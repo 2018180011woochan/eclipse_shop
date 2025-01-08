@@ -11,4 +11,9 @@ public class adminProductViewController {
 	public String ProductControllList() {
 		return "admin/product/adminProductList";
 	}
+	
+	@GetMapping("/create")
+	public String CreateProduct() {
+		return "admin/product/ProductCreatePage";
+	}
 }
