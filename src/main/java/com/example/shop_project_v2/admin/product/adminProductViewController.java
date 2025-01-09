@@ -37,6 +37,6 @@ public class adminProductViewController {
 	@PostMapping("/create")
 	public String CreateProduct(@ModelAttribute ProductRequestDTO productRequestDto) {
 		productService.CreateProduct(productRequestDto);
-		return "admin/product/adminProductList";
+		return "redirect:/admin/products";
 	}
 }

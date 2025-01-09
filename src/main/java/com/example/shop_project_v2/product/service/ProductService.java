@@ -33,13 +33,21 @@ public class ProductService {
 		productRepository.save(product);
 		
 		List<MultipartFile> imageFiles = productRequestDto.getImages();
+		
 		if (imageFiles != null && !imageFiles.isEmpty()) {
-			for (MultipartFile imageFile : imageFiles) {
-				String imageUrl = saveImage(imageFile);
-				ProductImage productImage = new ProductImage();
-				productImage.setProduct(product);
-				productImage.setImageUrl(imageUrl);
-				productImageRepository.save(productImage);
+			for (int i = 0; i < imageFiles.size(); ++i) {
+	            MultipartFile imageFile = imageFiles.get(i);
+	            String imageUrl = saveImage(imageFile);
+	            
+	            ProductImage productImage = new ProductImage();
+	            productImage.setProduct(product);
+	            productImage.setImageUrl(imageUrl);
+	            productImageRepository.save(productImage);
+
+	            // 첫 번째 이미지를 썸네일로 설정
+	            if (i == 0) {
+	                product.setThumbnailUrl(imageUrl);
+	            }
 			}
 		}
 	}

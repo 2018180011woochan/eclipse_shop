@@ -32,6 +32,8 @@ public class Product {
 	
 	private String description;
 	
+	private String thumbnailUrl;
+	
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ProductImage> images = new ArrayList<>();
 }

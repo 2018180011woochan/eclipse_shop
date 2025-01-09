@@ -22,11 +22,7 @@
 				<td th:text="${product.price}"></td>
 				<td th:text="${product.description}"></td>
 				<td>
-					<ul>
-						<li th:each="image : ${product.images}">
-							<img th:src="@{${image.imageUrl}}" alt="상품 이미지" width="100">
-						</li>
-					</ul>
+					<img th:src="@{${product.thumbnailUrl}}" alt="썸네일 이미지" width="100">
 				</td>
 			</tr>
 		</tbody>
