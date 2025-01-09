@@ -18,6 +18,27 @@
 			<label for="description">상세 설명:</label>
 			<input type="text" id="description" name="description" placeholder="상세 설명을 입력하세요" required>
 		</div>
+		
+		<div id="option">
+			<label>옵션 추가</label>
+			<div class="option">
+				<label>사이즈</label>
+				<select name="options[0].size" required>
+					<option value="S">S</option>
+					<option value="M">M</option>
+					<option value="L">L</option>
+					<option value="XL">XL</option>
+				</select>
+				
+				<label>색상</label>
+				<input type="text" name="options[0].color" placeholder="색상을 입력하세요" required>
+				
+				<label>재고 수량</label>
+        		<input type="number" name="options[0].stockQuantity" min="1" required>
+			</div>
+		</div>
+		<button type="button" id="addOption">옵션 추가</button>
+		
 		<div>
 			<label for="images">이미지 추가</label>
 			<input type="file" id="images" name="images" accept="image/*" multiple required>
@@ -25,5 +46,6 @@
 		<button type="submit">상품 등록</button>
 		
 	</form>
+	<script src="/js/product/createProduct.js"></script>
 </body>
 </html>

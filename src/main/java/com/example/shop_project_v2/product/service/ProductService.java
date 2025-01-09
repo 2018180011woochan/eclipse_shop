@@ -9,10 +9,13 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.shop_project_v2.product.dto.ProductOptionRequestDTO;
 import com.example.shop_project_v2.product.dto.ProductRequestDTO;
 import com.example.shop_project_v2.product.entity.Product;
 import com.example.shop_project_v2.product.entity.ProductImage;
+import com.example.shop_project_v2.product.entity.ProductOption;
 import com.example.shop_project_v2.product.repository.ProductImageRepository;
+import com.example.shop_project_v2.product.repository.ProductOptionRepository;
 import com.example.shop_project_v2.product.repository.ProductRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class ProductService {
 	private final ProductRepository productRepository;
 	private final ProductImageRepository productImageRepository;
+	private final ProductOptionRepository productOptionRepository;
 	
 	public void CreateProduct(ProductRequestDTO productRequestDto) {
 		Product product = Product.builder()
@@ -32,8 +36,8 @@ public class ProductService {
 		
 		productRepository.save(product);
 		
-		List<MultipartFile> imageFiles = productRequestDto.getImages();
-		
+		// 이미지 처리
+		List<MultipartFile> imageFiles = productRequestDto.getImages();	
 		if (imageFiles != null && !imageFiles.isEmpty()) {
 			for (int i = 0; i < imageFiles.size(); ++i) {
 	            MultipartFile imageFile = imageFiles.get(i);
@@ -50,6 +54,20 @@ public class ProductService {
 	            }
 			}
 		}
+		
+		// 옵션 처리
+		List<ProductOptionRequestDTO> optionDto = productRequestDto.getOptions();
+		if (optionDto != null && !optionDto.isEmpty()) {
+			for (ProductOptionRequestDTO option : optionDto) {
+				ProductOption productOption = new ProductOption();
+				productOption.setProduct(product);
+				productOption.setColor(option.getColor());
+				productOption.setSize(option.getSize());
+				productOption.setStockQuantity(option.getStockQuantity());
+				productOptionRepository.save(productOption);
+			}
+		}
+		
 	}
 	
 	private String saveImage(MultipartFile imageFile) {

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,4 +18,7 @@ public class ProductRequestDTO {
 	private String description;
 	
 	private List<MultipartFile> images;
+	
+    @NotEmpty(message = "옵션은 최소 1개 항목 이상 선택해야 합니다.")
+    private List<ProductOptionRequestDTO> options;
 }
