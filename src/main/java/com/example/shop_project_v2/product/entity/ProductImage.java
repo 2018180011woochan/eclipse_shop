@@ -1,5 +1,7 @@
 package com.example.shop_project_v2.product.entity;
 
+import com.example.shop_project_v2.BaseEntity;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -12,7 +14,7 @@ import lombok.Data;
 
 @Entity
 @Data
-public class ProductImage {
+public class ProductImage extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ImageId;

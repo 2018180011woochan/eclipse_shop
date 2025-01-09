@@ -18,10 +18,12 @@ import com.example.shop_project_v2.product.repository.ProductImageRepository;
 import com.example.shop_project_v2.product.repository.ProductOptionRepository;
 import com.example.shop_project_v2.product.repository.ProductRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class ProductService {
 	private final ProductRepository productRepository;
 	private final ProductImageRepository productImageRepository;

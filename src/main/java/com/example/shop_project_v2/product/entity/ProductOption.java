@@ -2,6 +2,7 @@ package com.example.shop_project_v2.product.entity;
 
 import static jakarta.persistence.FetchType.LAZY;
 
+import com.example.shop_project_v2.BaseEntity;
 import com.example.shop_project_v2.product.Size;
 
 import jakarta.persistence.Column;
@@ -17,7 +18,7 @@ import lombok.Data;
 
 @Entity
 @Data
-public class ProductOption {
+public class ProductOption extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long OptionId;
