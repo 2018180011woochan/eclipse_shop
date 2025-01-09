@@ -25,7 +25,6 @@ public class adminProductViewController {
 	@GetMapping
 	public String ProductControllList(Model model) {
 		List<Product> products = productService.getAllProducts();
-		System.out.println("상품 개수" + products.size());
 		model.addAttribute("products" , products);
 		return "admin/product/adminProductList";
 	}

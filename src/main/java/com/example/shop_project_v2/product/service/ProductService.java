@@ -56,7 +56,7 @@ public class ProductService {
 			Files.createDirectories(path.getParent());
 			Files.write(path, imageFile.getBytes());
 			
-			return filePath;
+			return "/uploads/" + fileName;
 			
 		} catch (IOException e) {
 			throw new RuntimeException("이미지 저장 중 오류 발생", e);
