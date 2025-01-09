@@ -62,4 +62,8 @@ public class ProductService {
 			throw new RuntimeException("이미지 저장 중 오류 발생", e);
 		}
 	}
+	
+	public List<Product> getAllProducts() {
+		return productRepository.findAll();
+	}
 }
