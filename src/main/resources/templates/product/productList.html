@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html>
+<head>
+	<title>상품 목록</title>
+  <style>
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 가로 4열 */
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto; /* 가운데 정렬 */
+            padding: 20px;
+        }
+        .product-item {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            padding: 10px;
+        }
+        .product-item img {
+            width: 100%;
+            height: auto; /* 유지 */
+            object-fit: cover;
+        }
+        .product-name {
+            font-size: 1rem;
+            margin: 8px 0;
+            color: #333;
+        }
+        .product-price {
+            font-size: 0.9rem;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+<h1>상품 목록</h1>
+
+    <div class="product-grid">
+        <div class="product-item" th:each="product : ${products}">
+            <!-- 썸네일 이미지 -->
+            <img th:src="@{${product.thumbnailUrl}}" alt="상품 썸네일">
+            <!-- 상품 이름 -->
+            <div class="product-name" th:text="${product.name}"></div>
+            <!-- 상품 가격 -->
+            <div class="product-price" th:text="${'₩ ' + product.price}"></div>
+        </div>
+    </div>
+	
+</body>
+</html>
