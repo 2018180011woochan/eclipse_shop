@@ -5,12 +5,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.shop_project_v2.product.dto.ProductOptionRequestDTO;
 import com.example.shop_project_v2.product.dto.ProductRequestDTO;
+import com.example.shop_project_v2.product.dto.ProductResponseDTO;
 import com.example.shop_project_v2.product.entity.Product;
 import com.example.shop_project_v2.product.entity.ProductImage;
 import com.example.shop_project_v2.product.entity.ProductOption;
@@ -101,5 +103,21 @@ public class ProductService {
 	
 	public List<Product> getProductsByOldest() {
         return productRepository.findAllByOrderByCreatedDateAsc();
+    }
+	
+    public List<ProductResponseDTO> getProductsSorted(String sort) {
+        List<Product> products;
+        if ("oldest".equals(sort)) {
+            products = productRepository.findAllByOrderByCreatedDateAsc();
+        } else {
+            products = productRepository.findAllByOrderByCreatedDateDesc();
+        }
+        return products.stream()
+                .map(product -> new ProductResponseDTO(
+                        product.getName(),
+                        product.getPrice(),
+                        product.getThumbnailUrl()
+                ))
+                .collect(Collectors.toList());
     }
 }

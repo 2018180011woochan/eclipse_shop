@@ -3,48 +3,20 @@
 <html>
 <head>
 	<title>상품 목록</title>
-  <style>
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr); /* 가로 4열 */
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto; /* 가운데 정렬 */
-            padding: 20px;
-        }
-        .product-item {
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            text-align: center;
-            padding: 10px;
-        }
-        .product-item img {
-            width: 100%;
-            height: auto; /* 유지 */
-            object-fit: cover;
-        }
-        .product-name {
-            font-size: 1rem;
-            margin: 8px 0;
-            color: #333;
-        }
-        .product-price {
-            font-size: 0.9rem;
-            color: #888;
-        }
-    </style>
+<link rel="stylesheet" href="/product/css/productList.css">
 </head>
 <body>
 <h1>상품 목록</h1>
-    <div>
-        <a th:href="@{/products(sort='newest')}" 
-           th:classappend="${sort == 'newest'} ? 'active' : ''">최신순</a>
-        <a th:href="@{/products(sort='oldest')}" 
-           th:classappend="${sort == 'oldest'} ? 'active' : ''">등록순</a>
+    <div class="dropdown">
+        <button class="dropbtn">정렬 기준</button>
+        <div class="dropdown-content">
+            <a href="#" data-sort="newest">최신순</a>
+            <a href="#" data-sort="oldest">등록순</a>
+        </div>
     </div>
 
 
-    <div class="product-grid">
+    <div class="product-grid" id="product-container">
         <div class="product-item" th:each="product : ${products}">
             <!-- 썸네일 이미지 -->
             <img th:src="@{${product.thumbnailUrl}}" alt="상품 썸네일">
@@ -54,6 +26,7 @@
             <div class="product-price" th:text="${'₩ ' + product.price}"></div>
         </div>
     </div>
-	
+    
+	<script src="/product/js/productList.js"></script>
 </body>
 </html>
