@@ -94,4 +94,12 @@ public class ProductService {
 	public List<Product> getAllProducts() {
 		return productRepository.findAll();
 	}
+	
+	public List<Product> getProductsByNewest() {
+		return productRepository.findAllByOrderByCreatedDateDesc();
+	}
+	
+	public List<Product> getProductsByOldest() {
+        return productRepository.findAllByOrderByCreatedDateAsc();
+    }
 }

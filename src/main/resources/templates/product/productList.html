@@ -36,6 +36,13 @@
 </head>
 <body>
 <h1>상품 목록</h1>
+    <div>
+        <a th:href="@{/products(sort='newest')}" 
+           th:classappend="${sort == 'newest'} ? 'active' : ''">최신순</a>
+        <a th:href="@{/products(sort='oldest')}" 
+           th:classappend="${sort == 'oldest'} ? 'active' : ''">등록순</a>
+    </div>
+
 
     <div class="product-grid">
         <div class="product-item" th:each="product : ${products}">
