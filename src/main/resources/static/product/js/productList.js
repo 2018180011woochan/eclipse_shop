@@ -1,85 +1,67 @@
 document.addEventListener('DOMContentLoaded', () => {
-    let currentPage = 0;  // 현재 페이지(0-based)
-    let totalPages = 1;   // 총 페이지 수 (서버 응답 후 업데이트)
-    const size = 8;       // 한 페이지에 보여줄 상품 수
+    let currentPage = 0;   // 현재 페이지 (0-based)
+    let totalPages = 1;    // 전체 페이지 수 (API 응답으로 업데이트)
+    let currentSort = 'newest'; // 기본 정렬
+    let currentKeyword = '';    // 검색어 (검색 모드일 때 사용)
+    const size = 8;       // 한 페이지에 표시할 상품 수
 
     const productContainer = document.getElementById('product-container');
+    const paginationUl = document.getElementById('paginationUl');
 
-    // 정렬(드롭다운) 로직
+    // 드롭다운 (정렬)
     const sortLinks = document.querySelectorAll('.dropdown-content a');
     sortLinks.forEach(link => {
         link.addEventListener('click', event => {
             event.preventDefault();
-            const sortParam = link.getAttribute('data-sort'); // newest, oldest
-            currentPage = 0; // 정렬 바꿀 때 첫 페이지로 리셋
-            loadProducts(sortParam, currentPage);
+            currentSort = link.getAttribute('data-sort'); // newest or oldest
+            currentPage = 0; // 정렬 바꾸면 첫 페이지로
+            currentKeyword = ''; // 검색어 비움(정렬 모드)
+            loadProducts(currentSort, currentPage);
         });
     });
 
-    // 검색 로직
+    // 검색 버튼
     const searchBtn = document.getElementById('searchBtn');
     searchBtn.addEventListener('click', () => {
-        const keyword = document.getElementById('searchKeyword').value;
-        currentPage = 0; // 검색 시도 시에도 첫 페이지로
-        loadSearch(keyword, currentPage);
+        const keywordInput = document.getElementById('searchKeyword');
+        currentKeyword = keywordInput.value.trim();
+        currentPage = 0; // 검색시 첫 페이지
+        loadSearch(currentKeyword, currentPage);
     });
 
-    // 페이지네이션 버튼
-    const prevBtn = document.getElementById('prevPage');
-    const nextBtn = document.getElementById('nextPage');
-    const pageInfo = document.getElementById('pageInfo');
-
-    if (prevBtn && nextBtn) {
-        prevBtn.addEventListener('click', () => {
-            if (currentPage > 0) {
-                currentPage--;
-                // 정렬/검색 상태에 따라 다르게 호출해야 할 수도 있음
-                // 예시: 정렬 기반으로 재호출 (sortParam='newest' 가정)
-                loadProducts('newest', currentPage);
-            }
-        });
-
-        nextBtn.addEventListener('click', () => {
-            if (currentPage < totalPages - 1) {
-                currentPage++;
-                // 동일하게 loadProducts() or loadSearch()...
-                loadProducts('newest', currentPage);
-            }
-        });
-    }
-
-    // 실제 상품 불러오기 (정렬)
-    function loadProducts(sortParam, page = 0) {
+    // 상품 목록 불러오기 (정렬용)
+    function loadProducts(sortParam, page) {
         fetch(`/api/products?sort=${sortParam}&page=${page}&size=${size}`)
             .then(response => response.json())
             .then(pageData => {
-                // pageData.content : 상품 배열
-                // pageData.totalPages : 전체 페이지 수
+                // pageData.content : 상품 목록
+                // pageData.totalPages, pageData.number, ...
                 totalPages = pageData.totalPages;
-                renderProducts(pageData.content);
+                currentPage = pageData.number;
 
-                // 페이지 정보 표시
-                pageInfo.textContent = `${pageData.number + 1} / ${pageData.totalPages} pages`;
+                renderProducts(pageData.content);
+                renderPagination(pageData); // 페이지네이션 렌더
             })
             .catch(error => console.error("Error fetching products:", error));
     }
 
-    // 검색 시
-    function loadSearch(keyword, page = 0) {
+    // 상품 목록 불러오기 (검색용)
+    function loadSearch(keyword, page) {
         fetch(`/api/products/search?keyword=${keyword}&page=${page}&size=${size}`)
             .then(response => response.json())
             .then(pageData => {
                 totalPages = pageData.totalPages;
+                currentPage = pageData.number;
+
                 renderProducts(pageData.content);
-                pageInfo.textContent = `${pageData.number + 1} / ${pageData.totalPages} pages`;
+                renderPagination(pageData);
             })
-            .catch(err => console.error(err));
+            .catch(err => console.error("Error fetching search results:", err));
     }
 
-    // 렌더링 함수
+    // 상품 목록 렌더
     function renderProducts(productList) {
         productContainer.innerHTML = '';
-
         productList.forEach(item => {
             const productDiv = document.createElement('div');
             productDiv.classList.add('product-item');
@@ -92,6 +74,80 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 페이지 로드 시, 기본적으로 최신순 0페이지 로딩
+    // Bootstrap 페이지네이션 렌더
+    function renderPagination(pageData) {
+        paginationUl.innerHTML = ''; // 기존 버튼 제거
+
+        const currentPageNum = pageData.number;      // 현재 페이지 (0-based)
+        const totalPageCount = pageData.totalPages;  // 총 페이지 수
+
+        // 맨앞 페이지
+        const firstLi = createPageItem('&laquo;', 0, currentPageNum > 0);
+        paginationUl.appendChild(firstLi);
+
+        // 이전 페이지
+        const prevLi = createPageItem('&lsaquo;', currentPageNum - 1, currentPageNum > 0);
+        paginationUl.appendChild(prevLi);
+
+        // 페이지 번호들 (간단 버전: 전부)
+        for (let i = 0; i < totalPageCount; i++) {
+            const pageNum = i;
+            const li = createPageItem(`${i + 1}`, pageNum, true, (i === currentPageNum));
+            paginationUl.appendChild(li);
+        }
+
+        // 다음 페이지
+        const nextLi = createPageItem('&rsaquo;', currentPageNum + 1, currentPageNum < totalPageCount - 1);
+        paginationUl.appendChild(nextLi);
+
+        // 맨뒤 페이지
+        const lastLi = createPageItem('&raquo;', totalPageCount - 1, currentPageNum < totalPageCount - 1);
+        paginationUl.appendChild(lastLi);
+    }
+
+    // 페이지아이템 생성 함수
+    function createPageItem(label, pageTarget, clickable, isActive = false) {
+        const li = document.createElement('li');
+        li.classList.add('page-item');
+
+        if (!clickable) {
+            // 클릭 불가 상태(비활성)
+            li.classList.add('disabled');
+        }
+
+        if (isActive) {
+            // 현재 페이지
+            li.classList.add('active');
+        }
+
+        // a 태그 생성
+        const aTag = document.createElement('a');
+        aTag.classList.add('page-link');
+        aTag.innerHTML = label; // HTML 엔티티 사용(&laquo; 등)
+
+        // 클릭 이벤트
+        if (clickable) {
+            aTag.addEventListener('click', e => {
+                e.preventDefault();
+                // 만약 지금 검색 모드라면 loadSearch, 아니면 loadProducts
+                if (currentKeyword) {
+                    // 검색 모드
+                    loadSearch(currentKeyword, pageTarget);
+                } else {
+                    // 정렬 모드
+                    loadProducts(currentSort, pageTarget);
+                }
+            });
+        } else {
+            // disabled link
+            aTag.tabIndex = -1;
+            aTag.setAttribute('aria-disabled', 'true');
+        }
+
+        li.appendChild(aTag);
+        return li;
+    }
+
+    // 페이지 로드 시: newest 정렬, 첫 페이지
     loadProducts('newest', 0);
 });
