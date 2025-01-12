@@ -7,6 +7,9 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -97,27 +100,42 @@ public class ProductService {
 		return productRepository.findAll();
 	}
 	
-	public List<Product> getProductsByNewest() {
-		return productRepository.findAllByOrderByCreatedDateDesc();
-	}
+//	public List<Product> getProductsByNewest() {
+//		return productRepository.findAllByOrderByCreatedDateDesc();
+//	}
+//	
+//	public List<Product> getProductsByOldest() {
+//        return productRepository.findAllByOrderByCreatedDateAsc();
+//    }
 	
-	public List<Product> getProductsByOldest() {
-        return productRepository.findAllByOrderByCreatedDateAsc();
-    }
-	
-    public List<ProductResponseDTO> getProductsSorted(String sort) {
-        List<Product> products;
+    public Page<ProductResponseDTO> getProductsSorted(String sort, int page, int size) {
+    	Pageable pageable = PageRequest.of(page, size);
+    	
+    	Page<Product> productPage;
         if ("oldest".equals(sort)) {
-            products = productRepository.findAllByOrderByCreatedDateAsc();
+        	productPage = productRepository.findAllByOrderByCreatedDateAsc(pageable);
         } else {
-            products = productRepository.findAllByOrderByCreatedDateDesc();
+        	productPage = productRepository.findAllByOrderByCreatedDateDesc(pageable);
         }
-        return products.stream()
-                .map(product -> new ProductResponseDTO(
+        return productPage.map(product ->
+        new ProductResponseDTO(
+                product.getName(),
+                product.getPrice(),
+                product.getThumbnailUrl()
+		        )
+		);
+    }
+    
+    public Page<ProductResponseDTO> searchProducts(String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Product> productPage = productRepository.findByNameContaining(keyword, pageable);
+
+        return productPage.map(product ->
+                new ProductResponseDTO(
                         product.getName(),
                         product.getPrice(),
                         product.getThumbnailUrl()
-                ))
-                .collect(Collectors.toList());
+                )
+        );
     }
 }

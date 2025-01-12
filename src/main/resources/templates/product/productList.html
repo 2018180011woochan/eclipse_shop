@@ -4,6 +4,7 @@
 <head>
 	<title>상품 목록</title>
 <link rel="stylesheet" href="/product/css/productList.css">
+<link rel="stylesheet" href="/common/css/bootstrap.min.css">
 </head>
 <body>
 <h1>상품 목록</h1>
@@ -14,7 +15,9 @@
             <a href="#" data-sort="oldest">등록순</a>
         </div>
     </div>
-
+    
+	<input type="text" id="searchKeyword" placeholder="상품명 검색">
+	<button id="searchBtn">검색</button>
 
     <div class="product-grid" id="product-container">
         <div class="product-item" th:each="product : ${products}">

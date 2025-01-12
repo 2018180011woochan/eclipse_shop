@@ -20,14 +20,9 @@ public class ProductViewController {
 	public String ViewProducts(
 			@RequestParam(defaultValue = "newest") String sort,
 			Model model) {
-		List<Product> products;
-        if (sort.equals("oldest")) {
-            products = productService.getProductsByOldest(); // 등록순
-        } else {
-            products = productService.getProductsByNewest(); // 최신순 (기본값)
-        }
+		List<Product> products = productService.getAllProducts();
+
 		model.addAttribute("products" , products);
-		model.addAttribute("sort", sort);
 		return "product/productList";
 	}
 	
