@@ -34,6 +34,10 @@ public class ProductService {
 	private final ProductImageRepository productImageRepository;
 	private final ProductOptionRepository productOptionRepository;
 	
+	public Product FindById(Long id) {
+		return productRepository.findById(id).orElseThrow();
+	}
+	
 	public void CreateProduct(ProductRequestDTO productRequestDto) {
 		Product product = Product.builder()
 				.name(productRequestDto.getName())
@@ -119,6 +123,7 @@ public class ProductService {
         }
         return productPage.map(product ->
         new ProductResponseDTO(
+        		product.getProductId(),
                 product.getName(),
                 product.getPrice(),
                 product.getThumbnailUrl()
@@ -132,6 +137,7 @@ public class ProductService {
 
         return productPage.map(product ->
                 new ProductResponseDTO(
+                		product.getProductId(),
                         product.getName(),
                         product.getPrice(),
                         product.getThumbnailUrl()

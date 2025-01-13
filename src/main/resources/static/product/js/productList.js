@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sortLinks = document.querySelectorAll('.dropdown-content a');
     sortLinks.forEach(link => {
         link.addEventListener('click', event => {
-            event.preventDefault();
+            //event.preventDefault();
             currentSort = link.getAttribute('data-sort'); // newest or oldest
             currentPage = 0; // 정렬 바꾸면 첫 페이지로
             currentKeyword = ''; // 검색어 비움(정렬 모드)
@@ -62,13 +62,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // 상품 목록 렌더
     function renderProducts(productList) {
         productContainer.innerHTML = '';
+		
         productList.forEach(item => {
             const productDiv = document.createElement('div');
             productDiv.classList.add('product-item');
             productDiv.innerHTML = `
-                <img src="${item.thumbnailUrl}" alt="썸네일" />
-                <div class="product-name">${item.name}</div>
-                <div class="product-price">₩ ${item.price}</div>
+				<a href="/products/${item.productId}" style="text-decoration: none; color: inherit;">
+	                <img src="${item.thumbnailUrl}" alt="썸네일" />
+	                <div class="product-name">${item.name}</div>
+	                <div class="product-price">₩ ${item.price}</div>
+				</a>
             `;
             productContainer.appendChild(productDiv);
         });
@@ -128,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 클릭 이벤트
         if (clickable) {
             aTag.addEventListener('click', e => {
-                e.preventDefault();
+                //e.preventDefault();
                 // 만약 지금 검색 모드라면 loadSearch, 아니면 loadProducts
                 if (currentKeyword) {
                     // 검색 모드
