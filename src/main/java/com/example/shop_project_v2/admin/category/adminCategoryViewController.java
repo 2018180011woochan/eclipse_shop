@@ -11,7 +11,7 @@ import com.example.shop_project_v2.category.service.CategoryService;
 
 import lombok.RequiredArgsConstructor;
 
-@RequestMapping("/admin/categorys")
+@RequestMapping("/admin/category")
 @RequiredArgsConstructor
 @Controller
 public class adminCategoryViewController {
@@ -29,6 +29,12 @@ public class adminCategoryViewController {
     @PostMapping()
     public String createMainCategory(@RequestParam String name) {
         categoryService.createMainCategory(name);
-        return "redirect:/admin/categorys";
+        return "redirect:/admin/category";
+    }
+    
+    @PostMapping("/sub")
+    public String createSubCategory(@RequestParam Long parentId, @RequestParam String name) {
+        categoryService.createSubCategory(parentId, name);
+        return "redirect:/admin/category";
     }
 }

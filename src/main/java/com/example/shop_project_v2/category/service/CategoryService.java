@@ -28,4 +28,16 @@ public class CategoryService {
     public List<Category> getMainCategories() {
         return categoryRepository.findByParentIsNull();
     }
+    
+    // 서브카테고리 생성
+    public void createSubCategory(Long parentId, String name) {
+        Category parentCategory = categoryRepository.findById(parentId)
+                .orElseThrow(() -> new IllegalArgumentException("메인 카테고리가 존재하지 않습니다."));
+
+        Category subCategory = new Category();
+        subCategory.setName(name);
+        subCategory.setParent(parentCategory);
+
+        categoryRepository.save(subCategory);
+    }
 }

@@ -4,13 +4,18 @@
     <meta charset="UTF-8">
     <title>카테고리 관리</title>
     <link rel="stylesheet" href="/common/css/bootstrap.min.css">
+    <style>
+        .category-list {
+            margin-left: 20px;
+        }
+    </style>
 </head>
 <body>
 <div class="container mt-5">
     <h1>카테고리 관리</h1>
 
     <!-- 메인 카테고리 생성 폼 -->
-    <form th:action="@{/admin/categorys}" method="post">
+    <form th:action="@{/admin/category}" method="post" class="mb-4">
         <div class="mb-3">
             <label for="mainCategoryName" class="form-label">메인 카테고리 이름</label>
             <input type="text" id="mainCategoryName" name="name" class="form-control" placeholder="메인 카테고리 이름을 입력하세요" required>
@@ -18,22 +23,30 @@
         <button type="submit" class="btn btn-primary">메인 카테고리 생성</button>
     </form>
 
-    <!-- 생성된 메인 카테고리 목록 -->
-    <h2 class="mt-5">메인 카테고리 목록</h2>
-    <table class="table table-bordered">
-        <thead>
-        <tr>
-            <th>카테고리 ID</th>
-            <th>카테고리 이름</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="category : ${categories}">
-            <td th:text="${category.id}"></td>
-            <td th:text="${category.name}"></td>
-        </tr>
-        </tbody>
-    </table>
+    <!-- 카테고리 트리 -->
+    <ul class="list-group">
+        <li th:each="mainCategory : ${categories}" class="list-group-item">
+            <!-- 메인 카테고리 이름 -->
+            <strong th:text="${mainCategory.name}"></strong>
+
+            <!-- 서브카테고리 -->
+            <ul class="category-list">
+                <li th:each="subCategory : ${mainCategory.subCategories}" class="list-group-item">
+                    <span th:text="${subCategory.name}"></span>
+                </li>
+            </ul>
+
+            <!-- 서브카테고리 추가 폼 -->
+            <form th:action="@{/admin/category/sub}" method="post" class="mt-2">
+                <input type="hidden" name="parentId" th:value="${mainCategory.id}">
+                <div class="mb-3">
+                    <label for="subCategoryName" class="form-label">서브카테고리 이름</label>
+                    <input type="text" id="subCategoryName" name="name" class="form-control" placeholder="서브카테고리 이름을 입력하세요" required>
+                </div>
+                <button type="submit" class="btn btn-secondary btn-sm">서브카테고리 추가</button>
+            </form>
+        </li>
+    </ul>
 </div>
 </body>
 </html>
