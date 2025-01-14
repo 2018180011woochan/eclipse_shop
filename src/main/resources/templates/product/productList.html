@@ -21,7 +21,7 @@
 
     <div class="product-grid" id="product-container">
         <div class="product-item" th:each="product : ${products}">
-        	<a href="/products/${item.productId}" style="text-decoration: none; color: inherit;">
+        	<a href="/products/${product.productId}" style="text-decoration: none; color: inherit;">
 	            <img th:src="@{${product.thumbnailUrl}}" alt="상품 썸네일">
 	            <div class="product-name" th:text="${product.name}"></div>
 	            <div class="product-price" th:text="${'₩ ' + product.price}"></div>

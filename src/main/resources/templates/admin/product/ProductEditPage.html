@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 수정</title>
+    <link rel="stylesheet" href="/common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/common/css/productList.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h1>상품 수정</h1>
+
+    <!-- 상품 수정 폼 -->
+    <form th:action="@{/admin/products/edit/{id}(id=${productRequestDTO.productId})}"
+          th:object="${productRequestDTO}"
+          method="post"
+          enctype="multipart/form-data">
+
+        <!-- 상품명 -->
+        <div class="mb-3">
+            <label for="name" class="form-label">상품명</label>
+            <input type="text" id="name" class="form-control" th:field="*{name}" placeholder="상품명을 입력하세요" required>
+        </div>
+
+        <!-- 가격 -->
+        <div class="mb-3">
+            <label for="price" class="form-label">가격</label>
+            <input type="number" id="price" class="form-control" th:field="*{price}" placeholder="가격을 입력하세요" required>
+        </div>
+
+        <!-- 설명 -->
+        <div class="mb-3">
+            <label for="description" class="form-label">설명</label>
+            <textarea id="description" class="form-control" th:field="*{description}" rows="3" placeholder="상세 설명을 입력하세요"></textarea>
+        </div>
+
+        <!-- 이미지 수정 -->
+        <div class="mb-3">
+            <label for="images" class="form-label">이미지 파일</label>
+            <input type="file" id="images" class="form-control" th:field="*{images}" multiple>
+            <div class="mt-2">
+                <h6>현재 이미지:</h6>
+                <div class="product-grid">
+                    <div th:each="image : *{images}" class="product-item">
+                        <img th:src="${image}" alt="상품 이미지">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 옵션 수정 -->
+        <div class="mb-3">
+            <label class="form-label">상품 옵션</label>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>색상</th>
+                    <th>사이즈</th>
+                    <th>재고수량</th>
+                    <th>삭제</th>
+                </tr>
+                </thead>
+                <tbody id="optionTable">
+                <tr th:each="opt, stat : *{options}">
+                    <td>
+                        <input type="text" class="form-control" th:field="*{options[__${stat.index}__].color}" placeholder="색상을 입력하세요">
+                    </td>
+                    <td>
+                        <select class="form-control" th:field="*{options[__${stat.index}__].size}">
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" class="form-control" th:field="*{options[__${stat.index}__].stockQuantity}" min="1">
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger" onclick="removeOption(this)">삭제</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <button type="button" class="btn btn-secondary" id="addOption">옵션 추가</button>
+        </div>
+
+        <!-- 수정 버튼 -->
+        <button type="submit" class="btn btn-primary">수정</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('addOption').addEventListener('click', function () {
+        const optionTable = document.getElementById('optionTable');
+        const rowCount = optionTable.rows.length;
+
+        const newRow = `
+            <tr>
+                <td><input type="text" class="form-control" name="options[${rowCount}].color" placeholder="색상을 입력하세요"></td>
+                <td>
+                    <select class="form-control" name="options[${rowCount}].size">
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                    </select>
+                </td>
+                <td><input type="number" class="form-control" name="options[${rowCount}].stockQuantity" min="1"></td>
+                <td><button type="button" class="btn btn-danger" onclick="removeOption(this)">삭제</button></td>
+            </tr>
+        `;
+
+        optionTable.insertAdjacentHTML('beforeend', newRow);
+    });
+
+    function removeOption(button) {
+        const row = button.closest('tr');
+        row.remove();
+    }
+</script>
+</body>
+</html>

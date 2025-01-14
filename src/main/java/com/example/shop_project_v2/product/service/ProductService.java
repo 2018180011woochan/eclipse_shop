@@ -104,14 +104,6 @@ public class ProductService {
 		return productRepository.findAll();
 	}
 	
-//	public List<Product> getProductsByNewest() {
-//		return productRepository.findAllByOrderByCreatedDateDesc();
-//	}
-//	
-//	public List<Product> getProductsByOldest() {
-//        return productRepository.findAllByOrderByCreatedDateAsc();
-//    }
-	
     public Page<ProductResponseDTO> getProductsSorted(String sort, int page, int size) {
     	Pageable pageable = PageRequest.of(page, size);
     	
@@ -143,5 +135,52 @@ public class ProductService {
                         product.getThumbnailUrl()
                 )
         );
+    }
+    
+    @Transactional
+    public void UpdateProduct(Long productId, ProductRequestDTO productRequestDto) {
+        Product product = productRepository.findById(productId)
+            .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
+
+        product.setName(productRequestDto.getName());
+        product.setPrice(productRequestDto.getPrice());
+        product.setDescription(productRequestDto.getDescription());
+
+        // 이미지 업데이트
+        List<MultipartFile> imageFiles = productRequestDto.getImages();
+        if (imageFiles != null && !imageFiles.isEmpty()) {
+            product.getImages().clear();
+            for (int i = 0; i < imageFiles.size(); i++) {
+                MultipartFile imageFile = imageFiles.get(i);
+                String imageUrl = saveImage(imageFile);
+                ProductImage productImage = new ProductImage();
+                productImage.setProduct(product);
+                productImage.setImageUrl(imageUrl);
+                product.getImages().add(productImage);
+
+                // 첫 번째 이미지 → 썸네일
+                if (i == 0) {
+                    product.setThumbnailUrl(imageUrl);
+                }
+            }
+        }
+
+        // 옵션 업데이트
+        List<ProductOptionRequestDTO> optionDto = productRequestDto.getOptions();
+        if (optionDto != null && !optionDto.isEmpty()) {
+            product.getOptions().clear();
+            for (ProductOptionRequestDTO optRequest : optionDto) {
+                ProductOption productOption = new ProductOption();
+                productOption.setProduct(product);
+                productOption.setColor(optRequest.getColor());
+                productOption.setSize(optRequest.getSize());
+                productOption.setStockQuantity(optRequest.getStockQuantity());
+                product.getOptions().add(productOption);
+            }
+        }
+    }
+    
+    public void DeleteProduct(Long productId) {
+        productRepository.deleteById(productId);
     }
 }

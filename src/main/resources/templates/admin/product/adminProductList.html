@@ -24,6 +24,18 @@
 				<td>
 					<img th:src="@{${product.thumbnailUrl}}" alt="썸네일 이미지" width="100">
 				</td>
+				
+				<td>
+	                <!-- 수정 버튼 -->
+	                <a th:href="@{/admin/products/edit/{id}(id=${product.productId})}"
+	                   class="btn btn-sm btn-warning">수정</a>
+	
+	                <!-- 삭제 버튼 -->
+	                <form th:action="@{/admin/products/delete/{id}(id=${product.productId})}"
+	                      method="post" style="display: inline;">
+	                    <button type="submit" class="btn btn-sm btn-danger">삭제</button>
+	                </form>
+	            </td>
 			</tr>
 		</tbody>
 	</table>
