@@ -18,6 +18,8 @@ public class ProductRequestDTO {
 	
 	private String description;
 	
+	private Long categoryId;
+	
 	private List<MultipartFile> images;
 	
     @NotEmpty(message = "옵션은 최소 1개 항목 이상 선택해야 합니다.")

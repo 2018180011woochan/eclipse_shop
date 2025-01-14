@@ -1,12 +1,17 @@
 package com.example.shop_project_v2.admin.category;
 
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.example.shop_project_v2.category.entity.Category;
 import com.example.shop_project_v2.category.service.CategoryService;
 
 import lombok.RequiredArgsConstructor;
@@ -36,5 +41,11 @@ public class adminCategoryViewController {
     public String createSubCategory(@RequestParam Long parentId, @RequestParam String name) {
         categoryService.createSubCategory(parentId, name);
         return "redirect:/admin/category";
+    }
+    
+    @ResponseBody
+    @GetMapping("/{mainCategoryId}/subcategorys")
+    public List<Category> getSubCategories(@PathVariable Long mainCategoryId) {
+        return categoryService.findSubCategoriesByMainCategoryId(mainCategoryId);
     }
 }

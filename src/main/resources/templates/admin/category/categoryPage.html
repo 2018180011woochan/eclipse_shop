@@ -38,7 +38,7 @@
 
             <!-- 서브카테고리 추가 폼 -->
             <form th:action="@{/admin/category/sub}" method="post" class="mt-2">
-                <input type="hidden" name="parentId" th:value="${mainCategory.id}">
+                <input type="hidden" name="parentId" th:value="${mainCategory.categoryId}">
                 <div class="mb-3">
                     <label for="subCategoryName" class="form-label">서브카테고리 이름</label>
                     <input type="text" id="subCategoryName" name="name" class="form-control" placeholder="서브카테고리 이름을 입력하세요" required>

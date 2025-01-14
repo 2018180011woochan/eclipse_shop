@@ -43,6 +43,7 @@ public class ProductService {
 				.name(productRequestDto.getName())
 				.price(productRequestDto.getPrice())
 				.description(productRequestDto.getDescription())
+				.categoryId(productRequestDto.getCategoryId())
 				.build();
 		
 		productRepository.save(product);

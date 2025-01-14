@@ -40,4 +40,8 @@ public class CategoryService {
 
         categoryRepository.save(subCategory);
     }
+    
+    public List<Category> findSubCategoriesByMainCategoryId(Long mainCategoryId) {
+        return categoryRepository.findByParent_CategoryId(mainCategoryId);
+    }
 }
