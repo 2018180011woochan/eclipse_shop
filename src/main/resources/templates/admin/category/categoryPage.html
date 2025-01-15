@@ -28,11 +28,37 @@
         <li th:each="mainCategory : ${categories}" class="list-group-item">
             <!-- 메인 카테고리 이름 -->
             <strong th:text="${mainCategory.name}"></strong>
-
+			
+			<!-- 수정/삭제 버튼 -->
+	        <div class="d-inline ms-2">
+	            <form th:action="@{/admin/category/update}" method="post" class="d-inline">
+	                <input type="hidden" name="categoryId" th:value="${mainCategory.categoryId}">
+	                <input type="text" name="name" th:placeholder="${mainCategory.name}" class="form-control form-control-sm d-inline w-auto" required>
+	                <button type="submit" class="btn btn-sm btn-primary">수정</button>
+	            </form>
+	            <form th:action="@{/admin/category/delete}" method="post" class="d-inline ms-1">
+	                <input type="hidden" name="categoryId" th:value="${mainCategory.categoryId}">
+	                <button type="submit" class="btn btn-sm btn-danger">삭제</button>
+	            </form>
+	        </div>
+			
             <!-- 서브카테고리 -->
             <ul class="category-list">
                 <li th:each="subCategory : ${mainCategory.subCategories}" class="list-group-item">
                     <span th:text="${subCategory.name}"></span>
+                    
+                    <!-- 수정/삭제 버튼 -->
+	                <div class="d-inline ms-2">
+	                    <form th:action="@{/admin/category/update}" method="post" class="d-inline">
+	                        <input type="hidden" name="categoryId" th:value="${subCategory.categoryId}">
+	                        <input type="text" name="name" th:placeholder="${subCategory.name}" class="form-control form-control-sm d-inline w-auto" required>
+	                        <button type="submit" class="btn btn-sm btn-primary">수정</button>
+	                    </form>
+	                    <form th:action="@{/admin/category/delete}" method="post" class="d-inline ms-1">
+	                        <input type="hidden" name="categoryId" th:value="${subCategory.categoryId}">
+	                        <button type="submit" class="btn btn-sm btn-danger">삭제</button>
+	                    </form>
+	                </div>
                 </li>
             </ul>
 

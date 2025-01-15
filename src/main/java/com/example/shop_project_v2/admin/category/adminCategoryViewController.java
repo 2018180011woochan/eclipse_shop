@@ -48,4 +48,16 @@ public class adminCategoryViewController {
     public List<Category> getSubCategories(@PathVariable Long mainCategoryId) {
         return categoryService.findSubCategoriesByMainCategoryId(mainCategoryId);
     }
+    
+    @PostMapping("/update")
+    public String updateCategory(@RequestParam Long categoryId, @RequestParam String name) {
+        categoryService.updateCategory(categoryId, name);
+        return "redirect:/admin/category";
+    }
+
+    @PostMapping("/delete")
+    public String deleteCategory(@RequestParam Long categoryId) {
+        categoryService.deleteCategory(categoryId);
+        return "redirect:/admin/category";
+    }
 }
