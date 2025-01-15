@@ -1,13 +1,16 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{common/layout}">
 <html>
 <head><title>Admin</title></head>
 <body>
+<main layout:fragment="content">
 	<h2>Admin 메인페이지</h2>
 	<a th:href="@{/admin/orders}">주문 관리</a>
 	<a th:href="@{/admin/members}">회원 관리</a>
 	<a th:href="@{/admin/category}">카테고리 관리</a>
 	<a th:href="@{/admin/products}">상품 관리</a>
-	
+</main>
 </body>
 </html>

@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{common/layout}">
 <head>
     <meta charset="UTF-8">
     <title>카테고리 관리</title>
@@ -11,6 +13,7 @@
     </style>
 </head>
 <body>
+<main layout:fragment="content">
 <div class="container mt-5">
     <h1>카테고리 관리</h1>
 
@@ -74,5 +77,6 @@
         </li>
     </ul>
 </div>
+</main>
 </body>
 </html>

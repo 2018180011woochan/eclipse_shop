@@ -1,8 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{common/layout}">
 <html>
 <head><title>Admin Product</title></head>
 <body>
+<main layout:fragment="content">
 	<h2>Admin Product 페이지</h2>
 	
 	<table border="1">
@@ -43,6 +46,6 @@
 	<a href="/admin/products/create">
 		<button>상품 등록</button>
 	</a>
-	
+</main>
 </body>
 </html>
