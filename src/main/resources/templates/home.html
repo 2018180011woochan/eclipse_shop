@@ -1,8 +1,16 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<html>
-<head><title>Home</title></head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{common/layout}">
+
+<head layout:fragment="head">
+	<title>Home</title>
+</head>
 <body>
-    
+    <main layout:fragment="content">
+        <h1>홈 화면</h1>
+        <p>이곳에 home 페이지용 HTML을 작성합니다.</p>
+        <p th:text="'안녕, 타임리프'">이 문구가 사라지고, '안녕, 타임리프'가 떠야 정상</p>
+    </main>
 </body>
 </html>
