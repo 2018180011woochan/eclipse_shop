@@ -73,7 +73,7 @@
             const mainCategoryId = this.value;
 
             // AJAX 요청으로 서브카테고리 가져오기
-            fetch(`/admin/category/${mainCategoryId}/subcategorys`)
+            fetch(`/api/admin/category/${mainCategoryId}/subcategorys`)
                 .then(response => response.json())
                 .then(data => {
                     const subCategorySelect = document.getElementById("subCategory");

@@ -1,40 +1,111 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<html>
 <head>
-	<title>상품 목록</title>
-	<link rel="stylesheet" href="/product/css/productList.css">
-	<link rel="stylesheet" href="/common/css/bootstrap.min.css">
+    <title>상품 목록</title>
+    <link rel="stylesheet" href="/common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/product/css/productList.css">
 </head>
 <body>
-<h1>상품 목록</h1>
-    <div class="dropdown">
-        <button class="dropbtn">정렬 기준</button>
-        <div class="dropdown-content">
-            <a href="#" data-sort="newest">최신순</a>
-            <a href="#" data-sort="oldest">등록순</a>
-        </div>
-    </div>
-    
-	<input type="text" id="searchKeyword" placeholder="상품명 검색">
-	<button id="searchBtn">검색</button>
 
-    <div class="product-grid" id="product-container">
-        <div class="product-item" th:each="product : ${products}">
-        	<a href="/products/${product.productId}" style="text-decoration: none; color: inherit;">
-	            <img th:src="@{${product.thumbnailUrl}}" alt="상품 썸네일">
-	            <div class="product-name" th:text="${product.name}"></div>
-	            <div class="product-price" th:text="${'₩ ' + product.price}"></div>
-	        </a>
-        </div>
+<h1>상품 목록</h1>
+
+<!-- 정렬 -->
+<div class="dropdown">
+    <button class="dropbtn">정렬 기준</button>
+    <div class="dropdown-content">
+        <!-- 최신순 -->
+        <a th:href="@{/products/productList(
+             categoryId=${categoryId},
+             sort='newest',
+             page=0,
+             size=${size}
+        )}">최신순</a>
+        <!-- 등록순 -->
+        <a th:href="@{/products/productList(
+             categoryId=${categoryId},
+             sort='oldest',
+             page=0,
+             size=${size}
+        )}">등록순</a>
     </div>
-    
-    <div id="paginationContainer" class="d-flex justify-content-center mt-4">
-	    <nav>
-	        <ul class="pagination" id="paginationUl"></ul>
-	    </nav>
-	</div>
-    
-	<script src="/product/js/productList.js"></script>
+</div>
+
+<!-- 검색은 필요 시 구현 -->
+<input type="text" id="searchKeyword" placeholder="상품명 검색">
+<button id="searchBtn">검색</button>
+
+<!-- 상품 그리드 -->
+<div class="product-grid">
+    <div class="product-item" th:each="product : ${products}">
+        <a th:href="@{/products/{id}(id=${product.productId})}" style="text-decoration: none; color: inherit;">
+            <img th:src="${product.thumbnailUrl}" alt="상품 썸네일" />
+            <div class="product-name" th:text="${product.name}"></div>
+            <div class="product-price" th:text="${'₩ ' + product.price}"></div>
+        </a>
+    </div>
+</div>
+
+<!-- 페이지네이션 -->
+<div class="d-flex justify-content-center mt-4">
+    <nav>
+        <ul class="pagination">
+            <!-- 맨앞 -->
+            <li class="page-item" th:classappend="${currentPage == 0} ? ' disabled'">
+                <a class="page-link" th:href="@{/products/productList(
+                        categoryId=${categoryId},
+                        sort=${sort},
+                        page=0,
+                        size=${size}
+                    )}">맨앞</a>
+            </li>
+
+            <!-- 이전 -->
+            <li class="page-item" th:classappend="${currentPage == 0} ? ' disabled'">
+                <a class="page-link" th:href="@{/products/productList(
+                        categoryId=${categoryId},
+                        sort=${sort},
+                        page=${currentPage - 1},
+                        size=${size}
+                    )}">이전</a>
+            </li>
+
+            <!-- 페이지 번호 (1부터 totalPages까지) -->
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(0, totalPages-1)}"
+                th:classappend="${i == currentPage} ? ' active'">
+                <a class="page-link"
+                   th:href="@{/products/productList(
+                        categoryId=${categoryId},
+                        sort=${sort},
+                        page=${i},
+                        size=${size}
+                   )}"
+                   th:text="${i+1}">1</a>
+            </li>
+
+            <!-- 다음 -->
+            <li class="page-item" th:classappend="${currentPage >= totalPages - 1} ? ' disabled'">
+                <a class="page-link" th:href="@{/products/productList(
+                        categoryId=${categoryId},
+                        sort=${sort},
+                        page=${currentPage + 1},
+                        size=${size}
+                    )}">다음</a>
+            </li>
+
+            <!-- 맨뒤 -->
+            <li class="page-item" th:classappend="${currentPage >= totalPages - 1} ? ' disabled'">
+                <a class="page-link" th:href="@{/products/productList(
+                        categoryId=${categoryId},
+                        sort=${sort},
+                        page=${totalPages - 1},
+                        size=${size}
+                    )}">맨뒤</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<script src="/product/js/productList.js"></script>
 </body>
 </html>

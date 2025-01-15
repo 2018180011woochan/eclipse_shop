@@ -1,4 +1,4 @@
-fetch('/api/category/categoryList', {
+fetch('/api/admin/category/categoryList', {
     method: 'GET'
 })
     .then(response => {

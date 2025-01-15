@@ -2,6 +2,7 @@ package com.example.shop_project_v2.product.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,15 +20,25 @@ import lombok.RequiredArgsConstructor;
 public class ProductViewController {
 	private final ProductService productService;
 	
-	@GetMapping()	// 임시로, 나중에 카테고리 만들어서 넣을거임
-	public String ViewProducts(
-			@RequestParam(defaultValue = "newest") String sort,
-			Model model) {
-		List<Product> products = productService.getAllProducts();
+	@GetMapping("/productList")
+    public String viewProductsByCategory(
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(defaultValue = "newest") String sort,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size,
+            Model model
+    ) {
+        Page<Product> productPage = productService.getProductsByCategory(categoryId, sort, page, size);
 
-		model.addAttribute("products" , products);
-		return "product/productList";
-	}
+        model.addAttribute("products", productPage.getContent());
+        model.addAttribute("currentPage", productPage.getNumber());
+        model.addAttribute("totalPages", productPage.getTotalPages());
+        model.addAttribute("sort", sort);
+        model.addAttribute("size", size);
+        model.addAttribute("categoryId", categoryId);
+
+        return "product/productList"; 
+    }
 	
 	@GetMapping("/{id}")
 	public String ViewProductDetail(@PathVariable Long id, Model model) {

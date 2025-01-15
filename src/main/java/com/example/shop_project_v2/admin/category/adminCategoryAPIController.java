@@ -15,7 +15,7 @@ import com.example.shop_project_v2.category.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/category")
+@RequestMapping("/api/admin/category")
 @RequiredArgsConstructor
 public class adminCategoryAPIController {
     private final CategoryService categoryService;
