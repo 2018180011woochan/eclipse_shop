@@ -43,7 +43,7 @@
             </div>
         </div>
         <!-- 오른쪽: 상품 정보 -->
-        <div class="col-md-6">
+        <div class="col-md-6" id="productContainer" th:data-product-id="${product.productId}">
             <h2 th:text="${product.name}">상품 이름</h2>
             <h4 th:text="'₩ ' + ${product.price}">₩ 10000</h4>
             <p th:text="${product.description}">상품 설명</p>

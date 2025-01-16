@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{common/layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>장바구니</title>
+    <link rel="stylesheet" href="/common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/cart/css/cart.css">
+</head>
+<body>
+<main layout:fragment="content">
+<div class="container mt-5">
+    <div class="row">
+        <!-- 장바구니 상품 리스트 -->
+        <div class="col-md-8">
+            <h2>장바구니</h2>
+            <div id="cartItemsContainer" class="cart-items"></div>
+        </div>
+
+        <!-- 결제 정보 -->
+        <div class="col-md-4">
+            <h3>결제 정보</h3>
+            <div class="payment-summary">
+                <p>상품수: <span id="totalItems">0</span> 개</p>
+                <p>상품금액: <span id="totalAmount">0</span> 원</p>
+                <hr>
+                <h4>총 결제금액: <span id="finalAmount">0</span> 원</h4>
+                <button class="btn btn-primary w-100 mt-3">구매하기</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/cart/js/cart.js"></script>
+</main>
+</body>
+</html>
