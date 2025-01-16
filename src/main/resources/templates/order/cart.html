@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{common/layout}">
+<head>
+    <title>장바구니</title>
+    <link rel="stylesheet" href="/common/css/bootstrap.min.css">
+</head>
+<body>
+    <main layout:fragment="content">
+    <h1>장바구니</h1>
+    <div id="cartContainer"></div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const cartContainer = document.getElementById('cartContainer');
+        let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+
+        if (cartItems.length === 0) {
+            cartContainer.innerHTML = '<p>장바구니가 비어있습니다.</p>';
+            return;
+        }
+
+        // 임시로 JSON 형태로 출력
+        // 실제로는 서버에 상품명/가격 등을 요청하거나, 로컬에도 함께 저장해서 표시
+        cartItems.forEach(item => {
+            const div = document.createElement('div');
+            div.innerText = `상품ID: ${item.productId}, 옵션ID: ${item.optionId}, 수량: ${item.quantity}`;
+            cartContainer.appendChild(div);
+        });
+    });
+    </script>
+    </main>
+</body>
+</html>
