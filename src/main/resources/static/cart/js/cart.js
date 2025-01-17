@@ -62,6 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('cartItems', JSON.stringify(cartItems));
         renderCartItems();
     });
+	
+	orderButton.addEventListener('click', () => {
+	    location.href = '/order';
+	});
 
     renderCartItems();
 });

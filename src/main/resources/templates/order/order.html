@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>주문하기</title>
+    <link rel="stylesheet" href="/common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/order/css/order.css">
+</head>
+<body>
+<main layout:fragment="content">
+<div class="container mt-5">
+    <div class="row">
+        <!-- 좌측: 주소, 결제수단 등 입력 -->
+        <div class="col-md-8">
+            <h2>주문 정보</h2>
+
+            <!-- 주소 입력 -->
+            <div class="mb-3">
+                <label for="address" class="form-label">배송 주소</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="address" placeholder="주소를 검색하세요">
+                    <button class="btn btn-outline-secondary" type="button" id="addressSearchButton">주소검색</button>
+                </div>
+            </div>
+
+            <!-- 결제수단 선택 -->
+            <div class="mb-3">
+                <label for="paymentMethod" class="form-label">결제 수단</label>
+                <select id="paymentMethod" class="form-select">
+                    <option value="kakaopay">카카오페이</option>
+                    <option value="tosspay">토스페이</option>
+                    <option value="banktransfer">계좌이체</option>
+                </select>
+            </div>
+
+            <!-- 결제하기 버튼 -->
+            <button id="payButton" class="btn btn-primary">결제하기</button>
+        </div>
+
+        <!-- 우측: 주문 상품 목록 -->
+        <div class="col-md-4">
+            <h4>결제 상품 목록</h4>
+            <div id="orderItemsContainer"></div>
+            <hr>
+            <p>총 금액: <span id="orderTotalAmount">0</span> 원</p>
+        </div>
+    </div>
+</div>
+
+<!-- 카카오 주소 API (실제로는 daum Postcode 스크립트가 필요) -->
+<!-- 
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+-->
+
+<script src="/order/js/order.js"></script>
+</main>
+</body>
+</html>
