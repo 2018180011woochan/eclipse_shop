@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const payButton = document.getElementById('payButton');
     const addressSearchButton = document.getElementById('addressSearchButton');
 
-    // 1. 장바구니 정보 로드
+    // 장바구니 정보 로드
     const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
 
     function renderOrderItems() {
@@ -32,71 +32,102 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             orderItemsContainer.appendChild(itemDiv);
         });
-
         orderTotalAmount.textContent = totalPrice.toLocaleString();
     }
 
-    // 2. 결제하기 버튼
-    payButton.addEventListener('click', () => {
-        if (!cartItems || cartItems.length === 0) {
-            alert("주문할 상품이 없습니다.");
-            return;
-        }
-
-        const address = addressInput.value.trim();
-        if (!address) {
-            alert("주소를 입력하세요.");
-            return;
-        }
-
-        const paymentMethod = paymentMethodSelect.value;
-
-        // API 전송할 데이터 (OrderRequestDto 형태)
-        const orderRequest = {
-            memberId: 1, // 예: 로그인 회원이라면 실제 memberId를 넣어야 함
-            address: address,
-            paymentMethod: paymentMethod,
-            orderItems: cartItems.map(item => ({
-                productId: item.productId,
-                productName: item.name,
-                color: item.color,
-                size: item.size,
-                quantity: item.quantity,
-                unitPrice: item.price
-            }))
-        };
-
-        // /api/order 로 POST
-        fetch('/api/order', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(orderRequest)
-        })
-        .then(res => {
-            if (!res.ok) {
-                throw new Error('주문 요청 실패');
-            }
-            return res.json();
-        })
-        .then(data => {
-            alert(`주문이 완료되었습니다! 주문번호: ${data.orderId}`);
-            // 주문 완료 시 장바구니 비우고 메인이나 주문 완료 페이지로 이동
-            localStorage.removeItem('cartItems');
-            location.href = '/';
-        })
-        .catch(err => {
-            console.error(err);
-            alert("주문 중 오류가 발생했습니다.");
-        });
-    });
-
-    // 3. 주소 검색 버튼 (카카오 주소 API 예시)
+    // 주소 검색 버튼(카카오 API)
     addressSearchButton.addEventListener('click', () => {
         new daum.Postcode({
             oncomplete: function(data) {
                 addressInput.value = data.address;
             }
         }).open();
+    });
+
+    // 결제하기 버튼 (IMP.request_pay → 성공 시 /api/order)
+    payButton.addEventListener('click', () => {
+        // 1) 장바구니와 주소 확인
+        if (!cartItems || cartItems.length === 0) {
+            alert("주문할 상품이 없습니다.");
+            return;
+        }
+        const address = addressInput.value.trim();
+        if (!address) {
+            alert("주소를 입력하세요.");
+            return;
+        }
+
+        // 2) 총 결제 금액 계산
+        let totalPrice = 0;
+        cartItems.forEach(item => {
+            totalPrice += item.price * item.quantity;
+        });
+
+        // 3) 아임포트 결제창 파라미터
+        const { IMP } = window;
+        IMP.init("imp46747186");  // 또는 data-user-code 속성만으로도 OK
+
+        const param = {
+            pg: "kakaopay.TC0ONETIME",   // 카카오페이 테스트
+            pay_method: "card",
+            merchant_uid: "order_" + new Date().getTime(),
+            name: "장바구니 결제",
+            amount: totalPrice,
+            buyer_email: "test@example.com",
+            buyer_name: "홍길동",
+            buyer_tel: "010-1234-5678",
+            buyer_addr: address,
+        };
+
+        // 4) 결제창 호출
+        IMP.request_pay(param, function(rsp) {
+            if (rsp.success) {
+                // 결제 완료 (아임포트 서버에서 '가상' 승인이 된 상태)
+                alert("결제가 성공적으로 완료되었습니다.\n imp_uid: " + rsp.imp_uid);
+
+                // (선택) 서버에 검증 로직을 추가하고 싶다면 여기서 먼저 /api/payments/verify 등
+                // fetch -> portOneService.getPaymentData(rsp.imp_uid)...
+
+                // 5) 결제 성공이 확인되었으므로 => /api/order 호출(주문 DB 저장)
+                const orderRequest = {
+                    memberId: 1,  // 예: 회원번호
+                    address: address,
+                    paymentMethod: "kakaopay", 
+                    orderItems: cartItems.map(item => ({
+                        productId: item.productId,
+                        productName: item.name,
+                        color: item.color,
+                        size: item.size,
+                        quantity: item.quantity,
+                        unitPrice: item.price
+                    })),
+                    // 필요하다면 impUid, merchantUid도 함께
+                    impUid: rsp.imp_uid,
+                    merchantUid: rsp.merchant_uid,
+                };
+
+                fetch('/api/order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderRequest)
+                })
+                .then(res => res.json())
+                .then(data => {
+                    alert(`주문이 완료되었습니다! DB orderId: ${data.orderId}`);
+                    // 장바구니 비우고 페이지 이동
+                    localStorage.removeItem('cartItems');
+                    location.href = '/';
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("주문 저장 중 오류가 발생했습니다.");
+                });
+
+            } else {
+                // 결제 실패 or 취소
+                alert("결제가 취소되었거나 실패했습니다.\n" + rsp.error_msg);
+            }
+        });
     });
 
     renderOrderItems();

@@ -6,7 +6,11 @@
     <meta charset="UTF-8">
     <title>주문하기</title>
     <link rel="stylesheet" href="/common/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/order/css/order.css">
+    
+    <script 
+      src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js" 
+      data-user-code="imp46747186">
+    </script>
 </head>
 <body>
 <main layout:fragment="content">
@@ -30,7 +34,6 @@
                 <label for="paymentMethod" class="form-label">결제 수단</label>
                 <select id="paymentMethod" class="form-select">
                     <option value="kakaopay">카카오페이</option>
-                    <option value="tosspay">토스페이</option>
                     <option value="banktransfer">계좌이체</option>
                 </select>
             </div>
@@ -49,10 +52,6 @@
     </div>
 </div>
 
-<!-- 카카오 주소 API (실제로는 daum Postcode 스크립트가 필요) -->
-<!-- 
-<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
--->
 
 <script src="/order/js/order.js"></script>
 </main>
