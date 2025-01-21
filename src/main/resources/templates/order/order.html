@@ -5,6 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <title>주문하기</title>
+    <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <link rel="stylesheet" href="/common/css/bootstrap.min.css">
     
     <script 
@@ -20,7 +21,40 @@
         <div class="col-md-8">
             <h2>주문 정보</h2>
 
-            <!-- 주소 입력 -->
+            <!-- 사용자 정보 표시 -->
+            <div class="mb-3">
+                <label for="email" class="form-label">이메일</label>
+                <input type="text" class="form-control" id="email" readonly>
+            </div>
+            <div class="mb-3">
+                <label for="name" class="form-label">이름</label>
+                <input type="text" class="form-control" id="name" readonly>
+            </div>
+            <div class="mb-3">
+                <label for="phone" class="form-label">휴대폰 번호</label>
+                <input type="text" class="form-control" id="phone">
+            </div>
+
+            <!-- 주소 -->
+            <div class="mb-3">
+                <label for="address" class="form-label">배송 주소</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="address" placeholder="주소를 입력하세요">
+                    <button class="btn btn-outline-secondary" type="button" id="addressSearchButton">
+                        주소검색
+                    </button>
+                </div>
+                <!-- 기본 주소 / 새 주소 버튼 -->
+                <button class="btn btn-sm btn-outline-primary mt-1" type="button" id="basicAddressBtn">
+                    기본 주소
+                </button>
+                <button class="btn btn-sm btn-outline-secondary mt-1" type="button" id="newAddressBtn">
+                    새 주소
+                </button>
+            </div>
+
+
+            <!-- 주소 입력 
             <div class="mb-3">
                 <label for="address" class="form-label">배송 주소</label>
                 <div class="input-group">
@@ -28,6 +62,9 @@
                     <button class="btn btn-outline-secondary" type="button" id="addressSearchButton">주소검색</button>
                 </div>
             </div>
+-->
+
+
 
             <!-- 결제수단 선택 -->
             <div class="mb-3">

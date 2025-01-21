@@ -1,18 +1,31 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // 주문 상품 목록
     const orderItemsContainer = document.getElementById('orderItemsContainer');
     const orderTotalAmount = document.getElementById('orderTotalAmount');
+
+    // 사용자 정보
+    const emailInput = document.getElementById('email');
+    const nameInput = document.getElementById('name');
+    const phoneInput = document.getElementById('phone');
+
+    // 주소 관련
     const addressInput = document.getElementById('address');
+    const addressSearchButton = document.getElementById('addressSearchButton');
+    const basicAddressBtn = document.getElementById('basicAddressBtn');
+    const newAddressBtn = document.getElementById('newAddressBtn');
+
+    // 결제
     const paymentMethodSelect = document.getElementById('paymentMethod');
     const payButton = document.getElementById('payButton');
-    const addressSearchButton = document.getElementById('addressSearchButton');
 
-    // 장바구니 정보 로드
+    let userData = null;
+
+    // 1) 장바구니 로드
     const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
 
     function renderOrderItems() {
         orderItemsContainer.innerHTML = '';
         let totalPrice = 0;
-
         cartItems.forEach(item => {
             const itemTotalPrice = item.price * item.quantity;
             totalPrice += itemTotalPrice;
@@ -35,7 +48,50 @@ document.addEventListener('DOMContentLoaded', () => {
         orderTotalAmount.textContent = totalPrice.toLocaleString();
     }
 
-    // 주소 검색 버튼(카카오 API)
+    renderOrderItems();
+
+    // 2) 로그인 사용자 정보 가져오기
+    fetch('/api/v1/members/me')
+      .then(res => {
+        if (!res.ok) throw new Error('로그인이 필요합니다.');
+        return res.json();
+      })
+      .then(data => {
+        userData = data;
+        // userData = { email, name, phone, address, ... }
+
+        emailInput.value = data.email;
+        nameInput.value = data.name;
+        phoneInput.value = data.phone;
+        addressInput.value = data.address;
+        
+        // 시작 시에는 "기본 주소" 상태라고 가정 -> 검색 버튼 비활성화
+        addressSearchButton.disabled = true;
+      })
+      .catch(err => {
+        console.log(err);
+        alert("로그인 정보가 없거나, 세션이 만료되었습니다.");
+        location.href = "/login";
+      });
+
+    // 3) "기본 주소" 버튼: 기존 주소 세팅 & 검색 비활성화
+    basicAddressBtn.addEventListener('click', () => {
+      if (userData && userData.address) {
+        addressInput.value = userData.address;
+        addressSearchButton.disabled = true;  // 검색 버튼 비활성
+      } else {
+        alert("회원 정보에 기본 주소가 없습니다.");
+      }
+    });
+
+    // 4) "새 주소" 버튼: 입력 칸 비우고 검색 버튼 활성화
+    newAddressBtn.addEventListener('click', () => {
+      addressInput.value = "";
+      addressInput.focus();
+      addressSearchButton.disabled = false; // 검색 버튼 활성
+    });
+
+    // 5) 주소 검색 버튼 (다음 우편번호 API)
     addressSearchButton.addEventListener('click', () => {
         new daum.Postcode({
             oncomplete: function(data) {
@@ -44,9 +100,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }).open();
     });
 
-    // 결제하기 버튼 (IMP.request_pay → 성공 시 /api/order)
+    // 6) 결제하기
     payButton.addEventListener('click', () => {
-        // 1) 장바구니와 주소 확인
         if (!cartItems || cartItems.length === 0) {
             alert("주문할 상품이 없습니다.");
             return;
@@ -57,42 +112,33 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // 2) 총 결제 금액 계산
         let totalPrice = 0;
-        cartItems.forEach(item => {
-            totalPrice += item.price * item.quantity;
-        });
+        cartItems.forEach(item => totalPrice += item.price * item.quantity);
 
-        // 3) 아임포트 결제창 파라미터
         const { IMP } = window;
-        IMP.init("imp46747186");  // 또는 data-user-code 속성만으로도 OK
+        IMP.init("imp46747186");
 
         const param = {
-            pg: "kakaopay.TC0ONETIME",   // 카카오페이 테스트
+            pg: "kakaopay.TC0ONETIME",
             pay_method: "card",
             merchant_uid: "order_" + new Date().getTime(),
             name: "장바구니 결제",
             amount: totalPrice,
-            buyer_email: "test@example.com",
-            buyer_name: "홍길동",
-            buyer_tel: "010-1234-5678",
+            buyer_email: emailInput.value,
+            buyer_name: nameInput.value,
+            buyer_tel: phoneInput.value,
             buyer_addr: address,
         };
 
-        // 4) 결제창 호출
+        // 결제창 호출
         IMP.request_pay(param, function(rsp) {
             if (rsp.success) {
-                // 결제 완료 (아임포트 서버에서 '가상' 승인이 된 상태)
                 alert("결제가 성공적으로 완료되었습니다.\n imp_uid: " + rsp.imp_uid);
 
-                // (선택) 서버에 검증 로직을 추가하고 싶다면 여기서 먼저 /api/payments/verify 등
-                // fetch -> portOneService.getPaymentData(rsp.imp_uid)...
-
-                // 5) 결제 성공이 확인되었으므로 => /api/order 호출(주문 DB 저장)
                 const orderRequest = {
-                    memberId: 1,  // 예: 회원번호
+                    memberId: 1, // 실제론 userData.id 등을 사용
                     address: address,
-                    paymentMethod: "kakaopay", 
+                    paymentMethod: paymentMethodSelect.value,
                     orderItems: cartItems.map(item => ({
                         productId: item.productId,
                         productName: item.name,
@@ -101,7 +147,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         quantity: item.quantity,
                         unitPrice: item.price
                     })),
-                    // 필요하다면 impUid, merchantUid도 함께
                     impUid: rsp.imp_uid,
                     merchantUid: rsp.merchant_uid,
                 };
@@ -114,7 +159,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(res => res.json())
                 .then(data => {
                     alert(`주문이 완료되었습니다! DB orderId: ${data.orderId}`);
-                    // 장바구니 비우고 페이지 이동
                     localStorage.removeItem('cartItems');
                     location.href = '/';
                 })
@@ -122,13 +166,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.error(err);
                     alert("주문 저장 중 오류가 발생했습니다.");
                 });
-
             } else {
-                // 결제 실패 or 취소
                 alert("결제가 취소되었거나 실패했습니다.\n" + rsp.error_msg);
             }
         });
     });
-
-    renderOrderItems();
 });
