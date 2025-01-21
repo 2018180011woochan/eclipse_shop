@@ -5,6 +5,10 @@ import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.shop_project_v2.jwt.AuthTokenImpl;
+import com.example.shop_project_v2.jwt.JwtProviderImpl;
+import com.example.shop_project_v2.jwt.dto.JwtTokenDto;
+import com.example.shop_project_v2.jwt.dto.JwtTokenLoginRequest;
 import com.example.shop_project_v2.member.dto.MemberRequestDTO;
 import com.example.shop_project_v2.member.entity.Member;
 import com.example.shop_project_v2.member.repository.MemberRepository;
@@ -18,7 +22,7 @@ public class MemberService {
 	private final PasswordEncoder  passwordEncoder;
 	
 	// jwt
-	//private final JwtProviderImpl jwtProvider;
+	private final JwtProviderImpl jwtProvider;
 	
 	public void Join(MemberRequestDTO memberDTO) {
 		// 이메일과 닉네임 중복 검사 (비동기로 중복 검사 하지만 안정성을 위해 추가)
@@ -71,39 +75,39 @@ public class MemberService {
         }
     }
 	
-//	// jwt
-//	public JwtTokenDto login(JwtTokenLoginRequest request) {
-//	    // 1) 이메일로 사용자 찾기
-//	    Member member = memberRepository.findByEmail(request.getEmail())
-//	        .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-//
-//	    if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
-//            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-//        }
-//	    
-//	    // 2) 이메일을 subject로 사용
-//	    String subject = member.getEmail();   // 예: "user@example.com"
-//
-//	    // 3) Access Token 생성
-//	    AuthTokenImpl accessToken = jwtProvider.createAccessToken(
-//	        subject,          // <-- 'userId' 자리에 이메일을 보냄
-//	        member.getRole(),
-//	        null
-//	    );
-//
-//	    // 4) Refresh Token 생성
-//	    AuthTokenImpl refreshToken = jwtProvider.createRefreshToken(
-//	        subject,          // <-- 마찬가지로 이메일
-//	        member.getRole(),
-//	        null
-//	    );
-//
-//	    // 5) Dto로 묶어서 반환
-//	    return JwtTokenDto.builder()
-//	        .accessToken(accessToken.getToken())
-//	        .refreshToken(refreshToken.getToken())
-//	        .build();
-//	}
+	// jwt
+	public JwtTokenDto login(JwtTokenLoginRequest request) {
+	    // 1) 이메일로 사용자 찾기
+	    Member member = memberRepository.findByEmail(request.getEmail())
+	        .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+	    if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+	    
+	    // 2) 이메일을 subject로 사용
+	    String subject = member.getEmail();   // 예: "user@example.com"
+
+	    // 3) Access Token 생성
+	    AuthTokenImpl accessToken = jwtProvider.createAccessToken(
+	        subject,          // <-- 'userId' 자리에 이메일을 보냄
+	        member.getRole(),
+	        null
+	    );
+
+	    // 4) Refresh Token 생성
+	    AuthTokenImpl refreshToken = jwtProvider.createRefreshToken(
+	        subject,          // <-- 마찬가지로 이메일
+	        member.getRole(),
+	        null
+	    );
+
+	    // 5) Dto로 묶어서 반환
+	    return JwtTokenDto.builder()
+	        .accessToken(accessToken.getToken())
+	        .refreshToken(refreshToken.getToken())
+	        .build();
+	}
 //	
 //	// Google OAUTH2
 //	public Member saveOrUpdateGoogleUser(String email, String name, String providerId) {
