@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{common/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>문의 상세</title>
+    <link rel="stylesheet" href="/common/css/bootstrap.min.css">
+</head>
+<body>
+<main layout:fragment="content">
+<div class="container mt-5">
+    <h2>문의 상세</h2>
+    
+    <div>
+        <label>유형</label>
+        <p th:text="${inquiry.type}">SIZE</p>
+    </div>
+    
+    <div>
+        <label>제목</label>
+        <p th:text="${inquiry.title}">문의 제목</p>
+    </div>
+    
+    <div>
+        <label>작성자</label>
+        <p th:text="${inquiry.member.name}">홍길동</p>
+    </div>
+    
+    <div>
+        <label>작성일</label>
+        <p th:text="${#temporals.format(inquiry.createdDate, 'yyyy-MM-dd HH:mm')}">2025-01-30 10:10</p>
+    </div>
+    
+    <div>
+        <label>내용</label>
+        <p th:text="${inquiry.content}">문의 내용</p>
+    </div>
+    
+    <!-- 비밀글 여부 / 댓글 등 추가 요소 -->
+
+    <hr>
+    <!-- 목록 버튼 -->
+    <button class="btn btn-secondary"
+     th:onclick="'location.href=\'/inquiry?productId=' + ${inquiry.product.productId} + '\' '">
+        목록으로
+    </button>
+
+</div>
+</main>
+</body>
+</html>

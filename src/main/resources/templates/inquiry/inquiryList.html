@@ -14,7 +14,7 @@
     <!-- 문의하기 버튼 -->
     <div class="mb-3">
         <button class="btn btn-primary"
-            th:onclick="'location.href=\'/inquiry/new?productId=' + ${productId} + '\' '"> 
+            th:onclick="'location.href=\'/inquiry/create?productId=' + ${productId} + '\' '"> 
             문의하기
         </button>
     </div>
@@ -34,7 +34,7 @@
                 <td th:text="${inq.type}">SIZE</td>
                 <td th:text="${inq.title}">문의 제목</td>
                 <td th:text="${inq.member.name}">작성자 이름</td>
-                <td th:text="${#temporals.format(inq.createdAt, 'yyyy-MM-dd')}">2025-01-30</td>
+                <td th:text="${#temporals.format(inq.createdDate, 'yyyy-MM-dd')}">2025-01-30</td>
                 <td>
                     <button class="btn btn-sm btn-outline-info"
                      th:onclick="'location.href=\'/inquiry/' + ${inq.id} + '\' '">
