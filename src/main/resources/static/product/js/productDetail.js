@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const productPrice = parseInt(productContainer.querySelector('h4').textContent.replace('₩', '').trim());
     const thumbnailUrl = document.querySelector('.carousel-item.active img').src;
 
+	// 문의
+	const inquiryBtn = document.getElementById('inquiryBtn');
+	
     let selectedOptions = [];
 
     optionSelect.addEventListener('change', () => {
@@ -69,6 +72,10 @@ document.addEventListener('DOMContentLoaded', () => {
         renderSelectedOptions();
     }
 
+	inquiryBtn.addEventListener('click', () => {
+	    location.href = `/inquiry?productId=` + productId;
+	});
+	
     addToCartBtn.addEventListener('click', () => {
         if (selectedOptions.length === 0) {
             alert('옵션을 선택해주세요.');

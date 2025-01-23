@@ -1,9 +1,13 @@
 package com.example.shop_project_v2.Inquiry.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
+import com.example.shop_project_v2.BaseEntity;
 import com.example.shop_project_v2.Inquiry.InquiryType;
+import com.example.shop_project_v2.member.Membership;
+import com.example.shop_project_v2.member.Role;
 import com.example.shop_project_v2.member.entity.Member;
 import com.example.shop_project_v2.product.entity.Product;
 
@@ -28,6 +32,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "inquiries")
@@ -35,8 +40,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Inquiry {
+@SuperBuilder
+public class Inquiry extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // 문의 고유 ID
@@ -58,9 +63,6 @@ public class Inquiry {
     @NotBlank(message = "문의 내용은 필수입니다.")
     @Size(max = 500, message = "문의 제목은 500자 이내로 작성해주세요.")
     private String content; // 문의 내용
-
-    @Column(nullable = false)
-    private LocalDate date; // 작성 날짜
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
