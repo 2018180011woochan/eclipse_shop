@@ -71,10 +71,5 @@ public class AuthTokenImpl implements AuthToken<Claims> {
         }
 
         return null;
-    }
-    
-    
-    
-    
-    
+    } 
 }

@@ -10,13 +10,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.example.shop_project_v2.jwt.JwtFilter;
+
 import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-//	private final JwtFilter jwtFilter;
+	private final JwtFilter jwtFilter;
 //	private final CustomOAuth2UserService customOAuth2UserService;
 //	private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 //	private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
@@ -25,12 +27,55 @@ public class SecurityConfig {
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+
+	
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll())
-                .csrf(csrf -> csrf.disable())
-                .formLogin(login -> login.disable());
-            return http.build();
+        http
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                        		"/login", 
+                                "/join", 
+                                "/jwt-login", 
+                                "/css/**", 
+                                "/js/**", 
+                                "/images/**", 
+                                "/order/**", 
+                                "/member/**",
+                                "/",
+                                "/api/**",
+                                "/oauth2/**",
+                                "/signup/**",
+								"/products/**",
+                                "/signup/**",
+                                "/chatbot/**",
+								"/common/**",
+								"/password-reset",
+								"/mainpage/**",
+								"/product/**",
+								"/upload/**"
+                        ).permitAll()
+                        .requestMatchers("/mypage").authenticated()
+                        .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                        .anyRequest().authenticated()
+                )
+                .csrf(AbstractHttpConfigurer::disable)
+        		.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
+//        		.oauth2Login(oauth2 -> oauth2
+//        			    .loginPage("/login")
+//        			    //.defaultSuccessUrl("/signup/confirm") 
+//        			    .successHandler(customAuthenticationSuccessHandler)
+//        			    .failureUrl("/login?error=true")
+//        			    .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+//        			)
+//		        .logout(logout -> logout
+//		                .logoutUrl("/logout")
+//		                .logoutSuccessHandler(customLogoutSuccessHandler) 
+//		                .deleteCookies("accessToken", "refreshToken", "JSESSIONID") // 관련 쿠키 삭제
+//		                .invalidateHttpSession(true)
+//		                .permitAll()
+//		          );
+        
+        return http.build();
     }
 }
