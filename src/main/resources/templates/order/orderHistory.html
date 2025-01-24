@@ -12,24 +12,32 @@
 <div class="container mt-5">
     <h2>주문 내역</h2>
 
-    <!-- ordersByDate: Map<LocalDate, List<Order>> -->
     <div th:each="dateEntry : ${ordersByDate}">
-        <!-- dateEntry.key = LocalDate -->
-        <!-- dateEntry.value = List<Order> -->
+
         <h3 th:text="${#temporals.format(dateEntry.key, 'yyyy.MM.dd')}"></h3>
 
         <!-- 해당 날짜의 Order 목록 -->
         <div th:each="order : ${dateEntry.value}" class="border p-3 mb-3">
-            <p>주문 총액: <span th:text="${order.totalPrice}">0</span>원</p>
+
+
+
 
             <!-- orderItems(이미 productId asc 정렬) -->
             <div th:each="item, stat : ${order.orderItems}">
-
+            
+            	 <div th:if="${stat.index == 0}">
+	                <span style="font-size:0.8rem;color:gray;"
+	                      th:text="${order.orderStatus}">
+	                    NEW
+	                </span>
+	            </div>
+	            
+				<strong th:text="${item.productName}">상품명</strong>
                 <!-- [상품명, 썸네일]: productId가 이전 item과 달라질 때만 표시 -->
                 <div th:if="${stat.index == 0 
                              or item.productId != order.orderItems[stat.index-1].productId}">
 
-                    <strong th:text="${item.productName}">상품명</strong>
+                    
                     <!-- 썸네일 -->
                     <img th:src="${item.thumbnailUrl}"
                          style="width:80px; height:80px; object-fit:cover; margin-left:10px;"/>
@@ -37,11 +45,10 @@
 
                 <!-- 항상 옵션(color/size) 표시 -->
                 <p style="margin-left:50px;"
-                   th:text="'옵션: ' + ${item.color} + ' / ' + ${item.size} + ' | 수량: ' + ${item.quantity} + '개 | 가격: ' + ${item.totalPrice} + '원'">
+                   th:text="'옵션: ' + ${item.color} + ' / ' + ${item.size} + ' | 수량: ' + ${item.quantity} + '개'">
                 </p>
                 
-                <!-- 만약 상품별 합계를 표시하고 싶으면,
-                     "다음 item이 없거나, 다음 item.productId != 현재 item.productId" 시점에 표시 -->
+                <p>주문 총액: <span th:text="${order.totalPrice}">0</span>원</p>
             </div>
         </div>
     </div>
