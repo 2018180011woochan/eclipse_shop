@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>내가 작성한 리뷰</title>
+    <link rel="stylesheet" href="/common/css/bootstrap.min.css"/>
+</head>
+<body>
+<main layout:fragment="content">
+<div class="container mt-5">
+    <h2>내가 작성한 리뷰</h2>
+    
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>상품명</th>
+                <th>별점</th>
+                <th>리뷰 내용</th>
+                <th>작성일</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- reviews를 반복하여 표시 -->
+            <tr th:each="review : ${reviews}">
+                <!-- review.getOrderItem()가 존재하고, 거기에 productName이 있다고 가정 -->
+                <td th:text="${review.orderItem.productName}">상품명</td>
+                <td th:text="${review.stars}">별점</td>
+                <td th:text="${review.content}">내용</td>
+                <!-- 날짜 포맷: 2025-01-25 13:45:00 식으로 표시하고 싶다면 -->
+                <td th:text="${#temporals.format(review.createdDate, 'yyyy-MM-dd HH:mm')}">작성일</td>
+            </tr>
+        </tbody>
+    </table>
+    
+</div>
+</main>
+</body>
+</html>

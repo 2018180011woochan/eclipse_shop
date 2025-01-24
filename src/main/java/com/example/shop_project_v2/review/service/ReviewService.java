@@ -1,5 +1,7 @@
 package com.example.shop_project_v2.review.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.example.shop_project_v2.member.entity.Member;
@@ -47,6 +49,10 @@ public class ReviewService {
         reviewRepository.save(review);
 
         orderItem.setIsReview(true);
+    }
+    
+    public List<Review> findReviewsByMember(Member member) {
+        return reviewRepository.findByMember(member);
     }
 }
 
