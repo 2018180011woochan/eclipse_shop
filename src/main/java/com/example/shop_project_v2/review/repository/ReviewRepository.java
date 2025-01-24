@@ -10,4 +10,5 @@ import com.example.shop_project_v2.review.entity.Review;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 	List<Review> findByMember(Member member);
+	List<Review> findByProductId(Long productId);
 }

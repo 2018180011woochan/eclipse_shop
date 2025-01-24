@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>리뷰 목록</title>
+    <link rel="stylesheet" href="/common/css/bootstrap.min.css">
+</head>
+<body>
+<main layout:fragment="content">
+<div class="container mt-5">
+    <h2>리뷰 목록</h2>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>작성일</th>
+                <th>상품명</th>
+                <th>별점</th>
+                <th>옵션</th>
+                <th>내용</th>
+                <th>상세보기</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- reviews를 반복하여 표시 -->
+            <tr th:each="review : ${reviews}">
+                <td th:text="${#temporals.format(review.createdDate, 'yyyy-MM-dd')}">2025-01-30</td>
+                <td th:text="${review.orderItem.productName}">상품명</td>
+                <td th:text="${review.stars}">5</td>
+                <td th:text="'사이즈: ' + ${review.orderItem.size} + ', 색상: ' + ${review.orderItem.color}">
+                    옵션 정보
+                </td>
+                <td th:text="${review.content}">리뷰 내용</td>
+				<td>
+				    <button class="btn btn-sm btn-outline-info"
+				        th:onclick="|location.href='/review/'+${review.reviewId}|">
+				        상세보기
+				    </button>
+				</td>
+            </tr>
+            <tr th:if="${reviews.size()} == 0">
+                <td colspan="6">리뷰가 없습니다.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+</main>
+</body>
+</html>

@@ -7,10 +7,13 @@ import java.util.Map;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.shop_project_v2.Inquiry.dto.InquiryRequestDto;
+import com.example.shop_project_v2.Inquiry.entity.Inquiry;
 import com.example.shop_project_v2.member.entity.Member;
 import com.example.shop_project_v2.member.service.MemberService;
 import com.example.shop_project_v2.order.entity.Order;
@@ -61,5 +64,21 @@ public class ReviewViewController {
     	return "review/reviewHistory";
     }
     
+    @GetMapping
+    public String listByReview(@RequestParam Long productId, Model model) {
+    	List<Review> reviews = reviewService.getReviewByProduct(productId);
+        model.addAttribute("reviews", reviews);
+        model.addAttribute("productId", productId);
+        return "review/reviewList"; 
+    }
+    
+    @GetMapping("/{reviewId}")
+    public String detail(@PathVariable Long reviewId, Model model) {
+    	Review review = reviewService.getReviewById(reviewId);
+        model.addAttribute("review", review);
+        return "review/reviewDetail";
+    }
+    
+
 
 }

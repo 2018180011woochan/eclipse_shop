@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	// 문의
 	const inquiryBtn = document.getElementById('inquiryBtn');
+	// 리뷰
+	const reviewBtn = document.getElementById('reviewBtn');
 	
     let selectedOptions = [];
 
@@ -74,6 +76,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	inquiryBtn.addEventListener('click', () => {
 	    location.href = `/inquiry?productId=` + productId;
+	});
+	
+	reviewBtn.addEventListener('click', () => {
+	    location.href = `/review?productId=` + productId;
 	});
 	
     addToCartBtn.addEventListener('click', () => {

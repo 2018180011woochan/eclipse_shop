@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.shop_project_v2.Inquiry.entity.Inquiry;
 import com.example.shop_project_v2.member.entity.Member;
 import com.example.shop_project_v2.order.entity.OrderItem;
 import com.example.shop_project_v2.order.repository.OrderItemRepository;
@@ -53,6 +54,15 @@ public class ReviewService {
     
     public List<Review> findReviewsByMember(Member member) {
         return reviewRepository.findByMember(member);
+    }
+    
+    public List<Review> getReviewByProduct(Long productId) {
+        return reviewRepository.findByProductId(productId);
+    }
+
+    public Review getReviewById(Long reviewId) {
+        return reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("리뷰가 존재하지 않습니다."));
     }
 }
 
