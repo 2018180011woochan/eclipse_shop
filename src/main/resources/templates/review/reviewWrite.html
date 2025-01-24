@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>리뷰 작성</title>
+    <link rel="stylesheet" href="/common/css/bootstrap.min.css"/>
+</head>
+<body>
+<main layout:fragment="content">
+<div class="container mt-5">
+    <h2>리뷰 작성 페이지</h2>
+
+    <form th:action="@{/review/save}" method="post">
+        <!-- orderItemId, productId 히든 필드로 -->
+        <input type="hidden" name="orderItemId" th:value="${orderItemId}" />
+        <input type="hidden" name="productId" th:value="${productId}" />
+
+        <!-- 별점: 1~5점 라디오 버튼 예시 -->
+        <div class="mb-3">
+            <label><strong>별점</strong></label><br/>
+            <label>
+                <input type="radio" name="stars" value="1" checked/>
+                ★
+            </label>
+            <label>
+                <input type="radio" name="stars" value="2"/>
+                ★★
+            </label>
+            <label>
+                <input type="radio" name="stars" value="3"/>
+                ★★★
+            </label>
+            <label>
+                <input type="radio" name="stars" value="4"/>
+                ★★★★
+            </label>
+            <label>
+                <input type="radio" name="stars" value="5"/>
+                ★★★★★
+            </label>
+        </div>
+
+        <!-- 리뷰 제목 (엔티티에 title 필드가 필요하다면 추가) -->
+        <div class="mb-3">
+            <label for="title"><strong>리뷰 제목</strong></label>
+            <input type="text" id="title" name="title" class="form-control"
+                   placeholder="리뷰 제목을 입력하세요" />
+        </div>
+
+        <!-- 리뷰 내용 -->
+        <div class="mb-3">
+            <label for="content"><strong>리뷰 내용</strong></label>
+            <textarea id="content" name="content" rows="5"
+                      class="form-control" placeholder="리뷰 내용을 입력하세요"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">리뷰 작성</button>
+    </form>
+
+</div>
+</main>
+</body>
+</html>

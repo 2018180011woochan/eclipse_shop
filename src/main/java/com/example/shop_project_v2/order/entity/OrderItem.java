@@ -32,6 +32,7 @@ public class OrderItem extends BaseEntity {
     private int quantity;         // 구매 수량
     private int unitPrice;        // 단가 (상품 가격)
     private int totalPrice;       // (단가 * 수량) 계산
+    private Boolean isReview;
 
     /**
      * 주문 상세 금액 계산 (예시)

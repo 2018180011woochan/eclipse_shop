@@ -19,9 +19,6 @@
         <!-- 해당 날짜의 Order 목록 -->
         <div th:each="order : ${dateEntry.value}" class="border p-3 mb-3">
 
-
-
-
             <!-- orderItems(이미 productId asc 정렬) -->
             <div th:each="item, stat : ${order.orderItems}">
             
@@ -49,6 +46,13 @@
                 </p>
                 
                 <p>주문 총액: <span th:text="${order.totalPrice}">0</span>원</p>
+                
+                <div th:if="${item.isReview == false}">
+                    <a class="btn btn-primary btn-sm"
+                       th:href="@{/review/write(orderItemId=${item.orderItemId}, productId=${item.productId})}">
+                        리뷰 작성하기
+                    </a>
+                </div>
             </div>
         </div>
     </div>

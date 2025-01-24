@@ -41,6 +41,7 @@ public class OrderApiController {
             orderItem.setQuantity(itemDto.getQuantity());
             orderItem.setUnitPrice(itemDto.getUnitPrice());
             orderItem.calculatePrice();
+            orderItem.setIsReview(false);
 
             order.addOrderItem(orderItem);
         }

@@ -53,7 +53,8 @@ public class SecurityConfig {
 								"/password-reset",
 								"/mainpage/**",
 								"/product/**",
-								"/upload/**"
+								"/upload/**",
+								"/review/**"
                         ).permitAll()
                         .requestMatchers("/mypage").authenticated()
                         .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
