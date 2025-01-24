@@ -20,7 +20,8 @@ public class OrderItem extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
-
+    
+	private String thumbnailUrl;
     // Product 자체를 ManyToOne으로 연결할 수도 있지만,
     // 주문 시점의 상품명과 가격을 스냅샷 형태로 저장하는 게 일반적
     // (상품 정보가 바뀌어도 과거 주문 정보는 변하지 않아야 함)

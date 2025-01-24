@@ -12,6 +12,7 @@ import com.example.shop_project_v2.Inquiry.entity.Inquiry;
 import com.example.shop_project_v2.Inquiry.repository.InquiryRepository;
 import com.example.shop_project_v2.member.entity.Member;
 import com.example.shop_project_v2.member.repository.MemberRepository;
+import com.example.shop_project_v2.member.service.MemberService;
 import com.example.shop_project_v2.product.entity.Product;
 import com.example.shop_project_v2.product.repository.ProductRepository;
 
@@ -24,6 +25,7 @@ public class InquiryService {
     private final InquiryRepository inquiryRepository;
     private final ProductRepository productRepository;
     private final MemberRepository memberRepository;
+    private final MemberService memberService;
     
     public List<Inquiry> getInquiriesByProduct(Long productId) {
         return inquiryRepository.findByProduct_ProductId(productId);
@@ -41,7 +43,7 @@ public class InquiryService {
                 .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
         
         // 2) 로그인 회원: 실제 구현 시 SecurityContext나 세션에서 memberId를 가져와 조회
-        Member member = getCurrentMember();
+        Member member = memberService.getCurrentMember();
 
         Inquiry inquiry = new Inquiry();
         inquiry.setProduct(product);
@@ -54,23 +56,5 @@ public class InquiryService {
 
         inquiryRepository.save(inquiry);
     }
-    
-    private Member getCurrentMember() {
-        // (A) SecurityContextHolder에서 Authentication
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated() 
-            || auth.getPrincipal().equals("anonymousUser")) {
-            throw new RuntimeException("로그인 안 됨");
-        }
-
-        // (B) principal 객체 (org.springframework.security.core.userdetails.User)
-        User principal = (User) auth.getPrincipal();
-        // JwtProviderImpl에서 setSubject(userId or email), 
-        // => principal.getUsername() == claims.getSubject()
-        String email = principal.getUsername();
-
-        // (C) DB에서 Member 조회
-        return memberRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("해당 회원이 존재하지 않습니다."));
-    }
+   
 }
