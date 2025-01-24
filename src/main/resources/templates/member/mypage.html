@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{common/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>마이페이지</title>
+
+    <link rel="icon" href="/images/eclipse_icon.png"/>
+    
+    <link rel="stylesheet" href="/common/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/member/css/mypageStyle.css">
+
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="mypage-container">
+        <!-- 상단 프로필 섹션 -->
+        <div class="profile-header">
+            <div class="profile-info">
+                <img src="/member/tempimage.png" alt="Profile">
+                <div>
+                    <div class="profile-text"><strong th:text="${member.nickname}"></strong>님, 안녕하세요!</div>
+                    <div class="membership">
+                        <span th:text="${member.membership}"></span> 등급
+                    </div>
+                </div>
+            </div>
+            <div class="profile-button">
+                <a href="/favorites" class="favorite">
+                    <button>찜 목록</button>
+                </a>
+
+                <button id="edit-profile-btn">회원정보 수정</button>
+            </div>
+        </div>
+
+        <!-- 비밀번호 입력 모달 -->
+		<div id="password-modal" class="modal">
+		    <div class="modal-content">
+		        <h3>비밀번호 확인</h3>
+		        <input type="password" id="password-input" placeholder="현재 비밀번호를 입력하세요">
+		        <div class="modal-actions">
+		            <button id="password-confirm-btn">확인</button>
+		            <button id="password-cancel-btn">취소</button>
+		        </div>
+		    </div>
+		</div>
+
+        <!-- 정보 테이블 -->
+        <table class="info-table">
+            <thead>
+                <tr>
+                    <th>주문내역</th>
+                    <th>리뷰</th>
+                    <th>문의</th>
+                    <th>포인트</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script src="/member/js/mypageModal.js"></script>
+</main>
+</body>
+</html>

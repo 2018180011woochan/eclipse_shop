@@ -21,7 +21,7 @@ public class SecurityConfig {
 	private final JwtFilter jwtFilter;
 //	private final CustomOAuth2UserService customOAuth2UserService;
 //	private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
-//	private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
+	private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
 	
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -60,7 +60,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
-        		.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
+        		.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // JWT 필터 추가
 //        		.oauth2Login(oauth2 -> oauth2
 //        			    .loginPage("/login")
 //        			    //.defaultSuccessUrl("/signup/confirm") 
@@ -68,13 +68,13 @@ public class SecurityConfig {
 //        			    .failureUrl("/login?error=true")
 //        			    .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
 //        			)
-//		        .logout(logout -> logout
-//		                .logoutUrl("/logout")
-//		                .logoutSuccessHandler(customLogoutSuccessHandler) 
-//		                .deleteCookies("accessToken", "refreshToken", "JSESSIONID") // 관련 쿠키 삭제
-//		                .invalidateHttpSession(true)
-//		                .permitAll()
-//		          );
+		        .logout(logout -> logout
+		                .logoutUrl("/logout")
+		                .logoutSuccessHandler(customLogoutSuccessHandler) 
+		                .deleteCookies("accessToken", "refreshToken", "JSESSIONID") // 관련 쿠키 삭제
+		                .invalidateHttpSession(true)
+		                .permitAll()
+		          );
         
         return http.build();
     }
