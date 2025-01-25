@@ -8,6 +8,7 @@ import java.util.List;
 import com.example.shop_project_v2.BaseEntity;
 import com.example.shop_project_v2.member.Membership;
 import com.example.shop_project_v2.member.Role;
+import com.example.shop_project_v2.member.entity.Member;
 import com.example.shop_project_v2.order.OrderStatus;
 
 import jakarta.persistence.CascadeType;
@@ -18,6 +19,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
@@ -38,7 +41,10 @@ public class Order extends BaseEntity {
     private OrderStatus orderStatus;
     
     // 예: 주문자 정보(회원이라면 Member 엔티티와 연관관계를 맺을 수도 있음)
-    private Long memberId;        // 간단히 memberId만 저장
+    //private Long memberId;        // 간단히 memberId만 저장
+    @ManyToOne
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
     private String address;       // 배송 주소
     private String paymentMethod; // 결제 수단 (카카오페이, 토스페이 등)
 

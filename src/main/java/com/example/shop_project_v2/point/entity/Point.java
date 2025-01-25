@@ -18,6 +18,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -40,9 +41,11 @@ public class Point extends BaseEntity {
     private Member member;
 
     @OneToMany(mappedBy = "point", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<SavedPoint> savedPointList = new ArrayList<>();
 
     @OneToMany(mappedBy = "point", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<UsedPoint> usedPointList = new ArrayList<>();
 
     public void usePoint(UsedPoint usedPoint){

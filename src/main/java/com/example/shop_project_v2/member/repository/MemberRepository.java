@@ -15,6 +15,7 @@ import com.example.shop_project_v2.member.entity.Member;
 public interface MemberRepository extends JpaRepository<Member, Long> {
 	Optional<Member> findByEmail(String email);
 	Optional<Member> findByNickname(String nickname);
+	Optional<Member> findById(Long id);
 	List<Member> findAllByMembership(Membership membership);
 
 	boolean existsByEmail(String email);

@@ -21,6 +21,8 @@ import com.example.shop_project_v2.member.dto.MemberRequestDTO;
 import com.example.shop_project_v2.member.entity.Member;
 import com.example.shop_project_v2.member.repository.MemberRepository;
 import com.example.shop_project_v2.member.service.MemberService;
+import com.example.shop_project_v2.order.service.OrderService;
+import com.example.shop_project_v2.point.service.PointService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -31,9 +33,9 @@ import lombok.RequiredArgsConstructor;
 public class MemberViewController {
 	private final MemberService memberService;
 	private final MemberRepository memberRepository;
-	//private final PointService pointService;
+	private final PointService pointService;
 	//private final ReviewService reviewService;
-	//private final OrderService orderService;
+	private final OrderService orderService;
 	//private final InquiryService inquiryService;
 
 	@GetMapping("/join")
@@ -50,7 +52,8 @@ public class MemberViewController {
 	    }
 
 		memberService.Join(memberRequestDTO);
-		//pointService.createPointByEmail(memberRequestDTO.getEmail());
+		pointService.createPointByEmail(memberRequestDTO.getEmail());
+
 		return "redirect:/";
 	}
 	
@@ -60,18 +63,13 @@ public class MemberViewController {
 	}
 	
 	@GetMapping("/mypage")
-	public String Login(Model model, Principal principal) {
-		if (principal == null) {
-			// 인증되지 않은 사용자는 로그인 페이지로 리다이렉트
-			return "redirect:/login";
-		}
-		
-		String email = principal.getName();
-        Member member = memberService.findByEmail(email);
+	public String Login(Model model) {
+
+		Member member = memberService.getCurrentMember();
 		//Long inquiryCount = inquiryService.getInquiryCountByMember(email);
         model.addAttribute("member", member);
 		//model.addAttribute("point", pointService.getPointByMember(email));
-		//model.addAttribute("orderCount", orderService.getOrderCountByEmail(email));
+		model.addAttribute("orderCount", orderService.getOrderCountByEmail(member.getEmail()));
 		//model.addAttribute("reviewCount", reviewService.getReviewCountByMember(member));
 		//model.addAttribute("inquiryCount", inquiryCount);
 		return "member/mypage";

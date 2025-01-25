@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.shop_project_v2.member.repository.MemberRepository;
+import com.example.shop_project_v2.member.service.MemberService;
 import com.example.shop_project_v2.order.dto.OrderItemRequestDto;
 import com.example.shop_project_v2.order.dto.OrderRequestDto;
 import com.example.shop_project_v2.order.entity.Order;
@@ -23,12 +25,13 @@ import lombok.RequiredArgsConstructor;
 public class OrderApiController {
 
     private final OrderService orderService;
-
+    private final MemberService memberService;
+    
     @PostMapping
     public ResponseEntity<?> createOrder(@RequestBody OrderRequestDto orderRequest) {
         // 1) DTO → 엔티티 변환
         Order order = new Order();
-        order.setMemberId(orderRequest.getMemberId());
+        order.setMember(memberService.getCurrentMember());
         order.setAddress(orderRequest.getAddress());
         order.setPaymentMethod(orderRequest.getPaymentMethod());
 

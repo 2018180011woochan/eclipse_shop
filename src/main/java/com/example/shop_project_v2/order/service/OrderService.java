@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.example.shop_project_v2.member.repository.MemberRepository;
 import com.example.shop_project_v2.order.entity.Order;
 import com.example.shop_project_v2.order.entity.OrderItem;
 import com.example.shop_project_v2.order.repository.OrderRepository;
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class OrderService {
 	private final OrderRepository orderRepository;
 	private final ProductRepository productRepository;
+	private final MemberRepository memberRepository;
 	
     @Transactional
     public Order createOrder(Order order) {
@@ -64,5 +66,9 @@ public class OrderService {
         }
 
         return map;
+    }
+    
+    public Integer getOrderCountByEmail(String email){
+        return orderRepository.findAllByMember(memberRepository.findByEmail(email).orElseThrow()).size();
     }
 }
