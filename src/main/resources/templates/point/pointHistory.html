@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>나의 포인트</title>
+    <link rel="stylesheet" href="/common/css/bootstrap.min.css"/>
+</head>
+<body>
+<main layout:fragment="content">
+<div class="container mt-5">
+    <h2>나의 포인트</h2>
+
+    <!-- Bootstrap Nav Tabs -->
+    <ul class="nav nav-tabs" id="pointTabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="all-tab" data-bs-toggle="tab" href="#all" role="tab" aria-controls="all" aria-selected="true">
+                전체 포인트
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="used-tab" data-bs-toggle="tab" href="#used" role="tab" aria-controls="used" aria-selected="false">
+                사용 내역
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="saved-tab" data-bs-toggle="tab" href="#saved" role="tab" aria-controls="saved" aria-selected="false">
+                적립 내역
+            </a>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content mt-4" id="pointTabContent">
+        <!-- 전체 포인트 -->
+        <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all-tab">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>포인트 ID</th>
+                        <th>잔액</th>
+                        <th>회원 ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="point : ${points}">
+                        <td th:text="${point.pointId}">포인트 ID</td>
+                        <td th:text="${point.balance}">잔액</td>
+                        <td th:text="${point.member.id}">회원 ID</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 사용 내역 -->
+        <div class="tab-pane fade" id="used" role="tabpanel" aria-labelledby="used-tab">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>사용 ID</th>
+                        <th>사용 금액</th>
+                        <th>사용 일시</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="used : ${usedPoints}">
+                        <td th:text="${used.id}">사용 ID</td>
+                        <td th:text="${used.amount}">사용 금액</td>
+                        <td th:text="${#temporals.format(used.createdDate, 'yyyy-MM-dd HH:mm')}">사용 일시</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 적립 내역 -->
+        <div class="tab-pane fade" id="saved" role="tabpanel" aria-labelledby="saved-tab">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>적립 ID</th>
+                        <th>적립 금액</th>
+                        <th>적립 일시</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="saved : ${savedPoints}">
+                        <td th:text="${saved.id}">적립 ID</td>
+                        <td th:text="${saved.savedPoint}">적립 금액</td>
+                        <td th:text="${#temporals.format(saved.createdDate, 'yyyy-MM-dd HH:mm')}">적립 일시</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</main>
+<script src="/common/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
