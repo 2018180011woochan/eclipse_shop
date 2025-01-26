@@ -37,7 +37,7 @@ public class PointService {
 		return savedPointRepository.findAllByPoint(point);
 	}
 	
-    // 회원가입할 때 같이 생성
+    // 포인트 추가
     public void pushPoint(String email, String description, int pointValue) {      
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
@@ -60,6 +60,23 @@ public class PointService {
 
         point.savePoint(savedPoint);
         pointRepository.save(point);
-       
+    }
+    
+    // 포인트 차감
+    public void usedPoint(String email, String description, int pointValue) {      
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+
+        Point point = pointRepository.findByMember(member).orElse(null);
+        
+        UsedPoint usedPoint = UsedPoint.builder()
+                .point(point)
+                .usedPoint(pointValue)
+                .usedReason(description)
+                .build();
+        usedPointRepository.save(usedPoint);
+
+        point.usePoint(usedPoint);
+        pointRepository.save(point);
     }
 }

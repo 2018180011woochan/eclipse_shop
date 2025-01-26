@@ -32,7 +32,9 @@ public class UsedPoint {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long usedPointId;
     @Column(nullable = false)
-    private Integer amount;
+    private Integer usedPoint;
+    @Column(nullable = false)
+    private String usedReason;
     @CreatedDate
     private LocalDateTime createdDate;
 
