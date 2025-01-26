@@ -52,7 +52,7 @@ public class MemberViewController {
 	    }
 
 		memberService.Join(memberRequestDTO);
-		pointService.createPointByEmail(memberRequestDTO.getEmail());
+		pointService.pushPoint(memberRequestDTO.getEmail(), "회원가입 축하 포인트", 500);
 
 		return "redirect:/";
 	}
