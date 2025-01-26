@@ -17,6 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // 결제
     const paymentMethodSelect = document.getElementById('paymentMethod');
     const payButton = document.getElementById('payButton');
+	
+	// 포인트
+	const availablePointsElem = document.getElementById('availablePoints');
+	const usePointsInput = document.getElementById('usePoints');
+	const useAllPointsBtn = document.getElementById('useAllPointsBtn');
 
     let userData = null;
 
@@ -58,14 +63,11 @@ document.addEventListener('DOMContentLoaded', () => {
       })
       .then(data => {
         userData = data;
-        // userData = { email, name, phone, address, ... }
-
         emailInput.value = data.email;
         nameInput.value = data.name;
         phoneInput.value = data.phone;
         addressInput.value = data.address;
         
-        // 시작 시에는 "기본 주소" 상태라고 가정 -> 검색 버튼 비활성화
         addressSearchButton.disabled = true;
       })
       .catch(err => {
@@ -74,6 +76,27 @@ document.addEventListener('DOMContentLoaded', () => {
         location.href = "/login";
       });
 
+	// 2-2) Point 잔액
+   	let availablePoints = 0;
+   	fetch('/api/v1/points/me')
+     .then(res => {
+       if (!res.ok) throw new Error('포인트 정보가 없습니다.');
+       return res.json();
+     })
+     .then(pointData => {
+       availablePoints = pointData.balance;
+       availablePointsElem.textContent = availablePoints.toLocaleString();
+     })
+     .catch(err => {
+       console.error(err);
+       availablePointsElem.textContent = "0";
+     });
+	 
+	 // 포인트 전체 사용 버튼
+	 useAllPointsBtn.addEventListener('click', () => {
+	   usePointsInput.value = availablePoints; 
+	 });
+	  
     // 3) "기본 주소" 버튼: 기존 주소 세팅 & 검색 비활성화
     basicAddressBtn.addEventListener('click', () => {
       if (userData && userData.address) {
@@ -111,10 +134,30 @@ document.addEventListener('DOMContentLoaded', () => {
             alert("주소를 입력하세요.");
             return;
         }
+		
+		
 
         let totalPrice = 0;
         cartItems.forEach(item => totalPrice += item.price * item.quantity);
 
+		// (라) 사용 포인트 입력값
+		const inputUsePoints = parseInt(usePointsInput.value, 10) || 0;
+		// 보유 포인트보다 많다면 alert
+		if (inputUsePoints > availablePoints) {
+		  alert("보유한 포인트를 초과했습니다.");
+		  return;
+		}
+
+		
+		
+		
+		// 최종 결제 금액
+		const finalAmount = totalPrice - inputUsePoints;
+		if (finalAmount < 0) {
+		  alert("포인트가 주문 금액을 초과합니다.");
+		  return;
+		}
+		
         const { IMP } = window;
         IMP.init("imp46747186");
 
@@ -129,16 +172,17 @@ document.addEventListener('DOMContentLoaded', () => {
             buyer_tel: phoneInput.value,
             buyer_addr: address,
         };
-
+	
         // 결제창 호출
         IMP.request_pay(param, function(rsp) {
             if (rsp.success) {
                 alert("결제가 성공적으로 완료되었습니다.\n imp_uid: " + rsp.imp_uid);
-
+				console.log("사용 포인트 입력값:", inputUsePoints);
                 const orderRequest = {
                     memberId: 1, // 실제론 userData.id 등을 사용
                     address: address,
                     paymentMethod: paymentMethodSelect.value,
+					usedPoint: inputUsePoints, // 사용 포인트 추가
                     orderItems: cartItems.map(item => ({
                         productId: item.productId,
                         productName: item.name,

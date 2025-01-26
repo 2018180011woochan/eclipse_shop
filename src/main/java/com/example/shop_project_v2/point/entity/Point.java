@@ -51,7 +51,7 @@ public class Point extends BaseEntity {
     public void usePoint(UsedPoint usedPoint){
         usedPoint.assignPointToCreate(this);
         usedPointList.add(usedPoint);
-        balance -= usedPoint.getAmount();
+        balance -= usedPoint.getUsedPoint();
     }
 
     public void savePoint(SavedPoint savedPoint){

@@ -52,19 +52,18 @@
                     새 주소
                 </button>
             </div>
-
-
-            <!-- 주소 입력 
-            <div class="mb-3">
-                <label for="address" class="form-label">배송 주소</label>
-                <div class="input-group">
-                    <input type="text" class="form-control" id="address" placeholder="주소를 검색하세요">
-                    <button class="btn btn-outline-secondary" type="button" id="addressSearchButton">주소검색</button>
-                </div>
-            </div>
--->
-
-
+            
+			<!-- 포인트 사용 -->
+			<div class="mb-3">
+			    <label class="form-label">포인트 사용</label>
+			    <div>
+			        <small class="text-muted">보유 포인트: <span id="availablePoints">0</span> P</small>
+			    </div>
+			    <div class="input-group mt-1">
+			        <input type="number" id="usePoints" class="form-control" min="0" value="0" placeholder="사용할 포인트를 입력">
+			        <button class="btn btn-outline-secondary" id="useAllPointsBtn" type="button">전체사용</button>
+			    </div>
+			</div>
 
             <!-- 결제수단 선택 -->
             <div class="mb-3">

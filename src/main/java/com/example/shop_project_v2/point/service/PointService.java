@@ -69,6 +69,10 @@ public class PointService {
 
         Point point = pointRepository.findByMember(member).orElse(null);
         
+        if (point.getBalance() < pointValue) {
+            throw new IllegalArgumentException("잔액이 부족합니다.");
+        }
+        
         UsedPoint usedPoint = UsedPoint.builder()
                 .point(point)
                 .usedPoint(pointValue)

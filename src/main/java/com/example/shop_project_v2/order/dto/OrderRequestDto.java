@@ -10,4 +10,5 @@ public class OrderRequestDto {
     private String address;
     private String paymentMethod;
     private List<OrderItemRequestDto> orderItems;
+    private int usedPoint;
 }
