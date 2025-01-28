@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="/common/css/bootstrap.min.css">
 </head>
 <body>
+
+
+
 <main layout:fragment="content">
     <div class="container mt-5">
         <h1>주문 상세 정보</h1>
@@ -19,16 +22,17 @@
             </div>
             <div class="card-body">
                 <div class="form-group">
+                	<input type="hidden" id="orderId" th:value="${order.orderId}" />
+                	
                     <label for="orderStatus"><strong>주문 상태:</strong></label>
                     <select id="orderStatus" name="orderStatus" class="form-control">
-                        <option th:each="status : ${T(com.example.shop_project_v2.order.OrderStatus).values()}"
-                                th:value="${status}"
-                                th:text="${status}"
-                                th:selected="${status == order.orderStatus}">
-                        </option>
+						<option th:each="status : ${T(com.example.shop_project_v2.order.OrderStatus).values()}"
+						        th:value="${status.name()}"         
+						        th:text="${status.toString()}"       
+						        th:selected="${status == order.orderStatus}">
+						</option>
                     </select>
                 </div>
-                <button id="updateStatusBtn" class="btn btn-primary">상태 업데이트</button>
                 <p id="statusMessage" class="mt-2 text-success"></p>
                 <p><strong>결제 방법:</strong> <span th:text="${order.paymentMethod}"></span></p>
                 <p><strong>총 금액:</strong> <span th:text="${order.totalPrice} + '원'"></span></p>
@@ -96,43 +100,10 @@
     </div>
     
 
-    <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const orderIdField = document.getElementById("orderId");
-        const orderStatusField = document.getElementById("orderStatus");
-        const statusMessage = document.getElementById("statusMessage");
-        const updateBtn = document.getElementById("updateStatusBtn");
-
-        updateBtn.addEventListener("click", function() {
-            const orderId = orderIdField.value;         // hidden input에서 값 읽어옴
-            const newStatus = orderStatusField.value;   // select에서 값 읽어옴
-
-            fetch('/admin/api/orders/' + orderId + '/update-status', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: new URLSearchParams({ orderStatus: newStatus })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('서버 응답 실패: ' + response.status);
-                }
-                return response.json();
-            })
-            .then(data => {
-                // 성공
-                statusMessage.textContent = data.message; // "주문 상태가 업데이트되었습니다."
-                orderStatusField.value = data.newStatus;   // NEW -> SHIPPED 등
-            })
-            .catch(error => {
-                // 실패
-                statusMessage.textContent = '상태 업데이트에 실패했습니다.';
-                console.error(error);
-            });
-        });
-    });
-    </script>
+<script src="/order/js/orderDetail.js"></script>
 </main>
+
+
+
 </body>
 </html>

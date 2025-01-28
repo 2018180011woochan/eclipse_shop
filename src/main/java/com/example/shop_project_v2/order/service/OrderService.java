@@ -85,6 +85,7 @@ public class OrderService {
     public void updateOrderStatus(Long orderId, OrderStatus orderStatus) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
+        System.out.println("여기까지타나?");
         order.updateStatus(orderStatus);
         orderRepository.save(order);
     }

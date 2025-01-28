@@ -25,7 +25,7 @@ public class adminOrderAPIController {
 	public ResponseEntity<Map<String, String>> updateOrderStatus(
 	    @PathVariable Long orderId,
 	    @RequestParam OrderStatus orderStatus) {
-
+        System.out.println("여기는 컨트롤러");
 	    orderService.updateOrderStatus(orderId, orderStatus); // 주문 상태 업데이트
 
 	    Map<String, String> response = new HashMap<>();
