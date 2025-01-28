@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/admin/api/orders")
 @RequiredArgsConstructor
 @RestController
-public class adminOrderAPIController {
+public class AdminOrderAPIController {
 	private final OrderService orderService;
 	
 	@PostMapping("/{orderId}/update-status")

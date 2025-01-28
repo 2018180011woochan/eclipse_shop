@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/admin/orders")
 @RequiredArgsConstructor
 @Controller
-public class adminOrderViewController {
+public class AdminOrderViewController {
 	private final OrderService orderService;
 	
 	@GetMapping()
