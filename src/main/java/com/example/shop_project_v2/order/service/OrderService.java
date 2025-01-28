@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.example.shop_project_v2.member.repository.MemberRepository;
+import com.example.shop_project_v2.order.OrderStatus;
 import com.example.shop_project_v2.order.entity.Order;
 import com.example.shop_project_v2.order.entity.OrderItem;
 import com.example.shop_project_v2.order.repository.OrderRepository;
@@ -79,5 +80,12 @@ public class OrderService {
     
     public Integer getOrderCountByEmail(String email){
         return orderRepository.findAllByMember(memberRepository.findByEmail(email).orElseThrow()).size();
+    }
+    
+    public void updateOrderStatus(Long orderId, OrderStatus orderStatus) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
+        order.updateStatus(orderStatus);
+        orderRepository.save(order);
     }
 }
