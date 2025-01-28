@@ -38,6 +38,15 @@ public class OrderService {
         return orderRepository.save(order);
     }
     
+    public List<Order> findAllOrders() {
+        return orderRepository.findAll();
+    }
+    
+    public Order findOrderById(Long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
+    }
+    
     public Map<LocalDate, List<Order>> getOrdersByDate(Long memberId) {
         List<Order> orders = orderRepository.findByMemberIdOrderByCreatedDateDesc(memberId);
 

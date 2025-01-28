@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{common/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>주문 관리 페이지</title>
+    <link rel="stylesheet" href="/common/css/bootstrap.min.css">
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="container mt-5">
+        <h1>주문 관리</h1>
+        <table class="table table-bordered">
+            <thead class="thead-light">
+                <tr>
+                    <th>주문 날짜</th>
+                    <th>주문 정보</th>
+                    <th>주문 총액</th>
+                    <th>주문 상태</th>
+                    <th>상세 보기</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 주문 목록을 반복하여 표시 -->
+                <tr th:each="order : ${orders}">
+                    <!-- 주문 날짜 -->
+                    <td th:text="${order.createdDate}"></td>
+
+                    <!-- 주문 정보 -->
+                    <td>
+                        <span th:if="${order.orderItems.size() == 1}" 
+                              th:text="${order.orderItems[0].productName}"></span>
+                        <span th:if="${order.orderItems.size() > 1}" 
+                              th:text="${order.orderItems[0].productName} + ' 외 ' + (${order.orderItems.size()} - 1) + '개'"></span>
+                    </td>
+
+                    <!-- 주문 총액 -->
+                    <td th:text="${order.totalPrice} + '원'"></td>
+
+                    <!-- 주문 상태 -->
+                    <td th:text="${order.orderStatus}"></td>
+
+                    <!-- 상세 보기 버튼 -->
+                    <td>
+                        <a th:href="@{/admin/orders/{orderId}(orderId=${order.orderId})}" 
+                           class="btn btn-primary btn-sm">상세 보기</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>
