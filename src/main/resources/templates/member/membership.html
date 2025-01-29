@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{common/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>멤버십 혜택 안내</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .membership-container { width: 80%; margin: auto; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: center; }
+        th { background-color: #f8f8f8; font-weight: bold; }
+        .bronze { background-color: #cd7f32; color: white; }
+        .silver { background-color: #c0c0c0; color: black; }
+        .gold { background-color: #ffd700; color: black; }
+        .diamond { background-color: #b9f2ff; color: black; }
+    </style>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="membership-container">
+        <h1>🎉 멤버십 혜택 안내 🎉</h1>
+        <p>회원님들의 등급에 따라 다양한 혜택을 제공합니다!</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>등급</th>
+                    <th>조건 (총 구매 금액)</th>
+                    <th>혜택</th>
+                </tr>
+            </thead>
+            <tbody>
+            	<tr>
+	                <td class="bronze">BRONZE</td>
+	                <td>0원 이상 ~ 200,000원 미만</td>
+	                <td>한 달에 한 번 5% 쿠폰 발급</td>
+				</tr>
+				<tr>
+	                <td class="silver">SILVER</td>
+	                <td>200,000원 이상 ~ 500,000원 미만</td>
+	                <td>한 달에 한 번 10% 쿠폰 발급</td>
+				</tr>
+				<tr>
+	                <td class="gold">GOLD</td>
+	                <td>500,000원 이상 ~ 1,000,000원 미만</td>
+	                <td>한 달에 한 번 15% 쿠폰 발급, 전 상품 5% 할인</td>
+				</tr>
+				<tr>
+	                <td class="diamond">DIAMOND</td>
+	                <td>1,000,000원 이상</td>
+	                <td>한 달에 한 번 20% 쿠폰 발급, 전 상품 10% 할인</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

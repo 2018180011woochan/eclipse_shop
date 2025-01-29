@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.example.shop_project_v2.member.entity.Member;
 import com.example.shop_project_v2.member.repository.MemberRepository;
 import com.example.shop_project_v2.order.OrderStatus;
 import com.example.shop_project_v2.order.entity.Order;
@@ -78,14 +79,13 @@ public class OrderService {
         return map;
     }
     
-    public Integer getOrderCountByEmail(String email){
-        return orderRepository.findAllByMember(memberRepository.findByEmail(email).orElseThrow()).size();
+    public Integer getOrderCountByMember(Member member){
+        return orderRepository.findAllByMember(member).size();
     }
     
     public void updateOrderStatus(Long orderId, OrderStatus orderStatus) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
-        System.out.println("여기까지타나?");
         order.updateStatus(orderStatus);
         orderRepository.save(order);
     }

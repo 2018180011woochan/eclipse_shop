@@ -66,7 +66,7 @@
                 <tbody>
                     <tr th:each="used : ${usedPoints}">
                         <td th:text="${used.usedPointId}">사용 ID</td>
-                        <td th:text="${used.amount}">사용 금액</td>
+                        <td th:text="${used.usedPoint}">사용 금액</td>
                         <td th:text="${#temporals.format(used.createdDate, 'yyyy-MM-dd HH:mm')}">사용 일시</td>
                     </tr>
                 </tbody>

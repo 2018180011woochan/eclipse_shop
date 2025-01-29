@@ -17,12 +17,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.shop_project_v2.Inquiry.service.InquiryService;
 import com.example.shop_project_v2.member.dto.MemberRequestDTO;
 import com.example.shop_project_v2.member.entity.Member;
 import com.example.shop_project_v2.member.repository.MemberRepository;
 import com.example.shop_project_v2.member.service.MemberService;
 import com.example.shop_project_v2.order.service.OrderService;
 import com.example.shop_project_v2.point.service.PointService;
+import com.example.shop_project_v2.review.service.ReviewService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -34,9 +36,9 @@ public class MemberViewController {
 	private final MemberService memberService;
 	private final MemberRepository memberRepository;
 	private final PointService pointService;
-	//private final ReviewService reviewService;
+	private final ReviewService reviewService;
 	private final OrderService orderService;
-	//private final InquiryService inquiryService;
+	private final InquiryService inquiryService;
 
 	@GetMapping("/join")
 	public String Join() {
@@ -66,12 +68,11 @@ public class MemberViewController {
 	public String Login(Model model) {
 
 		Member member = memberService.getCurrentMember();
-		//Long inquiryCount = inquiryService.getInquiryCountByMember(email);
-        model.addAttribute("member", member);
-		//model.addAttribute("point", pointService.getPointByMember(email));
-		model.addAttribute("orderCount", orderService.getOrderCountByEmail(member.getEmail()));
-		//model.addAttribute("reviewCount", reviewService.getReviewCountByMember(member));
-		//model.addAttribute("inquiryCount", inquiryCount);
+		model.addAttribute("member", member);
+		model.addAttribute("orderCount", orderService.getOrderCountByMember(member));
+		model.addAttribute("reviewCount", reviewService.getReviewCountByMember(member));
+		model.addAttribute("inquiryCount", inquiryService.getInquiryCountByMember(member));
+		model.addAttribute("point", pointService.findByMember(member).orElse(null).getBalance());
 		return "member/mypage";
 	}
 	
@@ -149,5 +150,10 @@ public class MemberViewController {
     private String generateTemporaryPassword() {
         // 간단한 임시 비밀번호 생성
         return UUID.randomUUID().toString().substring(0, 8);
+    }
+    
+    @GetMapping("/membership/info")
+    public String MembershipInfo() {
+    	return "member/membership";
     }
 }

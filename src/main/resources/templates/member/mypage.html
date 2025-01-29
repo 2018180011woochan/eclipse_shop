@@ -19,9 +19,12 @@
                 <img src="/member/tempimage.png" alt="Profile">
                 <div>
                     <div class="profile-text"><strong th:text="${member.nickname}"></strong>님, 안녕하세요!</div>
-                    <div class="membership">
-                        <span th:text="${member.membership}"></span> 등급
-                    </div>
+						<div class="membership">
+							<a href="/membership/info"
+							   th:text="${member.membership.name}"
+							   th:classappend="${member.membership.cssClass}">
+							</a> 등급
+						</div>
                 </div>
             </div>
             <div class="profile-button">
@@ -53,13 +56,16 @@
                     <th>리뷰</th>
                     <th>문의</th>
                     <th>포인트</th>
+                    <th>쿠폰</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
 					<td><a href="/order/history" th:text="${orderCount}">주문개수</a></td>
 					<td><a href="/review/history" th:text="${reviewCount}">리뷰개수</a></td>
-					<td><a href="/point/history" th:text="${pointCount}">포인트개수</a></td>
+					<td><a href="/inquiry/history" th:text="${inquiryCount}">문의개수</a></td>
+					<td><a href="/point/history" th:text="${point}">포인트개수</a></td>
+					<td><a href="/coupon/history" th:text="${couponCount}">쿠폰개수</a></td>
                 </tr>
             </tbody>
         </table>

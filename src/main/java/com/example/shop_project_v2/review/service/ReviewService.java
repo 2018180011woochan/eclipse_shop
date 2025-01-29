@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.shop_project_v2.Inquiry.entity.Inquiry;
 import com.example.shop_project_v2.member.entity.Member;
+import com.example.shop_project_v2.member.repository.MemberRepository;
 import com.example.shop_project_v2.order.entity.OrderItem;
 import com.example.shop_project_v2.order.repository.OrderItemRepository;
 import com.example.shop_project_v2.review.entity.Review;
@@ -17,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
-
+	private final MemberRepository memberRepository;
     private final ReviewRepository reviewRepository;
     private final OrderItemRepository orderItemRepository;
 
@@ -63,6 +64,10 @@ public class ReviewService {
     public Review getReviewById(Long reviewId) {
         return reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("리뷰가 존재하지 않습니다."));
+    }
+    
+    public Integer getReviewCountByMember(Member member){
+        return reviewRepository.findByMember(member).size();
     }
 }
 

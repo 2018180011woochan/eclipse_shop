@@ -156,3 +156,32 @@
 .favorite {
     margin-right: 10px;
 }
+
+/* 기본 스타일 */
+.membership-link {
+    font-weight: bold;
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+/* 등급별 색상 적용 */
+.membership-bronze {
+    color: #cd7f32; /* 브론즈 */
+    background-color: #f5f5f5;
+}
+
+.membership-silver {
+    color: #c0c0c0; /* 실버 */
+    background-color: #f0f0f0;
+}
+
+.membership-gold {
+    color: #ffd700; /* 골드 */
+    background-color: #fffacd;
+}
+
+.membership-diamond {
+    color: #00bfff; /* 다이아몬드 */
+    background-color: #e0ffff;
+}

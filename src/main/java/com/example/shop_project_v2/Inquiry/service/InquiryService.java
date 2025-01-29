@@ -56,5 +56,9 @@ public class InquiryService {
 
         inquiryRepository.save(inquiry);
     }
+    
+    public Integer getInquiryCountByMember(Member member){
+        return inquiryRepository.findByMember(member).size();
+    }
    
 }
