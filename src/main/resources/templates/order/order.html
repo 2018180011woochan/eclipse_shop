@@ -5,9 +5,12 @@
 <head>
     <meta charset="UTF-8">
     <title>주문하기</title>
+    <!-- 다음 우편번호 API -->
     <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <!-- 부트스트랩 CSS -->
     <link rel="stylesheet" href="/common/css/bootstrap.min.css">
     
+    <!-- 아임포트 결제 -->
     <script 
       src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js" 
       data-user-code="imp46747186">
@@ -53,17 +56,17 @@
                 </button>
             </div>
             
-			<!-- 포인트 사용 -->
-			<div class="mb-3">
-			    <label class="form-label">포인트 사용</label>
-			    <div>
-			        <small class="text-muted">보유 포인트: <span id="availablePoints">0</span> P</small>
-			    </div>
-			    <div class="input-group mt-1">
-			        <input type="number" id="usePoints" class="form-control" min="0" value="0" placeholder="사용할 포인트를 입력">
-			        <button class="btn btn-outline-secondary" id="useAllPointsBtn" type="button">전체사용</button>
-			    </div>
-			</div>
+            <!-- 포인트 사용 -->
+            <div class="mb-3">
+                <label class="form-label">포인트 사용</label>
+                <div>
+                    <small class="text-muted">보유 포인트: <span id="availablePoints">0</span> P</small>
+                </div>
+                <div class="input-group mt-1">
+                    <input type="number" id="usePoints" class="form-control" min="0" value="0" placeholder="사용할 포인트를 입력">
+                    <button class="btn btn-outline-secondary" id="useAllPointsBtn" type="button">전체사용</button>
+                </div>
+            </div>
 
             <!-- 결제수단 선택 -->
             <div class="mb-3">
@@ -74,24 +77,30 @@
                 </select>
             </div>
             
-            <!-- 쿠폰 적용 버튼 -->
-             <div class="mb-3">
-                <label class="form-label">쿠폰 적용</label>
-                <button id="openCouponModalBtn" class="btn btn-success">쿠폰 적용</button>
+            <!-- 쿠폰 적용 -->
+            <div class="mb-3">
+                <!-- label for="openCouponModalBtn" => label을 지정해두면 JS에서 textContent를 변경하기 쉬움 -->
+                <label for="openCouponModalBtn" class="form-label">쿠폰 적용</label>
+                <button id="openCouponModalBtn" class="btn btn-success">쿠폰 선택</button>
             </div>
 
             <!-- 결제하기 버튼 -->
             <button id="payButton" class="btn btn-primary">결제하기</button>
         </div>
 
-        <!-- 우측: 주문 상품 목록 -->
+        <!-- 우측: 주문 상품 목록/결제 금액 요약 -->
         <div class="col-md-4">
             <h4>결제 상품 목록</h4>
             <div id="orderItemsContainer"></div>
             <hr>
-            <p>총 금액: <span id="orderTotalAmount">0</span> 원</p>
-            
-            <p>쿠폰 할인: <span id="couponDiscountAmount">0</span> 원</p>
+            <!-- 총 상품금액 -->
+            <p>상품 합계: <span id="orderTotalAmount">0</span> 원</p>
+            <!-- 쿠폰 할인액 -->
+            <p>쿠폰 할인: <span id="couponDiscountAmount">-0</span> 원</p>
+            <!-- 포인트 할인액 -->
+            <p>포인트 할인: <span id="pointDiscountAmount">-0</span> 원</p>
+            <!-- 배송비 -->
+            <p>배송비: <span id="deliveryFeeAmount">+3,000</span> 원</p>
             <hr>
             <p>최종 결제 금액: <strong><span id="finalPaymentAmount">0</span> 원</strong></p>
         </div>
@@ -107,10 +116,8 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <!-- 쿠폰 목록 영역 -->
-        <div id="couponListContainer">
-          <!-- JS에서 쿠폰 목록을 여기 채움 -->
-        </div>
+        <!-- 쿠폰 목록 -->
+        <div id="couponListContainer"></div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
@@ -119,6 +126,7 @@
   </div>
 </div>
 
+<!-- order.js 불러오기 -->
 <script src="/order/js/order.js"></script>
 </main>
 </body>
