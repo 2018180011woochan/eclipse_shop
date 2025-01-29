@@ -49,6 +49,7 @@ public class MemberService {
         memberRepository.save(member);	
         
         couponService.PushCoupon(member, "회원가입 축하 쿠폰", 30);
+        couponService.PushCoupon(member, member.getMembership().getName() + "등급 월간 쿠폰", 5);
 	}
 	
 	public Member findByEmail(String email) {
