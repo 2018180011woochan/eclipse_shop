@@ -11,4 +11,5 @@ public class OrderRequestDto {
     private String paymentMethod;
     private List<OrderItemRequestDto> orderItems;
     private int usedPoint;
+    private Long couponId;
 }

@@ -23,6 +23,13 @@ document.addEventListener('DOMContentLoaded', () => {
 	const usePointsInput = document.getElementById('usePoints');
 	const useAllPointsBtn = document.getElementById('useAllPointsBtn');
 
+	// 쿠폰
+	const openCouponModalBtn = document.getElementById('openCouponModalBtn');
+	const couponModal = document.getElementById('couponModal');
+	const couponListContainer = document.getElementById('couponListContainer');
+	const couponDiscountAmountElem = document.getElementById('couponDiscountAmount');
+	const finalPaymentAmountElem = document.getElementById('finalPaymentAmount');
+	
     let userData = null;
 
     // 1) 장바구니 로드
@@ -55,6 +62,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderOrderItems();
 
+	// 최종 결제금액 재계산하는 함수
+	function recalcFinalAmount() {
+	    // 총 상품금액
+	    let totalPrice = 0;
+	    cartItems.forEach(item => totalPrice += item.price * item.quantity);
+
+	    // 포인트 사용
+	    const inputUsePoints = parseInt(usePointsInput.value, 10) || 0;
+
+	    // 쿠폰 할인액
+	    let couponDiscount = 0;
+	    if (selectedCouponRate > 0) {
+			// 총 상품 금액 기준 할인
+	        couponDiscount = Math.floor(totalPrice * (selectedCouponRate / 100));
+	    }
+
+	    // 표시
+	    couponDiscountAmountElem.textContent = couponDiscount.toLocaleString();
+
+	    // 최종 금액 = 총 상품금액 - 포인트 - 쿠폰할인
+	    let finalAmount = totalPrice - inputUsePoints - couponDiscount;
+	    if (finalAmount < 0) finalAmount = 0;
+
+	    finalPaymentAmountElem.textContent = finalAmount.toLocaleString();
+	    return finalAmount;
+	}
+	
     // 2) 로그인 사용자 정보 가져오기
     fetch('/api/v1/members/me')
       .then(res => {
@@ -92,6 +126,11 @@ document.addEventListener('DOMContentLoaded', () => {
        availablePointsElem.textContent = "0";
      });
 	 
+	 // 포인트 입력 변경 시에도 재계산
+	 usePointsInput.addEventListener('input', () => {
+	     recalcFinalAmount();
+	 });
+	 
 	 // 포인트 전체 사용 버튼
 	 useAllPointsBtn.addEventListener('click', () => {
 	   usePointsInput.value = availablePoints; 
@@ -122,6 +161,77 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }).open();
     });
+	
+	// 쿠폰 적용 버튼 클릭 → 모달 띄우기 & 쿠폰 목록 로드
+	   openCouponModalBtn.addEventListener('click', () => {
+	       // Bootstrap Modal show
+	       const couponBsModal = new bootstrap.Modal(couponModal);
+	       couponBsModal.show();
+	
+	       // 쿠폰 목록 fetch
+	       fetch('/api/v1/coupons')
+	         .then(res => {
+	           if (!res.ok) throw new Error('쿠폰 정보를 가져올 수 없습니다.');
+	           return res.json();
+	         })
+	         .then(coupons => {
+	           renderCouponList(coupons);
+	         })
+	         .catch(err => {
+	           console.error(err);
+	           couponListContainer.innerHTML = `<p>쿠폰이 없습니다.</p>`;
+	         });
+	   });
+
+	   // 쿠폰 목록 렌더링 함수
+	   function renderCouponList(coupons) {
+	       couponListContainer.innerHTML = ''; // 초기화
+	       if (!coupons || coupons.length === 0) {
+	           couponListContainer.innerHTML = `<p>보유 쿠폰이 없습니다.</p>`;
+	           return;
+	       }
+	       // 각 쿠폰을 버튼/리스트 형태로 표시
+	       coupons.forEach(coupon => {
+	           if (coupon.isUsed) {
+	               // 이미 사용된 쿠폰은 비활성 표시
+	               const usedDiv = document.createElement('div');
+	               usedDiv.innerHTML = `
+	                 <div class="alert alert-secondary mb-2">
+	                   [사용됨] <strong>${coupon.reason}</strong> 
+	                   - 할인율: ${coupon.discountRate}%
+	                 </div>
+	               `;
+	               couponListContainer.appendChild(usedDiv);
+	           } else {
+	               // 사용 가능한 쿠폰
+	               const couponDiv = document.createElement('div');
+	               couponDiv.classList.add('alert', 'alert-info', 'mb-2');
+	               couponDiv.style.cursor = 'pointer';
+				   couponDiv.dataset.couponId = coupon.id;  // 쿠폰 ID 저장
+				   couponDiv.dataset.discountRate = coupon.discountRate;  // 할인율 저장
+	               couponDiv.innerHTML = `
+	                   <strong>${coupon.reason}</strong> 
+	                   <span>- 할인율: ${coupon.discountRate}%</span>
+	                   <span style="font-size:0.9em;color:gray;"> (지급일: ${coupon.createdDate})</span>
+	               `;
+	               // 쿠폰 클릭 시 => 할인 적용
+	               couponDiv.addEventListener('click', () => {
+	                   selectedCouponId = coupon.id;
+	                   selectedCouponRate = coupon.discountRate;
+	                   alert(`'${coupon.reason}' 쿠폰이 적용되었습니다.`);
+
+	                   // 모달 닫기
+	                   const couponBsModal = bootstrap.Modal.getInstance(couponModal);
+	                   couponBsModal.hide();
+
+	                   // 할인액 재계산
+	                   recalcFinalAmount();
+	               });
+
+	               couponListContainer.appendChild(couponDiv);
+	           }
+	       });
+	   }
 
     // 6) 결제하기
     payButton.addEventListener('click', () => {
@@ -147,12 +257,17 @@ document.addEventListener('DOMContentLoaded', () => {
 		  alert("보유한 포인트를 초과했습니다.");
 		  return;
 		}
-
 		
+		// 쿠폰 할인 계산
+		let couponDiscount = 0;
+		 if (selectedCouponRate > 0) {
+		     // 여기서는 총 상품금액 기준으로 쿠폰 할인
+		     couponDiscount = Math.floor(totalPrice * (selectedCouponRate / 100));
+		 }
 		
 		
 		// 최종 결제 금액
-		const finalAmount = totalPrice - inputUsePoints;
+		const finalAmount = totalPrice - inputUsePoints - couponDiscount;
 		if (finalAmount < 0) {
 		  alert("포인트가 주문 금액을 초과합니다.");
 		  return;
@@ -183,6 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     address: address,
                     paymentMethod: paymentMethodSelect.value,
 					usedPoint: inputUsePoints, // 사용 포인트 추가
+					couponId: selectedCouponId ? parseInt(selectedCouponId) : null, // 쿠폰id
                     orderItems: cartItems.map(item => ({
                         productId: item.productId,
                         productName: item.name,
@@ -195,6 +311,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     merchantUid: rsp.merchant_uid,
                 };
 
+				localStorage.removeItem("selectedCouponId");
+				
                 fetch('/api/order', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },

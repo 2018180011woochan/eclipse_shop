@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.shop_project_v2.coupon.service.CouponService;
 import com.example.shop_project_v2.member.entity.Member;
 import com.example.shop_project_v2.member.repository.MemberRepository;
 import com.example.shop_project_v2.member.service.MemberService;
@@ -33,6 +34,7 @@ public class OrderApiController {
     private final OrderService orderService;
     private final MemberService memberService;
     private final PointService pointService;
+    private final CouponService couponService;
     private final UsedPointRepository usedPointRepository;
     private final PointRepository pointRepository;
     
@@ -49,7 +51,13 @@ public class OrderApiController {
             throw new IllegalArgumentException("사용 포인트가 보유 포인트를 초과했습니다.");
         }
         
-
+        // 쿠폰 적용
+        if (orderRequest.getCouponId() != null) {
+        	System.out.println("쿠폰사용!!!" + orderRequest.getCouponId());
+            couponService.PopCoupon(orderRequest.getCouponId()); 
+        }
+        else
+        	System.out.println("쿠폰사용안됨!!!" + orderRequest.getCouponId());
     	
         // 1) DTO → 엔티티 변환
         Order order = new Order();
