@@ -42,7 +42,22 @@
         <a th:href="@{/products/{id}(id=${product.productId})}" style="text-decoration: none; color: inherit;">
             <img th:src="${product.thumbnailUrl}" alt="상품 썸네일" />
             <div class="product-name" th:text="${product.name}"></div>
-            <div class="product-price" th:text="${'₩ ' + product.price}"></div>
+            
+	        <!-- 멤버십 별 할인 적용 -->
+	        <div class="product-price">
+	            <span th:if="${membership == T(com.example.shop_project_v2.member.Membership).GOLD}">
+	                <span style="text-decoration: line-through;" th:text="'₩ ' + ${product.price}"></span>
+	                <br>
+	                <span style="font-weight: bold;" th:text="'₩ ' + ${#numbers.formatDecimal(product.price * 0.95, 0, 0)}"></span> <!-- 5% 할인 -->
+	            </span>
+	            <span th:if="${membership == T(com.example.shop_project_v2.member.Membership).DIAMOND}">
+	                <span style="text-decoration: line-through;" th:text="'₩ ' + ${product.price}"></span>
+	                <br>
+	                <span style="font-weight: bold;" th:text="'₩ ' + ${#numbers.formatDecimal(product.price * 0.90, 0, 0)}"></span> <!-- 10% 할인 -->
+	            </span>
+	            <span th:if="${membership != T(com.example.shop_project_v2.member.Membership).GOLD and membership != T(com.example.shop_project_v2.member.Membership).DIAMOND}"
+	                  th:text="'₩ ' + ${product.price}"></span> <!-- 일반 가격 -->
+	        </div>
         </a>
     </div>
 </div>

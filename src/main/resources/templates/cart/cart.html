@@ -24,14 +24,22 @@
             <div class="payment-summary">
                 <p>상품수: <span id="totalItems">0</span> 개</p>
                 <p>상품금액: <span id="totalAmount">0</span> 원</p>
+                <p>할인금액: <span id="discountAmount">0</span> 원</p>
+                <p>배송비: <span id="shippingFee">3000</span> 원</p>
                 <hr>
                 <h4>총 결제금액: <span id="finalAmount">0</span> 원</h4>
-                <!-- 구매하기 버튼 -->
                 <button class="btn btn-primary w-100 mt-3" id="orderButton">구매하기</button>
             </div>
         </div>
     </div>
 </div>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+    var membership = /*[[${membershipStr}]]*/;
+    console.log("membership =", membership);
+/*]]>*/
+</script>
 
 <script src="/cart/js/cart.js"></script>
 </main>

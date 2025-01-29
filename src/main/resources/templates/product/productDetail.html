@@ -45,7 +45,25 @@
         <!-- 오른쪽: 상품 정보 -->
         <div class="col-md-6" id="productContainer" th:data-product-id="${product.productId}">
             <h2 th:text="${product.name}">상품 이름</h2>
-            <h4 th:text="'₩ ' + ${product.price}">₩ 10000</h4>
+            <!-- 상품 가격 표시 -->
+            <h4>
+			    <!-- 일반 가격 표시 (할인 없는 경우) -->
+			    <span th:if="${membership == 'BRONZE' or membership == null}" th:text="'₩ ' + ${product.price}">₩ 10000</span>
+			
+			    <!-- GOLD 등급 할인 적용 -->
+			    <span th:if="${membership == 'GOLD'}">
+			        <span style="text-decoration: line-through;" th:text="'₩ ' + ${product.price}"></span>
+			        <br>
+			        <span style="font-weight: bold;" th:text="'₩ ' + ${discountPrice}"></span>
+			    </span>
+			
+			    <!-- DIAMOND 등급 할인 적용 -->
+			    <span th:if="${membership == 'DIAMOND'}">
+			        <span style="text-decoration: line-through;" th:text="'₩ ' + ${product.price}"></span>
+			        <br>
+			        <span style="font-weight: bold;" th:text="'₩ ' + ${discountPrice}"></span>
+			    </span>
+			</h4>
             <p th:text="${product.description}">상품 설명</p>
 
             <!-- 옵션이 있는 경우 예시 -->
