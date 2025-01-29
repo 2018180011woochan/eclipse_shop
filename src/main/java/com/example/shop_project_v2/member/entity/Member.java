@@ -1,11 +1,15 @@
 package com.example.shop_project_v2.member.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.example.shop_project_v2.BaseEntity;
+import com.example.shop_project_v2.coupon.entity.Coupon;
 import com.example.shop_project_v2.member.Membership;
 import com.example.shop_project_v2.member.Role;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -13,6 +17,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import lombok.AllArgsConstructor;
@@ -80,6 +85,9 @@ public class Member extends BaseEntity {
     private Boolean withdraw;
     
     private LocalDateTime withdrawDate;
+    
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Coupon> coupons = new ArrayList<>();
     
     // OAuth2를 사용하는 경우 provider 저장
 //    @Column(name = "provider")

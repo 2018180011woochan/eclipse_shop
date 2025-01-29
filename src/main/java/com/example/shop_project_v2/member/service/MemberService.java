@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.shop_project_v2.coupon.service.CouponService;
 import com.example.shop_project_v2.jwt.AuthTokenImpl;
 import com.example.shop_project_v2.jwt.JwtProviderImpl;
 import com.example.shop_project_v2.jwt.dto.JwtTokenDto;
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class MemberService {
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder  passwordEncoder;
+	private final CouponService couponService;
 	
 	// jwt
 	private final JwtProviderImpl jwtProvider;
@@ -45,6 +47,8 @@ public class MemberService {
 	            .build();
         
         memberRepository.save(member);	
+        
+        couponService.PushCoupon(member, "회원가입 축하 쿠폰", 30);
 	}
 	
 	public Member findByEmail(String email) {

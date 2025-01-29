@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>내 쿠폰 목록</title>
+    <link rel="stylesheet" href="/common/css/bootstrap.min.css"/>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="container mt-4">
+        <h2>내 쿠폰 내역</h2>
+        <hr/>
+        <!-- 쿠폰이 없을 때 안내문구 -->
+        <div th:if="${#lists.isEmpty(coupons)}" class="alert alert-info">
+            발급된 쿠폰이 없습니다.
+        </div>
+
+        <!-- 쿠폰 목록 테이블 -->
+        <table class="table table-bordered" th:if="${not #lists.isEmpty(coupons)}">
+            <thead>
+            <tr>
+                <th>쿠폰 ID</th>
+                <th>지급 이유</th>
+                <th>할인율</th>
+                <th>사용 여부</th>
+                <th>지급일</th>
+                <th>사용일</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="coupon : ${coupons}">
+                <td th:text="${coupon.id}">쿠폰 ID</td>
+                <td th:text="${coupon.reason}">쿠폰 지급 이유</td>
+                <td th:text="${coupon.discountRate + '%'}">할인율</td>
+
+                <!-- 사용 여부: true면 '사용됨', false면 '미사용' -->
+                <td th:text="${coupon.isUsed} ? '사용됨' : '미사용'">사용 여부</td>
+
+                <!-- BaseEntity의 createdDate 이용 -->
+                <td th:text="${#temporals.format(coupon.createdDate, 'yyyy-MM-dd HH:mm')}">
+                    지급일
+                </td>
+
+                <!-- coupon.usedAt가 null이면 미사용, null이 아니면 날짜 출력 -->
+                <td th:text="${coupon.isUsed} ? ${#temporals.format(coupon.usedAt, 'yyyy-MM-dd HH:mm')} : '-'">
+                    사용일
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<script src="/common/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
