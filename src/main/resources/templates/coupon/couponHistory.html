@@ -35,15 +35,12 @@
                 <td th:text="${coupon.reason}">쿠폰 지급 이유</td>
                 <td th:text="${coupon.discountRate + '%'}">할인율</td>
 
-                <!-- 사용 여부: true면 '사용됨', false면 '미사용' -->
                 <td th:text="${coupon.isUsed} ? '사용됨' : '미사용'">사용 여부</td>
 
-                <!-- BaseEntity의 createdDate 이용 -->
                 <td th:text="${#temporals.format(coupon.createdDate, 'yyyy-MM-dd HH:mm')}">
                     지급일
                 </td>
 
-                <!-- coupon.usedAt가 null이면 미사용, null이 아니면 날짜 출력 -->
                 <td th:text="${coupon.isUsed} ? ${#temporals.format(coupon.usedAt, 'yyyy-MM-dd HH:mm')} : '-'">
                     사용일
                 </td>

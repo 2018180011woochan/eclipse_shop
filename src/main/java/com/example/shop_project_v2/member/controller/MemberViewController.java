@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.shop_project_v2.Inquiry.service.InquiryService;
+import com.example.shop_project_v2.coupon.service.CouponService;
 import com.example.shop_project_v2.member.dto.MemberRequestDTO;
 import com.example.shop_project_v2.member.entity.Member;
 import com.example.shop_project_v2.member.repository.MemberRepository;
@@ -39,6 +40,7 @@ public class MemberViewController {
 	private final ReviewService reviewService;
 	private final OrderService orderService;
 	private final InquiryService inquiryService;
+	private final CouponService couponService;
 
 	@GetMapping("/join")
 	public String Join() {
@@ -73,6 +75,7 @@ public class MemberViewController {
 		model.addAttribute("reviewCount", reviewService.getReviewCountByMember(member));
 		model.addAttribute("inquiryCount", inquiryService.getInquiryCountByMember(member));
 		model.addAttribute("point", pointService.findByMember(member).orElse(null).getBalance());
+		model.addAttribute("couponCount", couponService.GetUsableCouponCount(member));
 		return "member/mypage";
 	}
 	

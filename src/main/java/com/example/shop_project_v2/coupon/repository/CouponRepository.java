@@ -10,4 +10,5 @@ import com.example.shop_project_v2.member.entity.Member;
 
 public interface CouponRepository extends JpaRepository<Coupon, Long> {
 	List<Coupon> findByMember(Member member);
+    int countByMemberAndIsUsedFalse(Member member);
 }

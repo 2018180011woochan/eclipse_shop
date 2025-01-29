@@ -41,4 +41,8 @@ public class CouponService {
     public List<Coupon> GetCouponByMember(Member member) {
     	return couponRepository.findByMember(member);
     }
+    
+    public int GetUsableCouponCount(Member member) {
+    	return couponRepository.countByMemberAndIsUsedFalse(member);
+    }
 }
