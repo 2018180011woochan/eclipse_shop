@@ -1,5 +1,7 @@
 package com.example.shop_project_v2.chatbot.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,5 +39,11 @@ public class ChatRoomAPIController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(room);
+    }
+    
+    @GetMapping("/active-rooms")
+    public ResponseEntity<List<ChatRoom>> getActiveRooms() {
+        List<ChatRoom> activeRooms = chatService.getWaitingOrInProgressRooms();
+        return ResponseEntity.ok(activeRooms);
     }
 }

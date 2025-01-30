@@ -38,7 +38,7 @@ public class ChatService {
                 result.add(room);
             }
         }
-
+        System.out.println("🔍 현재 대기/진행중인 방 목록: " + result.size());
         return result;
     }
 
@@ -67,4 +67,5 @@ public class ChatService {
     public Map<String, ChatRoom> getAllRooms() {
         return rooms;
     }
+   
 }
