@@ -115,6 +115,7 @@ public class MemberAPIController {
                     .phone(member.getPhone())
                     .address(member.getAddress())       
                     .addressDetail(member.getAddressDetail())
+                    .membership(member.getMembership().name())
                     .build();
 
             return ResponseEntity.ok(dto);

@@ -16,4 +16,5 @@ public class MemberResponseDTO {
     private String phone;
     private String address;
     private String addressDetail;
+    private String membership;
 }

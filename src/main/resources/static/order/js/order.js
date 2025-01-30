@@ -1,27 +1,35 @@
 document.addEventListener('DOMContentLoaded', () => {
-
     // --------------------------------------------------
-    // 1) 화면 요소들
+    // 1) 화면 요소
     // --------------------------------------------------
     // 장바구니 상품 표시
     const orderItemsContainer = document.getElementById('orderItemsContainer');
     const orderTotalAmount = document.getElementById('orderTotalAmount');
 
+    // 멤버십 할인 표시
+    const membershipDiscountElem = document.getElementById('membershipDiscountAmount');
+
+    // 쿠폰 할인, 포인트 할인, 배송비, 최종 결제
+    const couponDiscountAmountElem = document.getElementById('couponDiscountAmount');
+    const pointDiscountAmountElem = document.getElementById('pointDiscountAmount');
+    const deliveryFeeAmountElem = document.getElementById('deliveryFeeAmount');
+    const finalPaymentAmountElem = document.getElementById('finalPaymentAmount');
+
     // 사용자 정보
     const emailInput = document.getElementById('email');
     const nameInput = document.getElementById('name');
     const phoneInput = document.getElementById('phone');
-
-    // 주소
     const addressInput = document.getElementById('address');
+
+    // 주소 버튼들
     const addressSearchButton = document.getElementById('addressSearchButton');
     const basicAddressBtn = document.getElementById('basicAddressBtn');
     const newAddressBtn = document.getElementById('newAddressBtn');
 
-    // 결제수단
+    // 결제 관련
     const paymentMethodSelect = document.getElementById('paymentMethod');
     const payButton = document.getElementById('payButton');
-    
+
     // 포인트
     const availablePointsElem = document.getElementById('availablePoints');
     const usePointsInput = document.getElementById('usePoints');
@@ -31,25 +39,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const openCouponModalBtn = document.getElementById('openCouponModalBtn');
     const couponModal = document.getElementById('couponModal');
     const couponListContainer = document.getElementById('couponListContainer');
-    const couponLabel = document.querySelector('label[for="openCouponModalBtn"]'); // "쿠폰 적용" 라벨 잡기
-    
-    // 금액표시
-    const couponDiscountAmountElem = document.getElementById('couponDiscountAmount');
-    const finalPaymentAmountElem = document.getElementById('finalPaymentAmount');
-    const pointDiscountAmountElem = document.getElementById('pointDiscountAmount');
-    const deliveryFeeAmountElem = document.getElementById('deliveryFeeAmount');
+    const couponLabel = document.querySelector('label[for="openCouponModalBtn"]'); 
 
     // --------------------------------------------------
     // 2) 전역 변수
     // --------------------------------------------------
     let userData = null;
+    let membership = 'BRONZE';       // 기본값, 서버에서 가져옴
     let selectedCouponId = null;     // 적용된 쿠폰 ID
     let selectedCouponRate = 0;      // 적용된 쿠폰 할인율
     let availablePoints = 0;         // 보유 포인트
-    const DELIVERY_FEE = 3000;       // 기본 배송비
-
-    // 장바구니 상품 로드
+    const DELIVERY_FEE = 3000;       // 배송비
     const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+
+    // 멤버십 할인율 계산 함수
+    function getMembershipDiscountRate(m) {
+		console.log("현재 등급: " + m);
+        switch (m) {
+            case 'GOLD': return 0.05;      // 5%
+            case 'DIAMOND': return 0.10;   // 10%
+            default: return 0;
+        }
+    }
 
     // --------------------------------------------------
     // 3) 장바구니 상품 목록 & 금액 표시
@@ -71,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div>
                         <h6>${item.name}</h6>
                         <p>${item.color} / ${item.size} | 수량: ${item.quantity}</p>
-                        <p>${(itemTotalPrice).toLocaleString()} 원</p>
+                        <p>${itemTotalPrice.toLocaleString()} 원</p>
                     </div>
                 </div>
             `;
@@ -81,43 +92,39 @@ document.addEventListener('DOMContentLoaded', () => {
         orderTotalAmount.textContent = totalPrice.toLocaleString();
     }
 
-    renderOrderItems();
-
-
     // --------------------------------------------------
     // 4) 최종 결제 금액 계산
     // --------------------------------------------------
     function recalcFinalAmount() {
         let totalPrice = 0;
-        cartItems.forEach(item => totalPrice += item.price * item.quantity);
+        cartItems.forEach(item => {
+            totalPrice += item.price * item.quantity;
+        });
 
-        // 포인트 입력값
+        // (1) 멤버십 할인 적용 (쿠폰/포인트 이전에!)
+        const discountRate = getMembershipDiscountRate(membership);
+        const membershipDiscount = Math.floor(totalPrice * discountRate);
+        totalPrice -= membershipDiscount;  // 멤버십 할인 차감
+
+        // (2) 쿠폰 할인액
+        let couponDiscount = Math.floor(totalPrice * (selectedCouponRate / 100));
+
+        // (3) 포인트 사용
         const inputUsePoints = parseInt(usePointsInput.value, 10) || 0;
 
-        // 쿠폰 할인액
-        let couponDiscount = 0;
-        if (selectedCouponRate > 0) {
-            couponDiscount = Math.floor(totalPrice * (selectedCouponRate / 100));
-        }
+        // (4) 최종 결제금액
+        let finalAmount = totalPrice - couponDiscount - inputUsePoints + DELIVERY_FEE;
+        if (finalAmount < 0) finalAmount = 0;
 
-        // 배송비 (고정값)
-        const shippingCost = DELIVERY_FEE;
-
-        // 최종 결제금액 = 상품 합계 - 포인트 - 쿠폰 + 배송비
-        let finalAmount = totalPrice - inputUsePoints - couponDiscount + shippingCost;
-        if (finalAmount < 0) {
-            finalAmount = 0;
-        }
-
-        // UI 반영
+        // (5) UI 표시
+        membershipDiscountElem.textContent = `-${membershipDiscount.toLocaleString()}`;
         couponDiscountAmountElem.textContent = `-${couponDiscount.toLocaleString()}`;
         pointDiscountAmountElem.textContent = `-${inputUsePoints.toLocaleString()}`;
-        deliveryFeeAmountElem.textContent = `+${shippingCost.toLocaleString()}`;
+        deliveryFeeAmountElem.textContent = `+${DELIVERY_FEE.toLocaleString()}`;
         finalPaymentAmountElem.textContent = finalAmount.toLocaleString();
 
         return finalAmount;
     }
-
 
     // --------------------------------------------------
     // 5) 사용자(멤버) 정보 가져오기
@@ -129,17 +136,24 @@ document.addEventListener('DOMContentLoaded', () => {
       })
       .then(data => {
         userData = data;
+        membership = data.membership || 'BRONZE'; // 예: GOLD, DIAMOND, etc.
+        
         emailInput.value = data.email;
         nameInput.value = data.name;
         phoneInput.value = data.phone;
         addressInput.value = data.address;
 
-        addressSearchButton.disabled = true; // 기존 주소가 있다면 주소검색 비활성화
+        // 주소검색 버튼 비활성화(기존 주소가 있으면)
+        if (data.address) {
+          addressSearchButton.disabled = true;
+        }
+
+        recalcFinalAmount();
       })
       .catch(err => {
         console.log(err);
-        alert("로그인 정보가 없거나, 세션이 만료되었습니다.");
-        location.href = "/login";
+        alert('로그인 정보가 없거나 세션이 만료되었습니다.');
+        location.href = '/login';
       });
 
 
@@ -152,19 +166,18 @@ document.addEventListener('DOMContentLoaded', () => {
        return res.json();
      })
      .then(pointData => {
-       // pointData.balance 라고 가정
-       availablePoints = pointData.balance;
+       availablePoints = pointData.balance;  // 예: { balance: 10000 }
        availablePointsElem.textContent = availablePoints.toLocaleString();
      })
      .catch(err => {
        console.error(err);
        availablePoints = 0;
-       availablePointsElem.textContent = "0";
+       availablePointsElem.textContent = '0';
      });
 
 
     // --------------------------------------------------
-    // 7) 버튼 / 이벤트 부착
+    // 7) 버튼 / 이벤트
     // --------------------------------------------------
 
     // (A) 포인트 전체 사용 버튼
@@ -173,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
       recalcFinalAmount();
     });
 
-    // (B) 포인트 입력이 바뀔 때마다 최종금액 재계산
+    // (B) 포인트 입력 변경 시 재계산
     usePointsInput.addEventListener('input', () => {
       recalcFinalAmount();
     });
@@ -184,13 +197,13 @@ document.addEventListener('DOMContentLoaded', () => {
         addressInput.value = userData.address;
         addressSearchButton.disabled = true;
       } else {
-        alert("회원 정보에 기본 주소가 없습니다.");
+        alert('회원 정보에 기본 주소가 없습니다.');
       }
     });
 
     // (D) 새 주소 버튼
     newAddressBtn.addEventListener('click', () => {
-      addressInput.value = "";
+      addressInput.value = '';
       addressSearchButton.disabled = false;
       addressInput.focus();
     });
@@ -204,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }).open();
     });
 
-    // (F) "쿠폰 적용" 버튼 -> 모달 열기
+    // (F) 쿠폰 모달 열기
     openCouponModalBtn.addEventListener('click', () => {
       const couponBsModal = new bootstrap.Modal(couponModal);
       couponBsModal.show();
@@ -220,28 +233,23 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(err => {
           console.error(err);
-          couponListContainer.innerHTML = `<p>쿠폰이 없습니다.</p>`;
+          couponListContainer.innerHTML = '<p>쿠폰이 없습니다.</p>';
         });
     });
 
-    // (G) 쿠폰 목록 출력
+    // 쿠폰 목록 렌더링
     function renderCouponList(coupons) {
         couponListContainer.innerHTML = '';
         if (!coupons || coupons.length === 0) {
-            couponListContainer.innerHTML = `<p>보유 쿠폰이 없습니다.</p>`;
+            couponListContainer.innerHTML = '<p>보유 쿠폰이 없습니다.</p>';
             return;
         }
 
         coupons.forEach(coupon => {
-            /*
-               coupon = {
-                 id, discountRate, reason, isUsed, createdDate ...
-               }
-            */
             if (coupon.isUsed) {
                 // 이미 사용된 쿠폰
                 const usedDiv = document.createElement('div');
-                usedDiv.classList.add('alert', 'alert-secondary', 'mb-2');
+                usedDiv.classList.add('alert','alert-secondary','mb-2');
                 usedDiv.innerHTML = `
                   [사용됨] <strong>${coupon.reason}</strong> - 할인율: ${coupon.discountRate}%
                 `;
@@ -249,7 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 // 사용 가능
                 const couponDiv = document.createElement('div');
-                couponDiv.classList.add('alert', 'alert-info', 'mb-2');
+                couponDiv.classList.add('alert','alert-info','mb-2');
                 couponDiv.style.cursor = 'pointer';
                 couponDiv.dataset.couponId = coupon.id;
                 couponDiv.dataset.discountRate = coupon.discountRate;
@@ -265,7 +273,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     selectedCouponId = parseInt(this.dataset.couponId);
                     selectedCouponRate = parseInt(this.dataset.discountRate);
                     
-                    // 라벨 변경
                     couponLabel.textContent = `쿠폰 적용 (${this.dataset.reason})`;
 
                     alert(`'${this.dataset.reason}' 쿠폰이 적용되었습니다.`);
@@ -274,7 +281,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     const bsModal = bootstrap.Modal.getInstance(couponModal);
                     bsModal.hide();
 
-                    // 최종 금액 재계산
                     recalcFinalAmount();
                 });
 
@@ -283,55 +289,42 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-
     // (H) 결제하기
     payButton.addEventListener('click', () => {
-        // 장바구니 비었는지 체크
         if (!cartItems || cartItems.length === 0) {
-            alert("주문할 상품이 없습니다.");
+            alert('주문할 상품이 없습니다.');
             return;
         }
-        // 주소 체크
         const address = addressInput.value.trim();
         if (!address) {
-            alert("주소를 입력하세요.");
+            alert('주소를 입력하세요.');
             return;
         }
 
-        // 장바구니 총액
-        let totalPrice = 0;
-        cartItems.forEach(item => totalPrice += item.price * item.quantity);
+        // 원래 금액 (멤버십 할인 전)
+        let rawTotalPrice = 0;
+        cartItems.forEach(item => {
+          rawTotalPrice += item.price * item.quantity;
+        });
 
-        // 포인트 사용
-        const inputUsePoints = parseInt(usePointsInput.value, 10) || 0;
-        if (inputUsePoints > availablePoints) {
-            alert("보유 포인트 초과.");
-            return;
-        }
+        // 결제 요청에서, 아임포트 금액 노출은 '상품가격(포인트/쿠폰 제외)' 
+        // (멤버십 할인 여부는 비즈니스 규칙에 따라..)
+        // 여기서는 '멤버십 할인 전' 금액으로 노출한다고 가정
+        const paramAmount = rawTotalPrice;
 
-        // 쿠폰 할인
-        let couponDiscount = 0;
-        if (selectedCouponRate > 0) {
-            couponDiscount = Math.floor(totalPrice * (selectedCouponRate / 100));
-        }
+        // 최종 결제금액 (recalcFinalAmount() 결과)
+        const finalAmount = recalcFinalAmount();
 
-        // 최종 결제금액
-        const finalAmount = totalPrice - inputUsePoints - couponDiscount + DELIVERY_FEE;
-        if (finalAmount < 0) {
-            alert("결제 금액이 0원 미만이 될 수 없습니다.");
-            return;
-        }
-
+        // 아임포트 설정
         const { IMP } = window;
-        IMP.init("imp46747186");
+        IMP.init('imp46747186');
 
-        // 결제 요청 param
         const param = {
-            pg: "kakaopay.TC0ONETIME",
-            pay_method: "card",
-            merchant_uid: "order_" + new Date().getTime(),
-            name: "장바구니 결제",
-            amount: totalPrice, // 💡 실제 결제창에는 '상품가격(포인트/쿠폰 제외)'을 우선 노출
+            pg: 'kakaopay.TC0ONETIME',
+            pay_method: 'card',
+            merchant_uid: 'order_' + new Date().getTime(),
+            name: '장바구니 결제',
+            amount: paramAmount, 
             buyer_email: emailInput.value,
             buyer_name: nameInput.value,
             buyer_tel: phoneInput.value,
@@ -340,15 +333,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         IMP.request_pay(param, function(rsp) {
             if (rsp.success) {
-                alert("결제가 성공적으로 완료되었습니다.\n imp_uid: " + rsp.imp_uid);
+                alert('결제가 성공적으로 완료되었습니다.\n imp_uid: ' + rsp.imp_uid);
 
                 // 서버에 보낼 DTO
                 const orderRequest = {
                     memberId: (userData && userData.id) ? userData.id : null,
                     address: address,
                     paymentMethod: paymentMethodSelect.value,
-                    usedPoint: inputUsePoints,
-                    couponId: selectedCouponId ? selectedCouponId : null,
+                    usedPoint: parseInt(usePointsInput.value, 10) || 0,
+                    couponId: selectedCouponId || null,
                     orderItems: cartItems.map(item => ({
                         productId: item.productId,
                         productName: item.name,
@@ -376,16 +369,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
                 .catch(err => {
                     console.error(err);
-                    alert("주문 저장 중 오류가 발생했습니다.");
+                    alert('주문 저장 중 오류가 발생했습니다.');
                 });
 
             } else {
-                alert("결제가 취소되었거나 실패했습니다.\n" + rsp.error_msg);
+                alert('결제가 취소되었거나 실패했습니다.\n' + rsp.error_msg);
             }
         });
     });
 
-
-    // 페이지 로드시 한번 계산값 갱신
+    // 페이지 처음 진입 시 초기 렌더링
+    renderOrderItems();
     recalcFinalAmount();
 });
