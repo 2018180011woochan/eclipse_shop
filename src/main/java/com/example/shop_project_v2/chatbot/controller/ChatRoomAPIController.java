@@ -19,31 +19,19 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/chat")
 @RequiredArgsConstructor
 public class ChatRoomAPIController {
-
- private final ChatService chatService;
-
-	 @PostMapping("/connection")
-	 public ResponseEntity<ChatRoom> connectToAdmin(@RequestBody String userId) {
-	     // 1) 방 생성 (또는 이미 존재하는지 확인)
-	     ChatRoom chatRoom = chatService.createRoom(userId);
+	private final ChatService chatService;
 	
-	     // 2) 채팅방 정보 반환
-	     return ResponseEntity.ok(chatRoom);
-	}
-	 
-	// User가 폴링할 때 사용: 현재 room 상태 조회
-    @GetMapping("/room-status")
-    public ResponseEntity<ChatRoom> getRoomStatus(@RequestParam("roomId") String roomId) {
-        ChatRoom room = chatService.getRoom(roomId);
-        if (room == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(room);
+    @PostMapping("/connection")
+    public ResponseEntity<ChatRoom> connectToAdmin(@RequestBody String userEmail) {
+        // 새로운 방 생성 -> WAITING 상태
+        ChatRoom chatRoom = chatService.createRoom(userEmail);
+        return ResponseEntity.ok(chatRoom);
     }
     
-    @GetMapping("/active-rooms")
-    public ResponseEntity<List<ChatRoom>> getActiveRooms() {
-        List<ChatRoom> activeRooms = chatService.getWaitingOrInProgressRooms();
-        return ResponseEntity.ok(activeRooms);
+    @GetMapping("/room-status")
+    public ResponseEntity<ChatRoom> getRoomStatus(@RequestParam String roomId) {
+        ChatRoom room = chatService.getRoom(roomId);
+        if (room == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(room);
     }
 }

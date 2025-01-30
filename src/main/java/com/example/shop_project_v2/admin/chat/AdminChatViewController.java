@@ -23,6 +23,6 @@ public class AdminChatViewController {
     public String chatPage(Model model) {
 
         
-        return "admin/chat/chatPage"; // 회원 관리 페이지
+        return "admin/chat/adminChat"; // 회원 관리 페이지
     }
 }

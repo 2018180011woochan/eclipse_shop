@@ -10,19 +10,20 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-    @Override
-    public void configureMessageBroker(MessageBrokerRegistry config) {
-        // 서버 -> 클라이언트 통신 시 "/topic", "/queue" 등의 prefix 사용
-        config.enableSimpleBroker("/topic", "/queue");
-        // 클라이언트 -> 서버 메시지 전송 시 prefix
-        config.setApplicationDestinationPrefixes("/app");
-    }
-
+	@Override
+	public void configureMessageBroker(MessageBrokerRegistry config) {
+		// 서버 -> 클라
+		config.enableSimpleBroker("/chatroom");
+		
+		// 클라 -> 서버
+		config.setApplicationDestinationPrefixes("/app");
+	}
+	
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        // WebSocket 연결 endpoint
-        registry.addEndpoint("/ws")
-                .setAllowedOriginPatterns("*")
-                .withSockJS(); // SockJS fallback
+
+        registry.addEndpoint("/ws")  
+                .setAllowedOriginPatterns("*") 
+                .withSockJS(); 
     }
 }

@@ -15,21 +15,20 @@ public class ChatMessageController {
     // 메시지 저장 및 처리
 	private final ChatService chatService;
 
-    @MessageMapping("/chat/send")
-    @SendTo("/topic/messages")
+    // 유저/관리자가 보낸 메시지를 받아 해당 roomId 구독자들에게 전송
+    @MessageMapping("/chat/send") // => /app/chat/send
+    @SendTo("/chatroom/messages")
     public ChatMessage sendMessage(ChatMessage message) {
-        // 메시지 처리 로직 (DB 저장, roomId 체크 등)
-    	chatService.saveMessage(message);
-        return message; // 반환 시 구독중인 사용자에게 전송됨
+
+        return message; 
+        // 구독한 모든 클라이언트가 이 메시지를 수신(/topic/messages)
     }
-    
-    // 상담 종료 이벤트
+
+    // 상담 종료 
     @MessageMapping("/chat/end")
-    @SendTo("/topic/chat/end")
+    @SendTo("/chatroom/chat/end")
     public ChatMessage endChat(ChatMessage message) {
-        // message.roomId, message.sender
-        // 여기서 DB 저장하거나 필요 로직 수행 가능
-    	chatService.endChat(message.getRoomId());
-        return message; // /topic/chat/end 구독자에게 송신
+        chatService.endChat(message.getRoomId());
+        return message;
     }
 }

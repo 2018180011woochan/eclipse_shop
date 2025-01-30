@@ -7,7 +7,6 @@ import lombok.Data;
 @Data
 public class ChatMessage {
     private String roomId;
-    private String sender;  // "user" or "admin"
-    private String content; // 보낼 메시지
-
+    private String sender;  // user라면 email, admin이라면 "admin"
+    private String content;
 }

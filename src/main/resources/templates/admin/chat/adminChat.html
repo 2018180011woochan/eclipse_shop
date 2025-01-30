@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{common/layout}">
+<head>
+  <meta charset="UTF-8">
+  <title>관리자 페이지</title>
+</head>
+<body>
+<main layout:fragment="content">
+  <h2>상담 대기/진행 목록</h2>
+  <button id="load-waiting-rooms">불러오기</button>
+  <div id="waiting-list"></div>
+
+  <div id="chat-section" style="display:none;">
+    <h3>Admin Chat Room: <span id="room-id-span"></span></h3>
+    <div id="chat-content" style="width:300px; height:200px; border:1px solid #ccc; overflow:auto;">
+    </div>
+    <input type="text" id="adminMsg" placeholder="메시지를 입력하세요...">
+    <button id="sendAdminBtn">전송</button>
+    <button id="endChatBtn">상담 종료</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+  <script>
+    let stompClient = null;
+    let selectedRoomId = null;
+    const adminName = "관리자A"; // 실제 로그인된 관리자 이름
+
+    // 1) 대기/진행중인 방 목록 불러오기
+    document.getElementById("load-waiting-rooms").addEventListener("click", function() {
+      fetch("/api/v1/chat/admin/waiting-rooms")
+        .then(res => res.json())
+        .then(rooms => {
+          const waitingList = document.getElementById("waiting-list");
+          waitingList.innerHTML = ""; 
+          rooms.forEach(room => {
+            const btn = document.createElement("button");
+            btn.style.display = "block";
+            btn.textContent = 
+              "Room: " + room.roomId + 
+              " / UserEmail: " + room.userEmail + 
+              " / Status: " + room.status;
+            btn.addEventListener("click", () => assignAdmin(room.roomId));
+            waitingList.appendChild(btn);
+          });
+        })
+        .catch(err => console.error(err));
+    });
+
+    // 2) 방 할당(Assign)
+    function assignAdmin(roomId) {
+      fetch(`/api/v1/chat/admin/assign?roomId=${roomId}&adminName=${adminName}`)
+        .then(() => {
+          alert("해당 방을 담당합니다 (상담중)");
+          selectedRoomId = roomId;
+          document.getElementById("room-id-span").textContent = selectedRoomId;
+          document.getElementById("chat-section").style.display = "block";
+          connectStomp();
+        })
+        .catch(err => console.error(err));
+    }
+
+    // 3) 웹소켓 연결
+    function connectStomp() {
+      if (stompClient && stompClient.connected) return;
+      const socket = new SockJS('/ws');
+      stompClient = Stomp.over(socket);
+      stompClient.connect({}, function(frame) {
+        console.log("Admin Connected:", frame);
+
+        // 메시지 구독
+        stompClient.subscribe("/chatroom/messages", function(msg) {
+          const messageBody = JSON.parse(msg.body);
+          // roomId 필터
+          if (messageBody.roomId === selectedRoomId) {
+            appendMessage(messageBody.content, messageBody.sender);
+          }
+        });
+
+        // 상담 종료 알림 구독
+        stompClient.subscribe("/chatroom/chat/end", function(msg) {
+          const endBody = JSON.parse(msg.body);
+          if (endBody.roomId === selectedRoomId) {
+            alert("사용자가 상담을 종료했습니다.");
+            closeChat();
+          }
+        });
+      });
+    }
+
+    // 4) 메시지 전송
+    document.getElementById("sendAdminBtn").addEventListener("click", sendAdminMsg);
+    document.getElementById("adminMsg").addEventListener("keypress", function(e) {
+      if (e.key === "Enter") {
+        sendAdminMsg();
+      }
+    });
+    function sendAdminMsg() {
+      const content = document.getElementById("adminMsg").value.trim();
+      if (!content) return;
+      stompClient.send("/app/chat/send", {}, JSON.stringify({
+        roomId: selectedRoomId,
+        sender: adminName, 
+        content: content
+      }));
+      document.getElementById("adminMsg").value = "";
+    }
+
+    // 5) 상담 종료
+    document.getElementById("endChatBtn").addEventListener("click", function() {
+      // 백엔드에 상태 변경
+      fetch(`/api/v1/chat/admin/end?roomId=${selectedRoomId}`, { method: 'POST' })
+        .then(() => {
+          alert("상담 종료");
+          // WebSocket으로도 "end" 이벤트 전송
+          stompClient.send("/app/chat/end", {}, JSON.stringify({
+            roomId: selectedRoomId,
+            sender: adminName
+          }));
+          closeChat();
+        })
+        .catch(err => console.error(err));
+    });
+
+    // 채팅창 표시
+    function appendMessage(content, sender) {
+      const chatBox = document.getElementById("chat-content");
+      const div = document.createElement("div");
+      div.textContent = sender + ": " + content;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // 상담 종료 시 처리
+    function closeChat() {
+      selectedRoomId = null;
+      document.getElementById("chat-section").style.display = "none";
+      if (stompClient) {
+        stompClient.disconnect(() => {
+          console.log("Admin WebSocket disconnected.");
+        });
+      }
+    }
+  </script>
+</main>
+</body>
+</html>
