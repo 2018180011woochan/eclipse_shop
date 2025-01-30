@@ -38,6 +38,11 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        
+        if (path.startsWith("/chatbot.html") || path.startsWith("/chatbot/js/")) {
+        	filterChain.doFilter(request, response);
+            return;
+        }
     	
         // 1) 쿠키에서 Access Token 추출
         Optional<String> accessToken = getAccessTokenFromCookie(request);
