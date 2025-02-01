@@ -21,8 +21,19 @@ document.addEventListener("DOMContentLoaded", function () {
   // 질문 버튼 클릭 시 자동 메시지 전송
   document.querySelectorAll(".chatbot-question-btn").forEach(button => {
     button.addEventListener("click", function () {
-      const question = this.textContent;
-      processMessage(question);
+      const question = this.textContent.trim();
+	  
+	  if (question === "상담사 연결") {
+	    connectToAdmin(); 
+	    return;
+	  }
+	  
+	  if (!window.isCounseling) {
+		processMessage(question);
+	  } else {
+		console.log("1:1 채팅 상담 중에는 자동응답 질의를 할 수 없습니다.");
+	  }
+	  
     });
   });
 
@@ -47,6 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
     appendMessage(message, "user"); // 화면에 사용자 메시지 표시
 
     // 서버에 메시지 전송 (POST /api/v1/chatbot)
+	if (window.isCounseling) return;
     fetch("/api/v1/chatbot", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -71,8 +83,10 @@ document.addEventListener("DOMContentLoaded", function () {
     messageDiv.classList.add("message");
     if (sender === "user") {
       messageDiv.classList.add("user");
+	  console.log("이름: " + sender);
     } else {
       messageDiv.classList.add("bot");
+	  console.log("이름: " + sender);
     }
     messageDiv.textContent = content;
     chatContent.appendChild(messageDiv);

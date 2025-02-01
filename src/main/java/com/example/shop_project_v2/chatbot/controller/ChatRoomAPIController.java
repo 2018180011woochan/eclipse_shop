@@ -25,6 +25,7 @@ public class ChatRoomAPIController {
     public ResponseEntity<ChatRoom> connectToAdmin(@RequestBody String userEmail) {
         // 새로운 방 생성 -> WAITING 상태
         ChatRoom chatRoom = chatService.createRoom(userEmail);
+        
         return ResponseEntity.ok(chatRoom);
     }
     
