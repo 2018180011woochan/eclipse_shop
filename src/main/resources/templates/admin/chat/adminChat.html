@@ -5,6 +5,69 @@
 <head>
   <meta charset="UTF-8">
   <title>관리자 페이지</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    #waiting-list {
+      margin-top: 10px;
+    }
+    #chat-section {
+      display: none;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 10px;
+      max-width: 400px;
+      background: #f9f9f9;
+      margin-top: 20px;
+    }
+    #chat-content {
+      width: 100%;
+      height: 250px;
+      border: 1px solid #ccc;
+      overflow-y: auto;
+      padding: 10px;
+      background: white;
+      border-radius: 5px;
+    }
+    .message {
+      padding: 8px;
+      margin: 5px 0;
+      border-radius: 5px;
+      max-width: 80%;
+    }
+    .user-message {
+      background-color: #4CAF50;
+      color: white;
+      text-align: right;
+      align-self: flex-end;
+    }
+    .admin-message {
+      background-color: #ddd;
+      color: black;
+      text-align: left;
+      align-self: flex-start;
+    }
+    #chat-input {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    #chat-input input {
+      flex: 1;
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    #chat-input button {
+      padding: 8px 12px;
+      border: none;
+      background: #6200ea;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
 <main layout:fragment="content">
@@ -12,13 +75,14 @@
   <button id="load-waiting-rooms">불러오기</button>
   <div id="waiting-list"></div>
 
-  <div id="chat-section" style="display:none;">
-    <h3>Admin Chat Room: <span id="room-id-span"></span></h3>
-    <div id="chat-content" style="width:300px; height:200px; border:1px solid #ccc; overflow:auto;">
+  <div id="chat-section">
+    <h3>상담 채팅</h3>
+    <div id="chat-content"></div>
+    <div id="chat-input">
+      <input type="text" id="adminMsg" placeholder="메시지를 입력하세요...">
+      <button id="sendAdminBtn">전송</button>
+      <button id="endChatBtn">종료</button>
     </div>
-    <input type="text" id="adminMsg" placeholder="메시지를 입력하세요...">
-    <button id="sendAdminBtn">전송</button>
-    <button id="endChatBtn">상담 종료</button>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
@@ -39,9 +103,7 @@
             const btn = document.createElement("button");
             btn.style.display = "block";
             btn.textContent = 
-              "Room: " + room.roomId + 
-              " / UserEmail: " + room.userEmail + 
-              " / Status: " + room.status;
+              `User: ${room.userEmail} / Status: ${room.status}`;
             btn.addEventListener("click", () => assignAdmin(room.roomId));
             waitingList.appendChild(btn);
           });
@@ -53,9 +115,8 @@
     function assignAdmin(roomId) {
       fetch(`/api/v1/chat/admin/assign?roomId=${roomId}&adminName=${adminName}`)
         .then(() => {
-          alert("해당 방을 담당합니다 (상담중)");
+          alert("상담이 연결되었습니다!");
           selectedRoomId = roomId;
-          document.getElementById("room-id-span").textContent = selectedRoomId;
           document.getElementById("chat-section").style.display = "block";
           connectStomp();
         })
@@ -97,6 +158,7 @@
         sendAdminMsg();
       }
     });
+
     function sendAdminMsg() {
       const content = document.getElementById("adminMsg").value.trim();
       if (!content) return;
@@ -105,16 +167,15 @@
         sender: adminName, 
         content: content
       }));
+      //appendMessage(content, adminName); // 관리자 메시지 바로 표시
       document.getElementById("adminMsg").value = "";
     }
 
     // 5) 상담 종료
     document.getElementById("endChatBtn").addEventListener("click", function() {
-      // 백엔드에 상태 변경
       fetch(`/api/v1/chat/admin/end?roomId=${selectedRoomId}`, { method: 'POST' })
         .then(() => {
           alert("상담 종료");
-          // WebSocket으로도 "end" 이벤트 전송
           stompClient.send("/app/chat/end", {}, JSON.stringify({
             roomId: selectedRoomId,
             sender: adminName
@@ -124,10 +185,16 @@
         .catch(err => console.error(err));
     });
 
-    // 채팅창 표시
+    // 채팅창 메시지 표시
     function appendMessage(content, sender) {
       const chatBox = document.getElementById("chat-content");
       const div = document.createElement("div");
+      div.classList.add("message");
+      if (sender === adminName) {
+        div.classList.add("admin-message");
+      } else {
+        div.classList.add("user-message");
+      }
       div.textContent = sender + ": " + content;
       chatBox.appendChild(div);
       chatBox.scrollTop = chatBox.scrollHeight;
