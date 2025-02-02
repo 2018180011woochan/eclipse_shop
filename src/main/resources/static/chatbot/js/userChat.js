@@ -36,7 +36,7 @@ window.connectToAdmin = function() {
   window.isCounselingRequest = true;
   
   if (!userEmail) {
-    alert("로그인 정보(유저 이메일)를 불러오지 못했습니다. 다시 시도해주세요.");
+    alert("1:1 상담은 로그인 후에 가능합니다.");
     return;
   }
 
@@ -154,8 +154,19 @@ function appendMessage(msgContent, sender) {
   const chatContentDiv = document.getElementById("chat-content");
   const messageDiv = document.createElement("div");
   
-  if (sender != userEmail)
-  	messageDiv.textContent = sender + ": " + msgContent;
+  /*if (sender != userEmail)
+  	messageDiv.textContent = sender + ": " + msgContent;*/
+  
+  if (sender !== userEmail) {
+    // 상담원의 메시지에 'bot' 클래스 추가
+    messageDiv.classList.add("message", "bot");
+    messageDiv.textContent = "상담원: " + msgContent;
+  } else {
+    // 사용자의 메시지에 'user' 클래스 추가
+    // messageDiv.classList.add("message", "user");
+    // messageDiv.textContent = "나: " + msgContent;
+  }
+  
   chatContentDiv.appendChild(messageDiv);
   chatContentDiv.scrollTop = chatContentDiv.scrollHeight;
 }
