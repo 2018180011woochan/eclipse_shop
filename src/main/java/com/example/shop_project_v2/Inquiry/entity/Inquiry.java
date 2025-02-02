@@ -57,23 +57,23 @@ public class Inquiry extends BaseEntity {
     @Column(nullable = false, length = 50)
     @NotBlank(message = "문의 제목은 필수입니다.")
     @Size(max = 50, message = "문의 제목은 50자 이내로 작성해주세요.")
-    private String title; // 문의 제목
+    private String title; 
 
     @Column(nullable = false, columnDefinition = "TEXT")
     @NotBlank(message = "문의 내용은 필수입니다.")
     @Size(max = 500, message = "문의 제목은 500자 이내로 작성해주세요.")
-    private String content; // 문의 내용
+    private String content; 
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private InquiryType type; // 문의 유형 (SIZE, SHIPPING, RESTOCK, DETAILS)
+    private InquiryType type; 
 
     @Column(nullable = false)
-    private boolean isSecret; // 비밀글 여부
+    private boolean isSecret; 
 
     //@OneToMany(mappedBy = "inquiry", cascade = CascadeType.ALL, orphanRemoval = true)
     //private List<Comment> comments;
 
     @Transient
-    private int commentCount; // 댓글 개수
+    private int commentCount; 
 }

@@ -16,10 +16,8 @@
 
         <h3 th:text="${#temporals.format(dateEntry.key, 'yyyy.MM.dd')}"></h3>
 
-        <!-- 해당 날짜의 Order 목록 -->
         <div th:each="order : ${dateEntry.value}" class="border p-3 mb-3">
 
-            <!-- orderItems(이미 productId asc 정렬) -->
             <div th:each="item, stat : ${order.orderItems}">
             
             	 <div th:if="${stat.index == 0}">
@@ -30,7 +28,6 @@
 	            </div>
 	            
 				<strong th:text="${item.productName}">상품명</strong>
-                <!-- [상품명, 썸네일]: productId가 이전 item과 달라질 때만 표시 -->
                 <div th:if="${stat.index == 0 
                              or item.productId != order.orderItems[stat.index-1].productId}">
 
@@ -40,7 +37,6 @@
                          style="width:80px; height:80px; object-fit:cover; margin-left:10px;"/>
                 </div>
 
-                <!-- 항상 옵션(color/size) 표시 -->
                 <p style="margin-left:50px;"
                    th:text="'옵션: ' + ${item.color} + ' / ' + ${item.size} + ' | 수량: ' + ${item.quantity} + '개'">
                 </p>

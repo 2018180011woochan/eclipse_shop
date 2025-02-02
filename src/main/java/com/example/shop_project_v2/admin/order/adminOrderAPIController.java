@@ -26,12 +26,12 @@ public class AdminOrderAPIController {
 	    @PathVariable Long orderId,
 	    @RequestParam OrderStatus orderStatus) {
         System.out.println("여기는 컨트롤러");
-	    orderService.updateOrderStatus(orderId, orderStatus); // 주문 상태 업데이트
+	    orderService.updateOrderStatus(orderId, orderStatus); 
 
 	    Map<String, String> response = new HashMap<>();
 	    response.put("message", "주문 상태가 업데이트되었습니다.");
 	    response.put("newStatus", orderStatus.name());
 
-	    return ResponseEntity.ok(response); // JSON 응답 반환
+	    return ResponseEntity.ok(response); 
 	}
 }

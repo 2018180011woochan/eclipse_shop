@@ -32,6 +32,6 @@ public class AdminMemberViewController {
         model.addAttribute("adminCount", adminCount);
         model.addAttribute("members", members);
         
-        return "admin/member/memberListPage"; // 회원 관리 페이지
+        return "admin/member/memberListPage"; 
     }
 }

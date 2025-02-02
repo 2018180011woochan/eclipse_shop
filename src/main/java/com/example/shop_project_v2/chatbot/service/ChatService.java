@@ -17,7 +17,6 @@ import com.example.shop_project_v2.chatbot.ChatStatus;
 public class ChatService {
     private final Map<String, ChatRoom> rooms = new ConcurrentHashMap<>();
     
-    // 유저가 상담요청하면 새 방 생성
 	public ChatRoom createRoom(String userEmail) {
         String roomId = UUID.randomUUID().toString();
         ChatRoom chatRoom = new ChatRoom();
@@ -28,7 +27,6 @@ public class ChatService {
         return chatRoom;
 	}
 	
-	// admin이 상담 요청 승인
     public void assignAdmin(String roomId, String adminName) {
         ChatRoom room = rooms.get(roomId);
         if (room != null) {
@@ -47,7 +45,6 @@ public class ChatService {
                 .collect(Collectors.toList());
     }
     
-    // 상담 종료
     public void endChat(String roomId) {
         ChatRoom room = rooms.get(roomId);
         if (room != null) {

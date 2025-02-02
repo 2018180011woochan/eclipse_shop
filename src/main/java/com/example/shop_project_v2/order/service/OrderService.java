@@ -30,13 +30,10 @@ public class OrderService {
 	
     @Transactional
     public Order createOrder(Order order) {
-        // 1) OrderItem들의 totalPrice 계산
         for (OrderItem item : order.getOrderItems()) {
             item.calculatePrice();
         }
-        // 2) Order totalPrice 계산
         order.calculateTotalPrice();
-        // 3) DB 저장
         return orderRepository.save(order);
     }
     
@@ -52,7 +49,6 @@ public class OrderService {
     public Map<LocalDate, List<Order>> getOrdersByDate(Long memberId) {
         List<Order> orders = orderRepository.findByMemberIdOrderByCreatedDateDesc(memberId);
 
-        // 1) 날짜별로 groupBy
         Map<LocalDate, List<Order>> map = orders.stream()
             .collect(Collectors.groupingBy(
                 o -> o.getCreatedDate().toLocalDate(),
@@ -60,13 +56,10 @@ public class OrderService {
                 Collectors.toList()
             ));
 
-        // 2) 각 Order 마다 orderItems 정렬 (productId 기준)
-        //    (이후 Thymeleaf에서 group-break에 사용)
         for (List<Order> dayOrders : map.values()) {
             for (Order o : dayOrders) {
                 // 오름차순 정렬
                 o.getOrderItems().sort(Comparator.comparing(OrderItem::getProductId));
-                // (선택) 썸네일이 필요하면 아래처럼 미리 채워 넣을 수도 있음:
                 for (OrderItem oi : o.getOrderItems()) {
                     if (oi.getThumbnailUrl() == null) {
                         productRepository.findById(oi.getProductId())

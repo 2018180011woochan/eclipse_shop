@@ -19,19 +19,19 @@ import lombok.experimental.SuperBuilder;
 public class Coupon extends BaseEntity  {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // 쿠폰 ID
+    private Long id; 
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    private Member member; // 쿠폰을 소유한 회원 (1:N 관계)
+    private Member member; 
 
-    private String reason; // 지급 이유
+    private String reason; 
 
-    private int discountRate; // 할인율 (%)
+    private int discountRate; 
 
-    private boolean isUsed; // 사용 여부
+    private boolean isUsed; 
 
-    private LocalDateTime usedAt; // 사용 날짜
+    private LocalDateTime usedAt; 
 
     // 쿠폰 사용 메서드
     public void useCoupon() {

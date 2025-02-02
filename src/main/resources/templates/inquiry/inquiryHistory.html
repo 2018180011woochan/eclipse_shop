@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>내 문의 내역</title>
+    <link rel="stylesheet" href="/common/css/bootstrap.min.css"/>
+</head>
+<body>
+<main layout:fragment="content">
+<div class="container mt-5">
+    <h2>내 문의 내역</h2>
+    
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>상품명</th>
+                <th>문의 유형</th>
+                <th>문의 제목</th>
+                <th>작성일</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- inquiry 리스트를 반복하여 표시 -->
+            <tr th:each="inquiry : ${inquirys}">
+                <!-- Product 엔티티의 name 필드를 사용하여 상품명 표시 -->
+                <td th:text="${inquiry.product.name}">상품명</td>
+                <!-- 문의 유형 -->
+                <td th:text="${inquiry.type.getKoreanName()}">문의 유형</td>
+                <!-- 문의 제목 -->
+                <td th:text="${inquiry.title}">문의 제목</td>
+                <!-- 작성일 (yyyy-MM-dd HH:mm 포맷) -->
+                <td th:text="${#temporals.format(inquiry.createdDate, 'yyyy-MM-dd HH:mm')}">작성일</td>
+            </tr>
+        </tbody>
+    </table>
+    
+</div>
+</main>
+</body>
+</html>

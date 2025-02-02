@@ -31,7 +31,6 @@ public class OrderViewController {
 	
     @GetMapping
     public String showOrderPage() {
-        // templates/order.html 뷰로 이동
         return "order/order";
     }
     

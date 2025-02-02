@@ -33,7 +33,7 @@ import jakarta.persistence.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "orders") // 테이블명을 "orders"로 지정
+@Table(name = "orders") 
 public class Order extends BaseEntity {
 
     @Id

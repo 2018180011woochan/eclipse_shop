@@ -36,19 +36,16 @@ public class Category extends BaseEntity  {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long categoryId;
 
-    // 카테고리 이름
     @Column(nullable = false)
     private String name;
 
-    // 메인 카테고리와 서브 카테고리 계층 구조
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
-    private Category parent; // 상위 카테고리 (메인 카테고리)
+    private Category parent;
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Category> subCategories = new ArrayList<>(); // 하위 카테고리들 (서브 카테고리)
+    private List<Category> subCategories = new ArrayList<>();
 
-    // 유틸 메서드
     public void addSubCategory(Category subCategory) {
         subCategories.add(subCategory);
         subCategory.setParent(this);

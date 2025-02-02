@@ -15,6 +15,7 @@ import com.example.shop_project_v2.member.repository.MemberRepository;
 import com.example.shop_project_v2.member.service.MemberService;
 import com.example.shop_project_v2.product.entity.Product;
 import com.example.shop_project_v2.product.repository.ProductRepository;
+import com.example.shop_project_v2.review.entity.Review;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -38,11 +39,9 @@ public class InquiryService {
     
     @Transactional
     public void createInquiry(InquiryRequestDto form) {
-        // 1) 상품 조회
         Product product = productRepository.findById(form.getProductId())
                 .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
         
-        // 2) 로그인 회원: 실제 구현 시 SecurityContext나 세션에서 memberId를 가져와 조회
         Member member = memberService.getCurrentMember();
 
         Inquiry inquiry = new Inquiry();
@@ -52,13 +51,16 @@ public class InquiryService {
         inquiry.setContent(form.getContent());
         inquiry.setType(form.getType());
         inquiry.setSecret(form.getIsSecret());
-        // createdAt, updatedAt 등 BaseEntity 처리
 
         inquiryRepository.save(inquiry);
     }
     
     public Integer getInquiryCountByMember(Member member){
         return inquiryRepository.findByMember(member).size();
+    }
+    
+    public List<Inquiry> findInquirysByMember(Member member) {
+        return inquiryRepository.findByMember(member);
     }
    
 }

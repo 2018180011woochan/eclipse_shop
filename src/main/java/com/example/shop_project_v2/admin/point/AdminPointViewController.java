@@ -36,6 +36,6 @@ public class AdminPointViewController {
         model.addAttribute("usedPoints", usedPoints);
 
         
-        return "admin/point/pointListPage"; // 회원 관리 페이지
+        return "admin/point/pointListPage"; 
     }
 }

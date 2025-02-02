@@ -85,7 +85,6 @@ public class MemberService {
 	
 	// jwt
 	public JwtTokenDto login(JwtTokenLoginRequest request) {
-	    // 1) 이메일로 사용자 찾기
 	    Member member = memberRepository.findByEmail(request.getEmail())
 	        .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
@@ -93,24 +92,20 @@ public class MemberService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 	    
-	    // 2) 이메일을 subject로 사용
-	    String subject = member.getEmail();   // 예: "user@example.com"
+	    String subject = member.getEmail();   
 
-	    // 3) Access Token 생성
 	    AuthTokenImpl accessToken = jwtProvider.createAccessToken(
-	        subject,          // <-- 'userId' 자리에 이메일을 보냄
+	        subject,          
 	        member.getRole(),
 	        null
 	    );
 
-	    // 4) Refresh Token 생성
 	    AuthTokenImpl refreshToken = jwtProvider.createRefreshToken(
-	        subject,          // <-- 마찬가지로 이메일
+	        subject,          
 	        member.getRole(),
 	        null
 	    );
 
-	    // 5) Dto로 묶어서 반환
 	    return JwtTokenDto.builder()
 	        .accessToken(accessToken.getToken())
 	        .refreshToken(refreshToken.getToken())
@@ -119,42 +114,34 @@ public class MemberService {
 //	
 //	// Google OAUTH2
 //	public Member saveOrUpdateGoogleUser(String email, String name, String providerId) {
-//        // 1) DB에서 이메일로 사용자 찾기
 //        return memberRepository.findByEmail(email)
 //            .map(user -> {
-//                // 2) 이미 존재하면, 필요한 경우 업데이트
-//                user.setName(name);           // 이름 업데이트 예시
-//                user.setProvider(Provider.GOOGLE);   // provider: GOOGLE
+//                user.setName(name);          
+//                user.setProvider(Provider.GOOGLE);   
 //
 //                return memberRepository.save(user);
 //            })
 //            .orElseGet(() -> {
-//                // 3) 없으면 새로 생성
 //                return memberRepository.save(Member.builder()
 //                    .email(email)
 //                    .name(name)
 //                    .provider(Provider.GOOGLE)
 //
-//                    .role(Role.USER) // 일반 유저 권한
+//                    .role(Role.USER) 
 //                    .build());
 //            });
 //    }
 	
     public Member getCurrentMember() {
-        // (A) SecurityContextHolder에서 Authentication
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated() 
             || auth.getPrincipal().equals("anonymousUser")) {
             throw new RuntimeException("로그인 안 됨");
         }
 
-        // (B) principal 객체 (org.springframework.security.core.userdetails.User)
         User principal = (User) auth.getPrincipal();
-        // JwtProviderImpl에서 setSubject(userId or email), 
-        // => principal.getUsername() == claims.getSubject()
         String email = principal.getUsername();
 
-        // (C) DB에서 Member 조회
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("해당 회원이 존재하지 않습니다."));
     }

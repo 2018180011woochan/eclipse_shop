@@ -21,14 +21,11 @@ public class ChatbotAPIController {
 
     @PostMapping
     public ResponseEntity<Map<String, String>> handleChatbot(@RequestParam("message") String message) {
-        // 챗봇 로직
         String botResponse = chatbotService.getResponse(message);
 
-        // JSON 형태의 응답 생성
         Map<String, String> json = new HashMap<>();
         json.put("response", botResponse);
 
-        // 200 OK 응답
         return ResponseEntity.ok(json);
     }
 }

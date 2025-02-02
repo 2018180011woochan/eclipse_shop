@@ -188,16 +188,13 @@ public class ProductService {
     public Page<Product> getProductsByCategory(Long categoryId, String sort, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
-        // 1) 카테고리 ID 존재 → 해당 카테고리 조회
         if (categoryId != null) {
             if ("oldest".equals(sort)) {
                 return productRepository.findByCategoryIdOrderByCreatedDateAsc(categoryId, pageable);
             } else {
-                // newest가 기본
                 return productRepository.findByCategoryIdOrderByCreatedDateDesc(categoryId, pageable);
             }
         }
-        // 2) 카테고리 ID 없으면 전체 조회
         else {
             if ("oldest".equals(sort)) {
                 return productRepository.findAllByOrderByCreatedDateAsc(pageable);

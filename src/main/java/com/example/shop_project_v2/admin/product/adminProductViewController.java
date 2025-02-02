@@ -49,15 +49,13 @@ public class adminProductViewController {
 	@GetMapping("/edit/{id}")
 	public String EditProduct(@PathVariable Long id, Model model) {
 		Product product = productService.FindById(id);
-	    // 2) ProductRequestDTO 생성 후 기존 Product의 값 세팅
+
 	    ProductRequestDTO dto = new ProductRequestDTO();
 	    dto.setProductId(product.getProductId());
 	    dto.setName(product.getName());
 	    dto.setPrice(product.getPrice());
 	    dto.setDescription(product.getDescription());
-	    // 이미지/옵션은 필요하면 추가로 매핑
 
-	    // 3) 모델에 "productRequestDTO"라는 이름으로 담기
 	    model.addAttribute("productRequestDTO", dto);
 		
 		return "admin/product/ProductEditPage";

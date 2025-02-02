@@ -36,7 +36,7 @@ public class AdminChatAPIController {
         // 상담 시작 메시지 전송
         ChatMessage startMessage = new ChatMessage();
         startMessage.setRoomId(roomId);
-        startMessage.setSender(adminName); // 관리자 이름 또는 "admin"
+        startMessage.setSender(adminName);
         startMessage.setContent("상담이 시작되었습니다.");
         messagingTemplate.convertAndSend("/chatroom/messages", startMessage);
         

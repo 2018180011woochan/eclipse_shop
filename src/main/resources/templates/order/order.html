@@ -5,12 +5,9 @@
 <head>
     <meta charset="UTF-8">
     <title>주문하기</title>
-    <!-- 다음 우편번호 API -->
     <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-    <!-- 부트스트랩 CSS -->
     <link rel="stylesheet" href="/common/css/bootstrap.min.css">
     
-    <!-- 아임포트 결제 -->
     <script 
       src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js" 
       data-user-code="imp46747186">
@@ -79,7 +76,6 @@
             
             <!-- 쿠폰 적용 -->
             <div class="mb-3">
-                <!-- label for="openCouponModalBtn" => label을 지정해두면 JS에서 textContent를 변경하기 쉬움 -->
                 <label for="openCouponModalBtn" class="form-label">쿠폰 적용</label>
                 <button id="openCouponModalBtn" class="btn btn-success">쿠폰 선택</button>
             </div>
@@ -128,7 +124,6 @@
   </div>
 </div>
 
-<!-- order.js 불러오기 -->
 <script src="/order/js/order.js"></script>
 </main>
 </body>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{common/layout}">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/layout}">
 <head layout:fragment="head">
     <title>상품 목록</title>
     <link rel="stylesheet" href="/common/css/bootstrap.min.css">
@@ -9,32 +9,43 @@
 </head>
 <body>
 <main layout:fragment="content">
-<h1>상품 목록</h1>
 
-<!-- 정렬 -->
-<div class="dropdown">
-    <button class="dropbtn">정렬 기준</button>
-    <div class="dropdown-content">
-        <!-- 최신순 -->
-        <a th:href="@{/products/productList(
-             categoryId=${categoryId},
-             sort='newest',
-             page=0,
-             size=${size}
-        )}">최신순</a>
-        <!-- 등록순 -->
-        <a th:href="@{/products/productList(
-             categoryId=${categoryId},
-             sort='oldest',
-             page=0,
-             size=${size}
-        )}">등록순</a>
+<div class="container">
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="d-flex justify-content-end align-items-center">
+                <div class="dropdown me-3">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        정렬 기준
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                        <li>
+                            <a class="dropdown-item" th:href="@{/products/productList(
+                                 categoryId=${categoryId},
+                                 sort='newest',
+                                 page=0,
+                                 size=${size}
+                            )}">최신순</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" th:href="@{/products/productList(
+                                 categoryId=${categoryId},
+                                 sort='oldest',
+                                 page=0,
+                                 size=${size}
+                            )}">등록순</a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- 검색 입력 + 버튼 -->
+                <!-- <div class="input-group w-auto">
+                    <input type="text" id="searchKeyword" class="form-control" placeholder="상품명 검색">
+                    <button class="btn btn-primary" id="searchBtn">검색</button>
+                </div> -->
+            </div>
+        </div>
     </div>
 </div>
-
-<!-- 검색은 필요 시 구현 -->
-<input type="text" id="searchKeyword" placeholder="상품명 검색">
-<button id="searchBtn">검색</button>
 
 <!-- 상품 그리드 -->
 <div class="product-grid">
@@ -43,21 +54,21 @@
             <img th:src="${product.thumbnailUrl}" alt="상품 썸네일" />
             <div class="product-name" th:text="${product.name}"></div>
             
-	        <!-- 멤버십 별 할인 적용 -->
-	        <div class="product-price">
-	            <span th:if="${membership == T(com.example.shop_project_v2.member.Membership).GOLD}">
-	                <span style="text-decoration: line-through;" th:text="'₩ ' + ${product.price}"></span>
-	                <br>
-	                <span style="font-weight: bold;" th:text="'₩ ' + ${#numbers.formatDecimal(product.price * 0.95, 0, 0)}"></span> <!-- 5% 할인 -->
-	            </span>
-	            <span th:if="${membership == T(com.example.shop_project_v2.member.Membership).DIAMOND}">
-	                <span style="text-decoration: line-through;" th:text="'₩ ' + ${product.price}"></span>
-	                <br>
-	                <span style="font-weight: bold;" th:text="'₩ ' + ${#numbers.formatDecimal(product.price * 0.90, 0, 0)}"></span> <!-- 10% 할인 -->
-	            </span>
-	            <span th:if="${membership != T(com.example.shop_project_v2.member.Membership).GOLD and membership != T(com.example.shop_project_v2.member.Membership).DIAMOND}"
-	                  th:text="'₩ ' + ${product.price}"></span> <!-- 일반 가격 -->
-	        </div>
+            <!-- 멤버십 별 할인 적용 -->
+            <div class="product-price">
+                <span th:if="${membership == T(com.example.shop_project_v2.member.Membership).GOLD}">
+                    <span style="text-decoration: line-through;" th:text="'₩ ' + ${product.price}"></span>
+                    <br>
+                    <span style="font-weight: bold;" th:text="'₩ ' + ${#numbers.formatDecimal(product.price * 0.95, 0, 0)}"></span>
+                </span>
+                <span th:if="${membership == T(com.example.shop_project_v2.member.Membership).DIAMOND}">
+                    <span style="text-decoration: line-through;" th:text="'₩ ' + ${product.price}"></span>
+                    <br>
+                    <span style="font-weight: bold;" th:text="'₩ ' + ${#numbers.formatDecimal(product.price * 0.90, 0, 0)}"></span>
+                </span>
+                <span th:if="${membership != T(com.example.shop_project_v2.member.Membership).GOLD and membership != T(com.example.shop_project_v2.member.Membership).DIAMOND}"
+                      th:text="'₩ ' + ${product.price}"></span>
+            </div>
         </a>
     </div>
 </div>
@@ -86,7 +97,7 @@
                     )}">이전</a>
             </li>
 
-            <!-- 페이지 번호 (1부터 totalPages까지) -->
+            <!-- 페이지 번호 -->
             <li class="page-item"
                 th:each="i : ${#numbers.sequence(0, totalPages-1)}"
                 th:classappend="${i == currentPage} ? ' active'">

@@ -42,6 +42,8 @@ public class SecurityConfig {
                                 "/images/**", 
                                 "/order/**", 
                                 "/member/**",
+                                "/cart/**",
+                                "/inquiry/**",
                                 "/",
                                 "/api/**",
                                 "/oauth2/**",

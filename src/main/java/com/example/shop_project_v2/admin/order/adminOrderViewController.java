@@ -28,8 +28,8 @@ public class AdminOrderViewController {
 	
     @GetMapping("/{orderId}")
     public String orderDetailPage(@PathVariable Long orderId, Model model) {
-        Order order = orderService.findOrderById(orderId); // 주문 상세 정보 조회
-        model.addAttribute("order", order); // 모델에 주문 정보 추가
+        Order order = orderService.findOrderById(orderId); 
+        model.addAttribute("order", order); 
         return "admin/order/orderDetailPage.html";
     }
 }

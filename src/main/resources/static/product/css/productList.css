@@ -59,3 +59,19 @@
 .dropdown:hover .dropbtn {
     background-color: #3e8e41;
 }
+
+/* 정렬 및 검색 영역 추가 스타일 (선택사항) */
+#searchKeyword {
+    /* 기본 높이나 패딩 등을 조정할 수 있습니다 */
+    height: 38px;
+    border-radius: 0;
+}
+
+#searchBtn {
+    border-radius: 0;
+}
+
+/* dropdown 버튼 커스텀 (필요 시) */
+.btn.dropdown-toggle {
+    border-radius: 0;
+}

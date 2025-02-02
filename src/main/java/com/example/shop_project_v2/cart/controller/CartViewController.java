@@ -25,11 +25,15 @@ public class CartViewController {
 	private final MemberService memberService;
     @GetMapping
     public String viewCart(Model model) {
-    	Member member = memberService.getCurrentMember();
+        String membershipName = "";
+        
+        try {
+            membershipName = memberService.getCurrentMember().getMembership().getName();
+        } catch (RuntimeException ex) {
+            membershipName = "BRONZE"; // 비로그인 상태 -> 할인 없음
+        }
     	
-    	System.out.println(">>> membershipStr in Controller = " + member.getMembership().getName());
-    	
-    	model.addAttribute("membershipStr", member.getMembership().getName());
+    	model.addAttribute("membershipStr", membershipName);
         return "cart/cart";
     }
 }

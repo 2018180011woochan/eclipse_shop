@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.example.shop_project_v2.Inquiry.dto.InquiryRequestDto;
 import com.example.shop_project_v2.Inquiry.entity.Inquiry;
 import com.example.shop_project_v2.Inquiry.service.InquiryService;
+import com.example.shop_project_v2.member.entity.Member;
+import com.example.shop_project_v2.member.service.MemberService;
+import com.example.shop_project_v2.review.entity.Review;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class InquiryViewController {
 	private final InquiryService inquiryService;
+	private final MemberService memberService;
 	
 	@GetMapping
     public String listByProduct(@RequestParam("productId") Long productId, Model model) {
@@ -46,13 +50,18 @@ public class InquiryViewController {
         model.addAttribute("inquiryForm", dto);
         return "inquiry/inquiryForm";
     }
+    
+    @GetMapping("/history")
+    public String inquiryHistory(Model model) {
+    	Member currentMember = memberService.getCurrentMember();
+    	List<Inquiry> inquirys = inquiryService.findInquirysByMember(currentMember);
+    	model.addAttribute("inquirys", inquirys);
+    	return "inquiry/inquiryHistory";
+    }
 
-    // 4) 문의 저장
     @PostMapping
     public String createInquiry(@ModelAttribute InquiryRequestDto form) {
-        // form: title, content, type, isSecret, productId 등
         inquiryService.createInquiry(form);
-        System.out.println("!!!!!!!!" + form.getProductId());
         return "redirect:/inquiry?productId=" + form.getProductId();
     }
 }

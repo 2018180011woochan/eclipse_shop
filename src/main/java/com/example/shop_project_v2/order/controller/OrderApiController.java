@@ -53,13 +53,10 @@ public class OrderApiController {
         
         // 쿠폰 적용
         if (orderRequest.getCouponId() != null) {
-        	System.out.println("쿠폰사용!!!" + orderRequest.getCouponId());
             couponService.PopCoupon(orderRequest.getCouponId()); 
         }
-        else
-        	System.out.println("쿠폰사용안됨!!!" + orderRequest.getCouponId());
+
     	
-        // 1) DTO → 엔티티 변환
         Order order = new Order();
         order.setMember(memberService.getCurrentMember());
         order.setAddress(orderRequest.getAddress());
@@ -79,7 +76,6 @@ public class OrderApiController {
             order.addOrderItem(orderItem);
         }
 
-        // 2) 주문 생성
         Order savedOrder = orderService.createOrder(order);
 
         
@@ -101,7 +97,6 @@ public class OrderApiController {
         System.out.println("사용 포인트: " + usedPoints);
         System.out.println("UsedPoint 객체: " + usedPoint);
         
-        // 3) 응답(JSON)
         Map<String, Object> responseBody = new HashMap<>();
         responseBody.put("orderId", savedOrder.getOrderId());
         responseBody.put("totalPrice", savedOrder.getTotalPrice());

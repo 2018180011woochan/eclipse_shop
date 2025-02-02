@@ -7,6 +7,6 @@ public class PaymentData {
     private String impUid;
     private String merchantUid;
     private int amount;
-    private String status; // "ready"/"paid"/"cancelled" 등
+    private String status; 
 }
 

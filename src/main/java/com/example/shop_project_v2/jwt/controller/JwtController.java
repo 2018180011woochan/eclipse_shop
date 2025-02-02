@@ -40,7 +40,7 @@ public class JwtController {
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setSecure(false);
         refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(14 * 24 * 60 * 60); // 예: 2주
+        refreshTokenCookie.setMaxAge(14 * 24 * 60 * 60); 
 
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
@@ -49,8 +49,6 @@ public class JwtController {
         response.setHeader("Set-Cookie", String.format("accessToken=%s; Path=/; HttpOnly; Secure; SameSite=Lax", jwtTokenDto.getAccessToken()));
         response.addHeader("Set-Cookie", String.format("refreshToken=%s; Path=/; HttpOnly; Secure; SameSite=Lax", jwtTokenDto.getRefreshToken()));
         
-        // 3) 추가로 클라이언트에 AccessToken을 JSON으로 줄 필요가 없다면, 
-        //    JwtTokenResponse 대신 간단한 성공 메시지를 내려줘도 됨.
         return ResponseEntity.ok(
             JwtTokenResponse.builder()
             .accessToken(jwtTokenDto.getAccessToken())

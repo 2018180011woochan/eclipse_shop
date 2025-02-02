@@ -30,10 +30,18 @@ public class ProductViewController {
             @RequestParam(defaultValue = "newest") String sort,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "8") int size,
+            @RequestParam(required = false) String keyword,
             Model model
     ) {
         Page<Product> productPage = productService.getProductsByCategory(categoryId, sort, page, size);
-        Membership membership = memberService.getCurrentMember().getMembership();
+        
+        // 로그인 여부 확인
+        Membership membership = null;
+        try {
+            membership = memberService.getCurrentMember().getMembership();
+        } catch (RuntimeException ex) {
+            // 로그인되지 않은 경우 예외 발생 -> membership은 null 유지
+        }
         
         model.addAttribute("products", productPage.getContent());
         model.addAttribute("currentPage", productPage.getNumber());
@@ -49,19 +57,23 @@ public class ProductViewController {
 	@GetMapping("/{id}")
 	public String ViewProductDetail(@PathVariable Long id, Model model) {
         Product product = productService.FindById(id);
-        String membership = memberService.getCurrentMember().getMembership().getName();
-        
+        String membershipName = "";
         int originalPrice = product.getPrice();
         int discountPrice = originalPrice;
         
-        if (membership.equals("GOLD")) {
+        try {
+            membershipName = memberService.getCurrentMember().getMembership().getName();
+        } catch (RuntimeException ex) {
+            membershipName = ""; // 비로그인 상태 -> 할인 없음
+        }
+        if (membershipName.equals("GOLD")) {
             discountPrice = (int) Math.round((originalPrice * 0.95) / 10.0) * 10;
-        } else if (membership.equals("DIAMOND")) {
+        } else if (membershipName.equals("DIAMOND")) {
             discountPrice = (int) Math.round((originalPrice * 0.90) / 10.0) * 10;
         }
         
         model.addAttribute("product", product);
-        model.addAttribute("membership", membership);
+        model.addAttribute("membership", membershipName);
         model.addAttribute("discountPrice", discountPrice);
 		return "product/productDetail";
 	}

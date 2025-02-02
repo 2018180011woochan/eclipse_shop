@@ -44,11 +44,11 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
     	
-        // 1) 쿠키에서 Access Token 추출
+
         Optional<String> accessToken = getAccessTokenFromCookie(request);
         log.info("AccessToken from cookie: {}", accessToken.orElse("EMPTY"));
         
-        // 2) 토큰 검증 및 SecurityContext 설정
+
         if (accessToken.isPresent()) {
             AuthTokenImpl jwtToken = tokenProvider.convertAuthToken(accessToken.get());
 
