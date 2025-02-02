@@ -20,16 +20,17 @@
 <body>
 <header class="sticky-sm-top">
     <nav class="navbar navbar-expand-lg bg-body">
+
         <div class="container-fluid">
             <a class="navbar-brand" href="/">
                 <img id="logo-img" src="/images/logo.png" alt="logo">
             </a>
             <ul class="navbar-nav">
-                <!-- 여기에 자바스크립트가 fetch로 만들어주는 카테고리 메뉴가 들어가게 됨 -->
-                
-                
+
             </ul>
-            			    <li class="nav-item" sec:authorize="isAnonymous()">
+            <ul class="navbar-nav ms-auto my-2 my-lg-0 navbar-nav-scroll">
+				<!-- 로그인하지 않은 사용자 -->
+			    <li class="nav-item" sec:authorize="isAnonymous()">
 			        <a class="nav-link" href="/login">로그인</a>
 			    </li>
 			    <li class="nav-item" sec:authorize="isAnonymous()">
@@ -43,7 +44,8 @@
 			    <li class="nav-item" sec:authorize="isAuthenticated()">
 			        <a class="nav-link" href="/mypage">마이페이지</a>
 			    </li>
-            			    <!-- 공통 메뉴 -->
+
+			    <!-- 공통 메뉴 -->
 			    <li><div class="position-relative" style="display: inline-block;">
                     <a href="/cart">
                         <img src="/images/cart4.svg" style="width: 30px" href="/cart">
@@ -51,12 +53,13 @@
                             0
                         </div>
                     </a>
-                    <a>
-                    	<a href="/admin">관리자 페이지</a>
-                    </a>
 
+                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+					    <a class="nav-link" href="/admin">관리자 페이지</a>
+					</li>
                 	</div>
                 </li>
+            </ul>
         </div>
     </nav>
 </header>

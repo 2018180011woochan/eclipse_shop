@@ -54,6 +54,7 @@ public class SecurityConfig {
 								"/mainpage/**",
 								"/product/**",
 								"/upload/**",
+								"/uploads/**",
 								"/review/**",
 								"/chatbot/js/**",
 								"/chatbot.html"

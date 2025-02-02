@@ -25,4 +25,6 @@ public class ProductImage extends BaseEntity {
     
     @NotBlank
     private String imageUrl;
+    
+    private int sortOrder;   // 이미지 순서
 }

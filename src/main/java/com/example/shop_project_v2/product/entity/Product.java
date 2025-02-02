@@ -42,6 +42,8 @@ public class Product extends BaseEntity {
 	
 	private String thumbnailUrl;
 	
+	private int salesCount;
+	
 	// 추가함
     @JoinColumn(name = "category_id", nullable = false)
     private Long categoryId;

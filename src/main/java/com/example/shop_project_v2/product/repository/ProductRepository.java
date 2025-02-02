@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.example.shop_project_v2.product.entity.Product;
@@ -18,5 +19,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	
 	Page<Product> findByCategoryIdOrderByCreatedDateDesc(Long categoryId, Pageable pageable);
     Page<Product> findByCategoryIdOrderByCreatedDateAsc(Long categoryId, Pageable pageable);
+   
+    
+    List<Product> findTop5ByOrderBySalesCountDesc();
 
 }

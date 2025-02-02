@@ -154,17 +154,10 @@ function appendMessage(msgContent, sender) {
   const chatContentDiv = document.getElementById("chat-content");
   const messageDiv = document.createElement("div");
   
-  /*if (sender != userEmail)
-  	messageDiv.textContent = sender + ": " + msgContent;*/
-  
   if (sender !== userEmail) {
     // 상담원의 메시지에 'bot' 클래스 추가
     messageDiv.classList.add("message", "bot");
     messageDiv.textContent = "상담원: " + msgContent;
-  } else {
-    // 사용자의 메시지에 'user' 클래스 추가
-    // messageDiv.classList.add("message", "user");
-    // messageDiv.textContent = "나: " + msgContent;
   }
   
   chatContentDiv.appendChild(messageDiv);
