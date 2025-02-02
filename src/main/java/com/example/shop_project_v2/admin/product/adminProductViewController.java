@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/admin/products")
 @RequiredArgsConstructor
 @Controller
-public class adminProductViewController {
+public class AdminProductViewController {
 	private final ProductService productService;
 	private final CategoryService categoryService;
 	@GetMapping
