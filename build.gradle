@@ -8,9 +8,8 @@ group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 configurations {
@@ -38,20 +37,8 @@ dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j'
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     
-    //compileOnly 'org.projectlombok:lombok'
-    //annotationProcessor 'org.projectlombok:lombok'
-    //compileOnly 'org.projectlombok:lombok:1.18.24'
-    //annotationProcessor 'org.projectlombok:lombok:1.18.24'
-    
-    // 아래의 dependencies를 추가
-	implementation 'com.google.code.findbugs:jsr305:3.0.2'
-	
-	compileOnly 'org.projectlombok:lombok:1.18.20'
-	annotationProcessor 'org.projectlombok:lombok:1.18.20'
-	
-	testCompileOnly 'org.projectlombok:lombok:1.18.20'
-	testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
-    
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
     
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
