@@ -19,11 +19,15 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Getter
-@AllArgsConstructor
 @Slf4j
 public class AuthTokenImpl implements AuthToken<Claims> {
     private final String token;
     private final Key key;
+    
+    public AuthTokenImpl(String token, Key key) {
+        this.token = token;
+        this.key = key;
+    }
     
     public AuthTokenImpl(String userId, Role role, Key key, Map<String, Object> claimsMap, Date expiredDate) {
     	this.key = key;
