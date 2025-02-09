@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{common/layout}">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/layout}">
 <head>
     <meta charset="UTF-8">
     <title>카테고리 관리</title>
@@ -10,12 +10,27 @@
         .category-list {
             margin-left: 20px;
         }
+        .custom-purple-btn {
+            background-color: #4E007C;
+            border-color: #4E007C;
+            color: #fff; 
+        }
+        .custom-purple-btn:hover {
+            background-color: #3a005f;
+            border-color: #3a005f;
+        }
+		h2 {
+	        text-align: center;
+	        margin: 20px 0; 
+	        font-size: 24px; 
+	        font-weight: bold; 
+        }       
     </style>
 </head>
 <body>
 <main layout:fragment="content">
 <div class="container mt-5">
-    <h1>카테고리 관리</h1>
+    <h2>카테고리 관리</h2>
 
     <!-- 메인 카테고리 생성 폼 -->
     <form th:action="@{/admin/category}" method="post" class="mb-4">
@@ -23,7 +38,7 @@
             <label for="mainCategoryName" class="form-label">메인 카테고리 이름</label>
             <input type="text" id="mainCategoryName" name="name" class="form-control" placeholder="메인 카테고리 이름을 입력하세요" required>
         </div>
-        <button type="submit" class="btn btn-primary">메인 카테고리 생성</button>
+        <button type="submit" class="btn custom-purple-btn">메인 카테고리 생성</button>
     </form>
 
     <!-- 카테고리 트리 -->
@@ -37,7 +52,7 @@
 	            <form th:action="@{/admin/category/update}" method="post" class="d-inline">
 	                <input type="hidden" name="categoryId" th:value="${mainCategory.categoryId}">
 	                <input type="text" name="name" th:placeholder="${mainCategory.name}" class="form-control form-control-sm d-inline w-auto" required>
-	                <button type="submit" class="btn btn-sm btn-primary">수정</button>
+	                <button type="submit" class="btn btn-sm custom-purple-btn">수정</button>
 	            </form>
 	            <form th:action="@{/admin/category/delete}" method="post" class="d-inline ms-1">
 	                <input type="hidden" name="categoryId" th:value="${mainCategory.categoryId}">
@@ -55,7 +70,7 @@
 	                    <form th:action="@{/admin/category/update}" method="post" class="d-inline">
 	                        <input type="hidden" name="categoryId" th:value="${subCategory.categoryId}">
 	                        <input type="text" name="name" th:placeholder="${subCategory.name}" class="form-control form-control-sm d-inline w-auto" required>
-	                        <button type="submit" class="btn btn-sm btn-primary">수정</button>
+	                        <button type="submit" class="btn btn-sm custom-purple-btn">수정</button>
 	                    </form>
 	                    <form th:action="@{/admin/category/delete}" method="post" class="d-inline ms-1">
 	                        <input type="hidden" name="categoryId" th:value="${subCategory.categoryId}">

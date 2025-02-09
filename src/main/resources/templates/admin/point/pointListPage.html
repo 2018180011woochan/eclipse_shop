@@ -6,15 +6,21 @@
     <meta charset="UTF-8">
     <title>포인트 관리</title>
     <link rel="stylesheet" href="/common/css/bootstrap.min.css"/>
+    <style>
+		h2 {
+	        text-align: center;
+	        margin: 20px 0; 
+	        font-size: 24px; 
+	        font-weight: bold; 
+        }
+    </style>    
 </head>
 <body>
 <main layout:fragment="content">
     <div class="container mt-5">
         <h2>포인트 관리</h2>
 
-        <!-- Bootstrap Nav Tabs -->
         <ul class="nav nav-tabs" id="pointTabs" role="tablist">
-            <!-- 전체 포인트 탭 -->
             <li class="nav-item">
                 <a class="nav-link active" id="all-tab"
                    data-bs-toggle="tab"
@@ -25,7 +31,6 @@
                     전체 포인트
                 </a>
             </li>
-            <!-- 사용 내역 탭 -->
             <li class="nav-item">
                 <a class="nav-link" id="used-tab"
                    data-bs-toggle="tab"
@@ -36,7 +41,6 @@
                     사용 내역
                 </a>
             </li>
-            <!-- 적립 내역 탭 -->
             <li class="nav-item">
                 <a class="nav-link" id="saved-tab"
                    data-bs-toggle="tab"
@@ -49,35 +53,30 @@
             </li>
         </ul>
 
-        <!-- 탭 컨텐츠 -->
         <div class="tab-content mt-4" id="pointTabContent">
 
-            <!-- (1) 전체 포인트 목록 -->
             <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all-tab">
                 <table class="table table-bordered">
                     <thead>
                     <tr>
-                        <th>포인트 ID</th>
+                        <th>회원 이메일</th>
                         <th>잔액</th>
-                        <th>회원 ID</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="point : ${points}">
-                        <td th:text="${point.pointId}">포인트 ID</td>
+                        <td th:text="${point.member.email}">회원 이메일</td>
                         <td th:text="${point.balance}">잔액</td>
-                        <td th:text="${point.member.id}">회원 ID</td>
                     </tr>
                     </tbody>
                 </table>
             </div>
 
-            <!-- (2) 사용 내역 -->
             <div class="tab-pane fade" id="used" role="tabpanel" aria-labelledby="used-tab">
                 <table class="table table-bordered">
                     <thead>
                     <tr>
-                        <th>사용 ID</th>
+                        <th>사용 회원 이메일</th>
                         <th>사용 포인트</th>
                         <th>사용 일시</th>
                         <th>사용 이유</th>
@@ -85,7 +84,7 @@
                     </thead>
                     <tbody>
                     <tr th:each="used : ${usedPoints}">
-                        <td th:text="${used.usedPointId}">사용 ID</td>
+                        <td th:text="${used.point.member.email}">사용 회원 이메일</td>
                         <td th:text="${used.usedPoint}">사용 포인트</td>
                         <td th:text="${#temporals.format(used.createdDate, 'yyyy-MM-dd HH:mm')}">사용 일시</td>
                         <td th:text="${used.usedReason}">사용 이유</td>
@@ -94,12 +93,11 @@
                 </table>
             </div>
 
-            <!-- (3) 적립 내역 -->
             <div class="tab-pane fade" id="saved" role="tabpanel" aria-labelledby="saved-tab">
                 <table class="table table-bordered">
                     <thead>
                     <tr>
-                        <th>적립 ID</th>
+                        <th>적립 회원 이메일</th>
                         <th>적립 포인트</th>
                         <th>적립 일시</th>
                         <th>적립 이유</th>
@@ -107,7 +105,7 @@
                     </thead>
                     <tbody>
                     <tr th:each="saved : ${savedPoints}">
-                        <td th:text="${saved.savedPointId}">적립 ID</td>
+                        <td th:text="${saved.point.member.email}">적립 회원 이메일</td>
                         <td th:text="${saved.savedPoint}">적립 포인트</td>
                         <td th:text="${#temporals.format(saved.createdDate, 'yyyy-MM-dd HH:mm')}">적립 일시</td>
                         <td th:text="${saved.saveReason}">적립 이유</td>
@@ -116,12 +114,11 @@
                 </table>
             </div>
 
-        </div> <!-- // tab-content -->
-    </div> <!-- // container -->
+        </div> 
+    </div> 
 
 </main>
 
-<!-- Bootstrap JS -->
 <script src="/common/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
