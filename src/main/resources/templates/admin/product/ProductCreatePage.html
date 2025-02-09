@@ -1,87 +1,136 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{common/layout}">
-<html>
-<head><title>상품 등록</title></head>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 등록</title>
+    <!-- Bootstrap CSS (경로는 실제 환경에 맞게 수정) -->
+    <link rel="stylesheet" href="/common/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        /* 폼 컨테이너 스타일 */
+        .form-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #4E007C;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-weight: bold;
+        }
+        /* 퍼스널 컬러를 적용한 버튼 */
+        .btn-purple {
+            background-color: #4E007C;
+            border-color: #4E007C;
+            color: #fff;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        .btn-purple:hover {
+            background-color: #3a005f;
+            border-color: #3a005f;
+        }
+
+    </style>
+</head>
 <body>
 <main layout:fragment="content">
-	<h2>상품 등록 페이지</h2>
-	
-	<form th:action="@{/admin/products/create}" method="post"  enctype="multipart/form-data">
-		<div>
-			<label for="name">상품 이름:</label>
-			<input type="text" id="name" name="name" placeholder="상품 이름을 입력하세요" required>
-		</div>
-		<div>
-			<label for="price">가격:</label>
-			<input type="number" id="price" name="price" placeholder="가격을 입력하세요" required>
-		</div>
-		<div>
-			<label for="description">상세 설명:</label>
-			<input type="text" id="description" name="description" placeholder="상세 설명을 입력하세요" required>
-		</div>
-		
-		 <!-- 카테고리 선택 -->
-        <div>
-            <label for="mainCategory">메인카테고리:</label>
-            <select id="mainCategory" name="mainCategory" required>
-                <option value="">메인카테고리를 선택하세요</option>
-                <!-- 서버에서 제공된 메인카테고리 데이터 -->
-                <option th:each="mainCategory : ${mainCategories}" 
-                        th:value="${mainCategory.categoryId}" 
-                        th:text="${mainCategory.name}">
-                </option>
-            </select>
-        </div>
-
-        <div>
-            <label for="subCategory">서브카테고리:</label>
-            <select id="subCategory" name="categoryId" required>
-                <option value="">서브카테고리를 선택하세요</option>
-                <!-- JavaScript로 동적 로드 -->
-            </select>
-        </div>
-		
-		<div id="options">
-			<label>옵션 추가</label>
-			<div class="option">
-				<label>사이즈</label>
-				<select name="options[0].size" required>
-					<option value="S">S</option>
-					<option value="M">M</option>
-					<option value="L">L</option>
-					<option value="XL">XL</option>
-				</select>
-				
-				<label>색상</label>
-				<input type="text" name="options[0].color" placeholder="색상을 입력하세요" required>
-				
-				<label>재고 수량</label>
-        		<input type="number" name="options[0].stockQuantity" min="1" required>
+    <div class="container form-container">
+        <h2>상품 등록 페이지</h2>
+        <form th:action="@{/admin/products/create}" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="name" class="form-label">상품 이름:</label>
+                <input type="text" id="name" name="name" class="form-control" placeholder="상품 이름을 입력하세요" required>
+            </div>
+            <div class="mb-3">
+                <label for="price" class="form-label">가격:</label>
+                <input type="number" id="price" name="price" class="form-control" placeholder="가격을 입력하세요" required>
+            </div>
+			<div class="mb-3">
+			    <label for="description" class="form-label">상세 설명:</label>
+			    <textarea id="description" name="description" class="form-control" placeholder="상세 설명을 입력하세요" required rows="20"></textarea>
 			</div>
-		</div>
-		<button type="button" id="addOption">옵션 추가</button>
-		
-		<div>
-			<label for="images">이미지 추가</label>
-			<input type="file" id="images" name="images" accept="image/*" multiple required>
-		</div>
-		<button type="submit">상품 등록</button>
-		
-	</form>
-	<script src="/product/js/createProduct.js"></script>
-	<script>
+            <!-- 카테고리 선택 -->
+            <div class="mb-3">
+                <label for="mainCategory" class="form-label">메인 카테고리:</label>
+                <select id="mainCategory" name="mainCategory" class="form-select" required>
+                    <option value="">메인 카테고리를 선택하세요</option>
+                    <option th:each="mainCategory : ${mainCategories}" 
+                            th:value="${mainCategory.categoryId}" 
+                            th:text="${mainCategory.name}">
+                    </option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="subCategory" class="form-label">서브 카테고리:</label>
+                <select id="subCategory" name="categoryId" class="form-select" required>
+                    <option value="">서브 카테고리를 선택하세요</option>
+                    <!-- 서브 카테고리는 JavaScript로 동적 로드 -->
+                </select>
+            </div>
+            <!-- 옵션 추가 -->
+            <div id="options" class="mb-3">
+                <label class="form-label">옵션 추가</label>
+                <div class="option mb-2">
+                    <div class="row g-2 align-items-center">
+                        <div class="col-auto">
+                            <label class="col-form-label">사이즈</label>
+                        </div>
+                        <div class="col-auto">
+                            <select name="options[0].size" class="form-select" required>
+                                <option value="S">S</option>
+                                <option value="M">M</option>
+                                <option value="L">L</option>
+                                <option value="XL">XL</option>
+                            </select>
+                        </div>
+                        <div class="col-auto">
+                            <label class="col-form-label">색상</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="text" name="options[0].color" class="form-control" placeholder="색상을 입력하세요" required>
+                        </div>
+                        <div class="col-auto">
+                            <label class="col-form-label">재고 수량</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="number" name="options[0].stockQuantity" class="form-control" min="1" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <button type="button" id="addOption" class="btn btn-secondary">옵션 추가</button>
+            </div>
+            <div class="mb-3">
+                <label for="images" class="form-label">이미지 추가</label>
+                <input type="file" id="images" name="images" class="form-control" accept="image/*" multiple required>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-purple">상품 등록</button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- JavaScript 파일 (옵션 추가 등 기능을 구현한 스크립트) -->
+    <script src="/product/js/createProduct.js"></script>
+    <script>
+        // 메인 카테고리 선택 시 서브 카테고리 동적 로드
         document.getElementById("mainCategory").addEventListener("change", function () {
             const mainCategoryId = this.value;
-
-            // AJAX 요청으로 서브카테고리 가져오기
             fetch(`/api/admin/category/${mainCategoryId}/subcategorys`)
                 .then(response => response.json())
                 .then(data => {
                     const subCategorySelect = document.getElementById("subCategory");
-                    subCategorySelect.innerHTML = '<option value="">서브카테고리를 선택하세요</option>'; // 초기화
-
+                    subCategorySelect.innerHTML = '<option value="">서브 카테고리를 선택하세요</option>';
                     data.forEach(subCategory => {
                         const option = document.createElement("option");
                         option.value = subCategory.categoryId;

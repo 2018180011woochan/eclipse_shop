@@ -31,7 +31,7 @@ public class HomeController {
         } catch (RuntimeException ex) {
 
         }
-    	List<Product> bestSellers = productRepository.findTop5ByOrderBySalesCountDesc();
+    	List<Product> bestSellers = productRepository.findTop4ByOrderBySalesCountDesc();
         // Product 엔티티를 ProductResponseDTO로 변환
         List<ProductResponseDTO> bestSellerDtos = bestSellers.stream()
             .map(product -> new ProductResponseDTO(

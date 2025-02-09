@@ -1,12 +1,31 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{common/layout}">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/layout}">
 <head>
     <meta charset="UTF-8">
     <title>상품 상세</title>
-
-	<link rel="stylesheet" href="/common/css/bootstrap.min.css">
+    
+    <!-- Bootstrap CSS (경로는 실제 환경에 맞게 수정) -->
+    <link rel="stylesheet" href="/common/css/bootstrap.min.css">
+    
+    <style>
+        .description-text {
+            white-space: pre-wrap;
+        }
+        .btn-black {
+            background-color: #000;
+            border-color: #000;
+            color: #fff;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        .btn-black:hover {
+            background-color: #333;
+            border-color: #333;
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
 <main layout:fragment="content">
@@ -15,10 +34,10 @@
         <div class="col-md-6">
             <div id="productImageCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
-					<div th:each="img, stat : ${product.images}"
-					     th:classappend="${stat.index == 0} ? 'carousel-item active' : 'carousel-item'">
-					    <img th:src="@{${img.imageUrl}}" class="d-block w-100" style="max-height: 500px; object-fit: cover;" alt="상품 이미지">
-					</div>
+                    <div th:each="img, stat : ${product.images}"
+                         th:classappend="${stat.index == 0} ? 'carousel-item active' : 'carousel-item'">
+                        <img th:src="@{${img.imageUrl}}" class="d-block w-100" style="max-height: 500px; object-fit: cover;" alt="상품 이미지">
+                    </div>
                     <div th:if="${product.images == null or product.images.size() == 0}" class="carousel-item active">
                         <img th:src="@{${product.thumbnailUrl}}"
                              class="d-block w-100" style="max-height: 500px; object-fit: cover;" alt="상품 이미지">
@@ -38,36 +57,34 @@
         <div class="col-md-6" id="productContainer" th:data-product-id="${product.productId}">
             <h2 th:text="${product.name}">상품 이름</h2>
             <h4>
-			    <span th:if="${membership == 'BRONZE' or membership == null}" th:text="'₩ ' + ${product.price}">₩ 10000</span>
-			
-			    <span th:if="${membership == 'GOLD'}">
-			        <span style="text-decoration: line-through;" th:text="'₩ ' + ${product.price}"></span>
-			        <br>
-			        <span style="font-weight: bold;" th:text="'₩ ' + ${discountPrice}"></span>
-			    </span>
-			
-			    <span th:if="${membership == 'DIAMOND'}">
-			        <span style="text-decoration: line-through;" th:text="'₩ ' + ${product.price}"></span>
-			        <br>
-			        <span style="font-weight: bold;" th:text="'₩ ' + ${discountPrice}"></span>
-			    </span>
-			</h4>
-            <p th:text="${product.description}">상품 설명</p>
+                <span th:if="${membership == 'BRONZE' or membership == null}" th:text="'₩ ' + ${product.price}">₩ 10000</span>
+                <span th:if="${membership == 'GOLD'}">
+                    <span style="text-decoration: line-through;" th:text="'₩ ' + ${product.price}"></span>
+                    <br>
+                    <span style="font-weight: bold;" th:text="'₩ ' + ${discountPrice}"></span>
+                </span>
+                <span th:if="${membership == 'DIAMOND'}">
+                    <span style="text-decoration: line-through;" th:text="'₩ ' + ${product.price}"></span>
+                    <br>
+                    <span style="font-weight: bold;" th:text="'₩ ' + ${discountPrice}"></span>
+                </span>
+            </h4>
+            <p class="description-text" th:text="${product.description}"></p>
 
             <div th:if="${product.options != null}">
                 <label>옵션 선택</label>
-                <select class="form-select" id="optionSelect" name="optionId" th:if="${product.options != null}">
-				    <option value="">옵션을 선택하세요</option>
-				    <option th:each="opt : ${product.options}"
-				            th:value="${opt.optionId}"
-				            th:text="${opt.color + ' / ' + opt.size + ' / 재고:' + opt.stockQuantity}">
-				    </option>
-				</select>
+                <select class="form-select" id="optionSelect" name="optionId">
+                    <option value="">옵션을 선택하세요</option>
+                    <option th:each="opt : ${product.options}"
+                            th:value="${opt.optionId}"
+                            th:text="${opt.color + ' / ' + opt.size + ' / 재고:' + opt.stockQuantity}">
+                    </option>
+                </select>
             </div>
-			<div id="selectedOptionsContainer" class="mt-3"></div>
-            <button id="addToCartBtn" class="btn btn-primary mt-3">장바구니에 담기</button>
-            <button id="inquiryBtn" class="btn btn-primary mt-3">문의 목록</button>
-            <button id="reviewBtn" class="btn btn-primary mt-3">리뷰 목록</button>
+            <div id="selectedOptionsContainer" class="mt-3"></div>
+            <button id="addToCartBtn" class="btn btn-black mt-3">장바구니에 담기</button>
+            <button id="inquiryBtn" class="btn btn-black mt-3">문의 목록</button>
+            <button id="reviewBtn" class="btn btn-black mt-3">리뷰 목록</button>
         </div>
     </div>
 </div>

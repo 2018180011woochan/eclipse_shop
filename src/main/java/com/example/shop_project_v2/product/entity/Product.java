@@ -38,6 +38,7 @@ public class Product extends BaseEntity {
 	
 	private int price;
 	
+	@Column(name = "description", length = 5000)
 	private String description;
 	
 	private String thumbnailUrl;
