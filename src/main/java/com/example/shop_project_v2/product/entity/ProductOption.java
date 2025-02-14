@@ -14,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Version;
 import lombok.Data;
 
 @Entity
@@ -35,4 +36,7 @@ public class ProductOption extends BaseEntity {
 
     @Column(nullable = false)
     private int stockQuantity;
+    
+    @Version
+    private Long version;
 }

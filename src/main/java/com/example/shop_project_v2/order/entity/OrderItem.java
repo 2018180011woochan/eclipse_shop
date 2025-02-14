@@ -1,6 +1,7 @@
 package com.example.shop_project_v2.order.entity;
 
 import com.example.shop_project_v2.BaseEntity;
+import com.example.shop_project_v2.product.Size;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,7 +28,7 @@ public class OrderItem extends BaseEntity {
     private Long productId;       // product_id
     private String productName;   // 상품명
     private String color;         // 옵션 - 색상
-    private String size;          // 옵션 - 사이즈
+    private Size size;          // 옵션 - 사이즈
     private int quantity;         // 구매 수량
     private int unitPrice;        // 단가 (상품 가격)
     private int totalPrice;       // (단가 * 수량) 계산

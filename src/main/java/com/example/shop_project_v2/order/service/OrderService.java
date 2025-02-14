@@ -16,6 +16,8 @@ import com.example.shop_project_v2.order.entity.Order;
 import com.example.shop_project_v2.order.entity.OrderItem;
 import com.example.shop_project_v2.order.repository.OrderRepository;
 import com.example.shop_project_v2.product.entity.Product;
+import com.example.shop_project_v2.product.entity.ProductOption;
+import com.example.shop_project_v2.product.repository.ProductOptionRepository;
 import com.example.shop_project_v2.product.repository.ProductRepository;
 
 import jakarta.transaction.Transactional;
@@ -26,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class OrderService {
 	private final OrderRepository orderRepository;
 	private final ProductRepository productRepository;
+	private final ProductOptionRepository productOptionRepository;
 	private final MemberRepository memberRepository;
 	
     @Transactional
@@ -34,7 +37,34 @@ public class OrderService {
             item.calculatePrice();
         }
         order.calculateTotalPrice();
-        return orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+        
+        for (OrderItem orderItem : savedOrder.getOrderItems()) {
+            Product product = productRepository.findById(orderItem.getProductId())
+                    .orElseThrow(() -> new RuntimeException("상품이 존재하지 않습니다."));
+            
+            ProductOption productOption = productOptionRepository
+                    .findByProduct_ProductIdAndColorAndSize(
+                        product.getProductId(),
+                        orderItem.getColor(),
+                        orderItem.getSize()
+                    )
+                    .orElseThrow(() -> new RuntimeException("해당 옵션이 존재하지 않습니다."));
+
+            int newStockQuantity = productOption.getStockQuantity() - orderItem.getQuantity();
+            if (newStockQuantity < 0) {
+                throw new RuntimeException("재고가 부족합니다.");
+            }
+            productOption.setStockQuantity(newStockQuantity);
+
+            int newSalesCount = product.getSalesCount() + orderItem.getQuantity();
+            product.setSalesCount(newSalesCount);
+
+            productOptionRepository.save(productOption);
+            productRepository.save(product);
+        }
+        
+        return savedOrder;
     }
     
     public List<Order> findAllOrders() {

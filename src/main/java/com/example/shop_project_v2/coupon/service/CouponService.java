@@ -69,7 +69,6 @@ public class CouponService {
                 couponRepository.save(coupon);
             }
     	}
-    	
     }
     
     // 등급별 할인율 반환
