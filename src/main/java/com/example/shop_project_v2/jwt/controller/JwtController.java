@@ -24,36 +24,31 @@ public class JwtController {
 	private final JwtProvider jwtProvider;
 	
 	@PostMapping("/jwt-login")
-	public ResponseEntity<JwtTokenResponse> jwtLogin(@RequestBody JwtTokenLoginRequest request,
-													HttpServletResponse response) {
-		JwtTokenDto jwtTokenDto = memberService.login(request);
-		
-		// 1) Access Token 쿠키로 저장
-        Cookie accessTokenCookie = new Cookie("accessToken", jwtTokenDto.getAccessToken());
-        accessTokenCookie.setHttpOnly(true);   // 자바스크립트 접근 방지
-        accessTokenCookie.setSecure(false);     // HTTPS에서만 전송
-        accessTokenCookie.setPath("/");        // 모든 경로에서 쿠키 전송
-        accessTokenCookie.setMaxAge(10 * 60);  // 예: 만료시간 10분(초 단위)
+	public ResponseEntity<JwtTokenResponse> jwtLogin(
+	        @RequestBody JwtTokenLoginRequest request,
+	        HttpServletResponse response) {
 
-        // 2) Refresh Token 쿠키로 저장 (이미 구현된 부분과 동일)
-        Cookie refreshTokenCookie = new Cookie("refreshToken", jwtTokenDto.getRefreshToken());
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setSecure(false);
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(14 * 24 * 60 * 60); 
+	    JwtTokenDto jwtTokenDto = memberService.login(request);
 
-        response.addCookie(accessTokenCookie);
-        response.addCookie(refreshTokenCookie);
+	    String accessTokenCookie = String.format(
+	        "accessToken=%s; Path=/; HttpOnly; SameSite=Lax; Max-Age=%d",
+	        jwtTokenDto.getAccessToken(),
+	        10 * 60  // 10분
+	    );
+	    String refreshTokenCookie = String.format(
+	        "refreshToken=%s; Path=/; HttpOnly; SameSite=Lax; Max-Age=%d",
+	        jwtTokenDto.getRefreshToken(),
+	        14 * 24 * 60 * 60  // 14일
+	    );
 
-        // csrf 공격을 막기 위한 samesite 설정
-        response.setHeader("Set-Cookie", String.format("accessToken=%s; Path=/; HttpOnly; Secure; SameSite=Lax", jwtTokenDto.getAccessToken()));
-        response.addHeader("Set-Cookie", String.format("refreshToken=%s; Path=/; HttpOnly; Secure; SameSite=Lax", jwtTokenDto.getRefreshToken()));
-        
-        return ResponseEntity.ok(
-            JwtTokenResponse.builder()
-            .accessToken(jwtTokenDto.getAccessToken())
-            .build()
-        );
+	    response.addHeader("Set-Cookie", accessTokenCookie);
+	    response.addHeader("Set-Cookie", refreshTokenCookie);
+
+	    return ResponseEntity.ok(
+	        JwtTokenResponse.builder()
+	                        .accessToken(jwtTokenDto.getAccessToken())
+	                        .build()
+	    );
 	}
 
 }
