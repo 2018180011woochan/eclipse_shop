@@ -16,6 +16,8 @@ import com.example.shop_project_v2.Inquiry.entity.Inquiry;
 import com.example.shop_project_v2.Inquiry.service.InquiryService;
 import com.example.shop_project_v2.member.entity.Member;
 import com.example.shop_project_v2.member.service.MemberService;
+import com.example.shop_project_v2.product.entity.Product;
+import com.example.shop_project_v2.product.service.ProductService;
 import com.example.shop_project_v2.review.entity.Review;
 
 import lombok.RequiredArgsConstructor;
@@ -26,14 +28,19 @@ import lombok.RequiredArgsConstructor;
 public class InquiryViewController {
 	private final InquiryService inquiryService;
 	private final MemberService memberService;
+	private final ProductService productService;
 	
 	@GetMapping
-    public String listByProduct(@RequestParam("productId") Long productId, Model model) {
-        List<Inquiry> inquiries = inquiryService.getInquiriesByProduct(productId);
-        model.addAttribute("inquiries", inquiries);
-        model.addAttribute("productId", productId);
-        return "inquiry/inquiryList"; 
-    }
+	public String listByProduct(@RequestParam("productId") Long productId, Model model) {
+	    Product product = productService.FindById(productId);
+	    
+	    List<Inquiry> inquiries = inquiryService.getInquiriesByProduct(productId);
+	    
+	    model.addAttribute("product", product);      // 상품 정보
+	    model.addAttribute("inquiries", inquiries);  // 문의 목록
+	    
+	    return "inquiry/inquiryList"; 
+	}
 	
     @GetMapping("/{inquiryId}")
     public String detail(@PathVariable Long inquiryId, Model model) {

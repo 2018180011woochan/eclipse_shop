@@ -8,6 +8,7 @@ import com.example.shop_project_v2.BaseEntity;
 import com.example.shop_project_v2.product.entity.Product;
 import com.example.shop_project_v2.product.entity.ProductImage;
 import com.example.shop_project_v2.product.entity.ProductOption;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -41,6 +42,7 @@ public class Category extends BaseEntity  {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
+    @JsonIgnore
     private Category parent;
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
