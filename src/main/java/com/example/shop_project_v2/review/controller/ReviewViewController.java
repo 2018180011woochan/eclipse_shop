@@ -67,7 +67,9 @@ public class ReviewViewController {
     @GetMapping
     public String listByReview(@RequestParam Long productId, Model model) {
     	List<Review> reviews = reviewService.getReviewByProduct(productId);
+    	Double averageRating = reviewService.getAverageRating(productId);
         model.addAttribute("reviews", reviews);
+        model.addAttribute("averageRating", averageRating);
         model.addAttribute("productId", productId);
         return "review/reviewList"; 
     }
@@ -75,6 +77,7 @@ public class ReviewViewController {
     @GetMapping("/{reviewId}")
     public String detail(@PathVariable Long reviewId, Model model) {
     	Review review = reviewService.getReviewById(reviewId);
+    	
         model.addAttribute("review", review);
         return "review/reviewDetail";
     }

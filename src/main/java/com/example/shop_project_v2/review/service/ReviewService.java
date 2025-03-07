@@ -69,5 +69,11 @@ public class ReviewService {
     public Integer getReviewCountByMember(Member member){
         return reviewRepository.findByMember(member).size();
     }
+    
+    public Double getAverageRating(Long productId) {
+        Double avg = reviewRepository.findAverageStarsByProductId(productId);
+        // 평균이 없으면 0 반환
+        return (avg != null) ? avg : 0.0;
+    }
 }
 

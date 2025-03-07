@@ -4,46 +4,96 @@
       layout:decorate="~{common/layout}">
 <head>
     <meta charset="UTF-8">
-    <title>리뷰 목록</title>
+    <title>전체 리뷰</title>
     <link rel="stylesheet" href="/common/css/bootstrap.min.css">
+    <style>
+        /* 전체 별 표시 색상(검정) */
+        .review-stars {
+            color: #000; /* 검정색 별 */
+            font-size: 1rem;
+            margin-right: 0.5rem;
+        }
+        /* 리뷰 카드 스타일 */
+        .review-card {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .review-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+        .review-meta {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        .review-content {
+            white-space: pre-line; /* DB에 줄바꿈이 있으면 그대로 표시 */
+        }
+        /* 보라색 버튼 */
+        .btn-purple {
+            background-color: #6f42c1;
+            border-color: #6f42c1;
+            color: #fff;
+        }
+        .btn-purple:hover {
+            background-color: #5a339b;
+            border-color: #5a339b;
+        }
+    </style>
 </head>
 <body>
 <main layout:fragment="content">
-<div class="container mt-5">
-    <h2>리뷰 목록</h2>
+<div class="container" style="max-width: 600px;">
 
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>작성일</th>
-                <th>상품명</th>
-                <th>별점</th>
-                <th>옵션</th>
-                <th>내용</th>
-                <th>상세보기</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="review : ${reviews}">
-                <td th:text="${#temporals.format(review.createdDate, 'yyyy-MM-dd')}">2025-01-30</td>
-                <td th:text="${review.orderItem.productName}">상품명</td>
-                <td th:text="${review.stars}">5</td>
-                <td th:text="'사이즈: ' + ${review.orderItem.size} + ', 색상: ' + ${review.orderItem.color}">
-                    옵션 정보
-                </td>
-                <td th:text="${review.content}">리뷰 내용</td>
-				<td>
-				    <button class="btn btn-sm btn-outline-info"
-				        th:onclick="|location.href='/review/'+${review.reviewId}|">
-				        상세보기
-				    </button>
-				</td>
-            </tr>
-            <tr th:if="${reviews.size()} == 0">
-                <td colspan="6">리뷰가 없습니다.</td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="d-flex align-items-center justify-content-start mt-5 mb-4">
+        <span class="me-3" style="font-size: 1.2rem; color: #000;"
+              th:text="${averageRating != null ? '★' + averageRating : '★0'}">
+            ★3
+        </span>
+        <h3 class="m-0">전체 리뷰</h3>
+    </div>
+
+    <!-- 리뷰 목록 -->
+    <div th:each="review : ${reviews}" class="review-card">
+        <div class="review-title" th:text="${review.orderItem.productName}">Mohair_Cardigan_-_Red</div>
+
+        <span class="review-stars"
+              th:utext="${#strings.repeat('★', review.stars)}">
+            ★
+        </span>
+
+        <!-- 작성자/작성일 -->
+        <div class="review-meta">
+            <!-- 작성자 -->
+            <span th:text="${review.member.nickname}">닉네임</span>
+            <span> / </span>
+            <!-- 작성일 -->
+            <span th:text="${#temporals.format(review.createdDate, 'yyyy-MM-dd')}">2025-03-06</span>
+        </div>
+
+        <!-- 리뷰 내용 -->
+        <div class="review-content" th:text="${review.content}">
+            리뷰내용
+        </div>
+    </div>
+
+    <!-- 리뷰가 없는 경우 -->
+    <div th:if="${reviews.size()} == 0">
+        <p>리뷰가 없습니다.</p>
+    </div>
+
+    <!-- 하단: "리뷰 더보기" 버튼 -->
+    <div class="text-center mt-4">
+        <button type="button" class="btn btn-purple"
+                th:onclick="|location.href='/review/more'|">
+            리뷰 더보기
+        </button>
+    </div>
+
 </div>
 </main>
 </body>
