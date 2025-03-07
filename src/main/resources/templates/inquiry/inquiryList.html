@@ -8,40 +8,7 @@
     <title>상품 문의 목록</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="/common/css/bootstrap.min.css">
-    <style>
-        /* 선택사항: 버튼 컬러, 여백 조정 등 */
-        .btn-purple {
-            background-color: #6f42c1;
-            border-color: #6f42c1;
-            color: #fff;
-        }
-        .btn-purple:hover {
-            background-color: #5a339b;
-            border-color: #5a339b;
-        }
-        
-        /* 문의 항목 스타일 */
-        .inquiry-item {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            background-color: #fff;
-        }
-        .inquiry-type {
-            font-size: 0.85rem;  /* 작은 폰트 */
-            color: #888;
-            margin-bottom: 0.25rem; /* 살짝 간격 */
-        }
-        .inquiry-title {
-            font-weight: bold;   /* 굵은 글씨 */
-            margin-bottom: 0.5rem; /* 살짝 간격 */
-        }
-        .inquiry-meta {
-            font-size: 0.8rem;
-            color: #666;
-        }
-    </style>
+    <link rel="stylesheet" href="/inquiry/css/inquiryList.css">
 </head>
 <body>
 <main layout:fragment="content">
@@ -58,7 +25,6 @@
             <h2 class="mt-3" th:text="${product.name}">상품명</h2>
 
             <p class="fw-bold" th:text="${product.price} + '원'">
-                23,900원
             </p>
         </div>
     </div>
@@ -76,7 +42,6 @@
     <!-- 문의 목록 -->
     <div class="row mt-3">
         <div class="col">
-            <h4 class="mb-3">상품 문의 목록</h4>
             <!-- 문의가 없을 때 -->
             <div th:if="${inquiries.size()} == 0">
                 <p>아직 등록된 문의가 없습니다.</p>

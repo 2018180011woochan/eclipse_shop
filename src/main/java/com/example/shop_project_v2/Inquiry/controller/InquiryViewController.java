@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.example.shop_project_v2.Inquiry.dto.InquiryRequestDto;
 import com.example.shop_project_v2.Inquiry.entity.Inquiry;
 import com.example.shop_project_v2.Inquiry.service.InquiryService;
+import com.example.shop_project_v2.comment.service.CommentService;
 import com.example.shop_project_v2.member.entity.Member;
 import com.example.shop_project_v2.member.service.MemberService;
 import com.example.shop_project_v2.product.entity.Product;
@@ -29,6 +30,7 @@ public class InquiryViewController {
 	private final InquiryService inquiryService;
 	private final MemberService memberService;
 	private final ProductService productService;
+	private final CommentService commentService;
 	
 	@GetMapping
 	public String listByProduct(@RequestParam("productId") Long productId, Model model) {
@@ -46,6 +48,7 @@ public class InquiryViewController {
     public String detail(@PathVariable Long inquiryId, Model model) {
         Inquiry inquiry = inquiryService.getInquiryById(inquiryId);
         model.addAttribute("inquiry", inquiry);
+        model.addAttribute("comments", inquiry.getComments());
         return "inquiry/inquiryDetail";
     }
     
@@ -70,5 +73,18 @@ public class InquiryViewController {
     public String createInquiry(@ModelAttribute InquiryRequestDto form) {
         inquiryService.createInquiry(form);
         return "redirect:/inquiry?productId=" + form.getProductId();
+    }
+    
+    // 관리자 전용 답글 작성 
+    @PostMapping("/{id}/comment")
+    public String addComment(@PathVariable("id") Long inquiryId,
+                             @RequestParam("content") String content) {
+        Member member = memberService.getCurrentMember();
+
+        commentService.addComment(inquiryId, content, member);
+
+        Inquiry inquiry = inquiryService.getInquiryById(inquiryId);
+        Long productId = inquiry.getProduct().getProductId();
+        return "redirect:/inquiry/" + inquiryId + "?productId=" + productId;
     }
 }

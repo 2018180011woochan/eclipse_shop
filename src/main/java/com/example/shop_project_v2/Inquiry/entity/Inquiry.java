@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.example.shop_project_v2.BaseEntity;
 import com.example.shop_project_v2.Inquiry.InquiryType;
+import com.example.shop_project_v2.comment.entity.Comment;
 import com.example.shop_project_v2.member.Membership;
 import com.example.shop_project_v2.member.Role;
 import com.example.shop_project_v2.member.entity.Member;
@@ -71,8 +72,8 @@ public class Inquiry extends BaseEntity {
     @Column(nullable = false)
     private boolean isSecret; 
 
-    //@OneToMany(mappedBy = "inquiry", cascade = CascadeType.ALL, orphanRemoval = true)
-    //private List<Comment> comments;
+    @OneToMany(mappedBy = "inquiry", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
 
     @Transient
     private int commentCount; 

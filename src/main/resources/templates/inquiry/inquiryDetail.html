@@ -1,51 +1,79 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{common/layout}">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{common/layout}">
 <head>
     <meta charset="UTF-8">
     <title>문의 상세</title>
     <link rel="stylesheet" href="/common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/inquiry/css/inquiryDetail.css">
 </head>
 <body>
 <main layout:fragment="content">
-<div class="container mt-5">
-    <h2>문의 상세</h2>
-    
-    <div>
-        <label>유형</label>
-        <p th:text="${inquiry.type.getKoreanName()}">SIZE</p>
-    </div>
-    
-    <div>
-        <label>제목</label>
-        <p th:text="${inquiry.title}">문의 제목</p>
-    </div>
-    
-    <div>
-        <label>작성자</label>
-        <p th:text="${inquiry.member.email}">홍길동</p>
-    </div>
-    
-    <div>
-        <label>작성일</label>
-        <p th:text="${#temporals.format(inquiry.createdDate, 'yyyy-MM-dd HH:mm')}">2025-01-30 10:10</p>
-    </div>
-    
-    <div>
-        <label>내용</label>
-        <p th:text="${inquiry.content}">문의 내용</p>
-    </div>
-    
-    <!-- 비밀글 여부 / 댓글 등 추가 요소 -->
+<div class="container mt-5" style="max-width: 600px;">
+    <div class="card">
+        <div class="card-body">
+            <div class="inquiry-type" th:text="${inquiry.type.getKoreanName()}">
+                문의 유형
+            </div>
+            <h2 class="inquiry-title" th:text="${inquiry.title}">
+                문의 제목
+            </h2>
+            <div class="inquiry-meta">
+                <span th:text="${inquiry.member.email}">작성자</span>
+                <span> | </span>
+                <span th:text="${#temporals.format(inquiry.createdDate, 'yyyy-MM-dd HH:mm')}">작성일</span>
+            </div>
+            
+            <!-- 구분선 -->
+            <hr class="my-3"/>
 
-    <hr>
-    <!-- 목록 버튼 -->
-    <button class="btn btn-secondary"
-     th:onclick="'location.href=\'/inquiry?productId=' + ${inquiry.product.productId} + '\' '">
-        목록으로
-    </button>
+            <!-- 문의 내용 -->
+            <div class="inquiry-content" th:text="${inquiry.content}">
+                문의 내용
+            </div>
+            
+            <div class="mt-4">
+			    <div th:if="${comments.size() > 0}">
+			        <div class="card mb-2" th:each="comment : ${comments}">
+			            <div class="card-body">
+			                <div class="comment-meta">
+			                    <strong th:text="${comment.member.email}">작성자</strong>
+			                    <span class="text-muted" th:text="${#temporals.format(comment.createdDate, 'yyyy-MM-dd HH:mm')}">작성일</span>
+			                </div>
+			                <p class="comment-content" th:text="${comment.content}">댓글 내용</p>
+			            </div>
+			        </div>
+			    </div>
+			    <div th:if="${comments.size() == 0}">
+			        <p class="text-muted">아직 댓글이 없습니다.</p>
+			    </div>
+			</div>
+            
+            
+            <!-- 관리자 전용: 답글 작성 폼 -->
+            <div class="mt-4" sec:authorize="hasRole('ADMIN')">
+                <hr class="my-3"/>
+                <h5>답글 작성</h5>
+                <form class="reply-form" th:action="@{/inquiry/{id}/comment(id=${inquiry.id})}" method="post">
+                    <div class="mb-3">
+                        <textarea name="content" class="form-control" rows="3" placeholder="답글을 작성하세요"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-purple btn-sm">답글 달기</button>
+                </form>
+            </div>
 
+            <!-- 목록 버튼 -->
+            <div class="text-end mt-4">
+                <button class="btn btn-secondary btn-sm"
+                        th:onclick="|location.href='/inquiry?productId=' + ${inquiry.product.productId}|">
+                    목록으로
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 </main>
 </body>

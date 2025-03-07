@@ -1,0 +1,30 @@
+.btn-purple {
+    background-color: #6f42c1;
+    border-color: #6f42c1;
+    color: #fff;
+}
+.btn-purple:hover {
+    background-color: #5a339b;
+    border-color: #5a339b;
+}
+
+.inquiry-item {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: #fff;
+}
+.inquiry-type {
+    font-size: 0.85rem;  
+    color: #888;
+    margin-bottom: 0.25rem; 
+}
+.inquiry-title {
+    font-weight: bold;   
+    margin-bottom: 0.5rem; 
+}
+.inquiry-meta {
+    font-size: 0.8rem;
+    color: #666;
+}

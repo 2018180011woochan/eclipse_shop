@@ -1,0 +1,34 @@
+/* 보라색 버튼 */
+.btn-purple {
+    background-color: #6f42c1;
+    border-color: #6f42c1;
+    color: #fff;
+}
+.btn-purple:hover {
+    background-color: #5a339b;
+    border-color: #5a339b;
+}
+/* 텍스트 스타일 */
+.inquiry-type {
+    font-size: 0.85rem;
+    color: #888;
+}
+.inquiry-title {
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin-top: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+.inquiry-meta {
+    font-size: 0.85rem;
+    color: #666;
+}
+.inquiry-content {
+    margin-top: 1rem;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+/* 답글 작성 폼 */
+.reply-form textarea {
+    resize: vertical;
+}
