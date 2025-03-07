@@ -1,52 +1,76 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 	layout:decorate="~{common/layout}">
 <head>
     <meta charset="UTF-8">
     <title>문의 작성</title>
     <link rel="stylesheet" href="/common/css/bootstrap.min.css">
+    <style>
+        /* 보라색 등록 버튼 */
+        .btn-purple {
+            background-color: #6f42c1;
+            border-color: #6f42c1;
+            color: #fff;
+        }
+        .btn-purple:hover {
+            background-color: #5a339b;
+            border-color: #5a339b;
+        }
+    </style>
 </head>
 <body>
 <main layout:fragment="content">
 <div class="container mt-5">
     <h2>문의 작성</h2>
-    
-    <form th:action="@{/inquiry}" th:object="${inquiryForm}" method="post">
-        <!-- 숨겨진 필드: productId -->
-        <input type="hidden" th:field="*{productId}"/>
-        
-        <div class="mb-3">
-            <label>문의 유형</label>
-            <select class="form-select" th:field="*{type}">
-                <option value="SIZE">사이즈 문의</option>
-                <option value="SHIPPING">배송 문의</option>
-                <option value="RESTOCK">재입고 문의</option>
-                <option value="DETAILS">상품 상세 문의</option>
-            </select>
-        </div>
-        
-        <div class="mb-3">
-            <label>제목</label>
-            <input type="text" class="form-control" th:field="*{title}" />
-        </div>
-        
-        <div class="mb-3">
-            <label>내용</label>
-            <textarea class="form-control" th:field="*{content}"></textarea>
-        </div>
-        
-        <div class="form-check mb-3">
-            <input class="form-check-input" type="checkbox" th:field="*{isSecret}" />
-            <label class="form-check-label">비밀글</label>
-        </div>
-        
-        <button type="submit" class="btn btn-primary">등록</button>
-        <button type="button" class="btn btn-secondary"
-         th:onclick="'location.href=\'/inquiry?productId=' + ${productId} + '\' '">
-            목록
-        </button>
-    </form>
+
+    <!-- 로그인되지 않은 경우 알림창 띄우고 로그인 페이지로 이동 -->
+    <div sec:authorize="!isAuthenticated()">
+        <script>
+            alert("로그인이 필요합니다.");
+            window.location.href = "/login";
+        </script>
+    </div>
+
+    <!-- 로그인된 사용자만 폼 표시 -->
+    <div sec:authorize="isAuthenticated()">
+        <form th:action="@{/inquiry}" th:object="${inquiryForm}" method="post">
+            <!-- 숨겨진 필드: productId -->
+            <input type="hidden" th:field="*{productId}"/>
+
+            <div class="mb-3">
+                <label>문의 유형</label>
+                <select class="form-select" th:field="*{type}">
+                    <option value="SIZE">사이즈 문의</option>
+                    <option value="SHIPPING">배송 문의</option>
+                    <option value="RESTOCK">재입고 문의</option>
+                    <option value="DETAILS">상품 상세 문의</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label>제목</label>
+                <input type="text" class="form-control" th:field="*{title}" />
+            </div>
+
+            <div class="mb-3">
+                <label>내용</label>
+                <textarea class="form-control" th:field="*{content}"></textarea>
+            </div>
+
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" th:field="*{isSecret}" />
+                <label class="form-check-label">비밀글</label>
+            </div>
+
+            <button type="submit" class="btn btn-purple">등록</button>
+            <button type="button" class="btn btn-secondary"
+                th:onclick="'location.href=\'/inquiry?productId=' + ${productId} + '\' '">
+                목록
+            </button>
+        </form>
+    </div>
 </div>
 </main>
 </body>

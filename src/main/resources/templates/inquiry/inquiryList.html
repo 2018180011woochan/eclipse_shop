@@ -54,10 +54,20 @@
                      th:text="${inq.type.getKoreanName()}">문의유형</div>
 
                 <!-- 문의 제목 -->
-                <div class="inquiry-title"
-                     th:text="${inq.title}">문의 제목</div>
-
-
+				<div class="inquiry-title">
+				  <span th:if="${!inq.isSecret or 
+				                (#authentication != null and 
+				                 (#authentication.name eq inq.member.email or 
+				                  (#authentication.authorities.?[authority=='ROLE_ADMIN'].size() > 0)))}"
+				        th:text="${inq.title}">
+				  </span>
+				  <span th:if="${inq.isSecret and 
+				                (#authentication == null or 
+				                 (#authentication.name ne inq.member.email and 
+				                  (#authentication.authorities.?[authority=='ROLE_ADMIN'].size() == 0)))}">
+				      비밀글입니다
+				  </span>
+				</div>
 
                 <!-- 작성자/날짜 -->
                 <div class="inquiry-meta">
@@ -69,10 +79,25 @@
 
                 <!-- 상세보기 버튼 (오른쪽 정렬) -->
                 <div class="text-end mt-2">
-                    <button class="btn btn-outline-secondary btn-sm"
-                        th:onclick="|location.href='/inquiry/' + ${inq.id};|">
-                        상세보기
-                    </button>
+				 <!-- 권한이 있어 상세 페이지로 이동 가능한 버튼 -->
+				    <button class="btn btn-outline-secondary btn-sm"
+				            th:if="${!inq.isSecret or 
+				                     (#authentication != null and 
+				                      (#authentication.name eq inq.member.email or 
+				                       (#authentication.authorities.?[authority=='ROLE_ADMIN'].size() > 0)))}"
+				            th:onclick="|location.href='/inquiry/' + ${inq.id}|">
+				        상세보기
+				    </button>
+				
+				    <!-- 비밀글이고 권한이 없는 경우: 클릭 시 alert 후 목록 페이지로 -->
+				    <button class="btn btn-outline-secondary btn-sm"
+				            th:if="${inq.isSecret and 
+				                     (#authentication == null or 
+				                      (#authentication.name ne inq.member.email and 
+				                       (#authentication.authorities.?[authority=='ROLE_ADMIN'].size() == 0)))}"
+				            th:onclick="|alert('비밀글입니다'); location.href='/inquiry?productId=${product.productId}';|">
+				        상세보기
+				    </button>
                 </div>
 
             </div>
