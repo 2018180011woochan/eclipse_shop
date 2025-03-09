@@ -53,7 +53,7 @@ public class ReviewViewController {
 
         reviewService.saveReview(orderItemId, productId, stars, title, content, currentMember);
 
-        return "redirect:/"; 
+        return "redirect:/review?productId=" + productId; 
     }
     
     @GetMapping("/history")

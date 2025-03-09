@@ -11,6 +11,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.example.shop_project_v2.jwt.JwtFilter;
+import com.example.shop_project_v2.oauth2.CustomOAuth2UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,8 +20,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 	private final JwtFilter jwtFilter;
-//	private final CustomOAuth2UserService customOAuth2UserService;
-//	private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+	private final CustomOAuth2UserService customOAuth2UserService;
+	private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 	private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
 	
 	@Bean
@@ -67,13 +68,13 @@ public class SecurityConfig {
                 )
                 .csrf(AbstractHttpConfigurer::disable)
         		.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // JWT 필터 추가
-//        		.oauth2Login(oauth2 -> oauth2
-//        			    .loginPage("/login")
-//        			    //.defaultSuccessUrl("/signup/confirm") 
-//        			    .successHandler(customAuthenticationSuccessHandler)
-//        			    .failureUrl("/login?error=true")
-//        			    .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-//        			)
+        		.oauth2Login(oauth2 -> oauth2
+        			    .loginPage("/login")
+        			    //.defaultSuccessUrl("/signup/confirm") 
+        			    .successHandler(customAuthenticationSuccessHandler)
+        			    .failureUrl("/login?error=true")
+        			    .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+        			)
 		        .logout(logout -> logout
 		                .logoutUrl("/logout")
 		                .logoutSuccessHandler(customLogoutSuccessHandler) 

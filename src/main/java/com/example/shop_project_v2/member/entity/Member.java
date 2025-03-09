@@ -7,6 +7,7 @@ import java.util.List;
 import com.example.shop_project_v2.BaseEntity;
 import com.example.shop_project_v2.coupon.entity.Coupon;
 import com.example.shop_project_v2.member.Membership;
+import com.example.shop_project_v2.member.Provider;
 import com.example.shop_project_v2.member.Role;
 
 import jakarta.persistence.CascadeType;
@@ -90,9 +91,9 @@ public class Member extends BaseEntity {
     private List<Coupon> coupons = new ArrayList<>();
     
     // OAuth2를 사용하는 경우 provider 저장
-//    @Column(name = "provider")
-//    @Enumerated(EnumType.STRING)
-//    private Provider provider;
+    @Column(name = "provider")
+    @Enumerated(EnumType.STRING)
+    private Provider provider;
    
 	@PrePersist
     public void prePersist() {
@@ -108,8 +109,8 @@ public class Member extends BaseEntity {
         if (this.membership == null) 
             this.membership = Membership.BRONZE;
         
-//        if (this.provider == null) 
-//            this.provider = Provider.NONE;
+        if (this.provider == null) 
+            this.provider = Provider.NONE;
         
         withdraw = false;
     }
