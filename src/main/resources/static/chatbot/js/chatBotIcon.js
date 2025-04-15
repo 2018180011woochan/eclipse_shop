@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // 챗봇 팝업 창 열기
     chatbotIcon.addEventListener("click", function () {
         const chatbotWindow = window.open(
-            "/chatbot.html",  // 챗봇 UI가 있는 파일
+            "/chatbot/chatbot.html",  // 챗봇 UI가 있는 파일
             "Chatbot",
             "width=400,height=500,resizable=no"
         );

@@ -39,7 +39,7 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
         
-        if (path.startsWith("/chatbot.html") || path.startsWith("/chatbot/js/")) {
+        if (path.startsWith("/chatbot/chatbot.html") || path.startsWith("/chatbot/js/")) {
         	filterChain.doFilter(request, response);
             return;
         }

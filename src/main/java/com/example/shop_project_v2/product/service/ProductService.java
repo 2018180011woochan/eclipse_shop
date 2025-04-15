@@ -54,8 +54,8 @@ public class ProductService {
 		if (imageFiles != null && !imageFiles.isEmpty()) {
 			for (int i = 0; i < imageFiles.size(); ++i) {
 	            MultipartFile imageFile = imageFiles.get(i);
-	            //String imageUrl = saveImage(imageFile);
-	            String imageUrl = s3Service.upload(imageFile);
+	            String imageUrl = saveImage(imageFile);
+	            //String imageUrl = s3Service.upload(imageFile);
 	            
 	            ProductImage productImage = new ProductImage();
 	            productImage.setProduct(product);

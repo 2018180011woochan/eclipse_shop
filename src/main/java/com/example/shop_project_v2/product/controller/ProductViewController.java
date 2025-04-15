@@ -15,14 +15,18 @@ import com.example.shop_project_v2.member.entity.Member;
 import com.example.shop_project_v2.member.service.MemberService;
 import com.example.shop_project_v2.product.entity.Product;
 import com.example.shop_project_v2.product.service.ProductService;
+import com.example.shop_project_v2.product.service.RecentProductService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/products")
 public class ProductViewController {
 	private final ProductService productService;
 	private final MemberService memberService;
+	private final RecentProductService recentProductService;
 	
 	@GetMapping("/productList")
     public String viewProductsByCategory(
@@ -55,7 +59,7 @@ public class ProductViewController {
     }
 	
 	@GetMapping("/{id}")
-	public String ViewProductDetail(@PathVariable Long id, Model model) {
+	public String ViewProductDetail(@PathVariable Long id, Model model, HttpServletRequest request) {
         Product product = productService.FindById(id);
         String membershipName = "";
         int originalPrice = product.getPrice();
@@ -75,6 +79,22 @@ public class ProductViewController {
         model.addAttribute("product", product);
         model.addAttribute("membership", membershipName);
         model.addAttribute("discountPrice", discountPrice);
+        
+        // 최근 본 상품 저장
+        String redisKey;
+        if (!membershipName.isEmpty()) {
+            Long userId = memberService.getCurrentMember().getId();
+            redisKey = "recent:product:" + userId;
+        } else {
+            // 비로그인: 세션 ID 사용
+            String sessionId = request.getSession(true).getId();
+            redisKey = "recent:product:guest:" + sessionId;
+            System.out.println("Redis Key used: recent:product:guest:" + sessionId);
+        }
+        
+        // Redis에 최근 본 상품 기록
+        recentProductService.saveRecentProduct(redisKey, id);
+        
 		return "product/productDetail";
 	}
 	
