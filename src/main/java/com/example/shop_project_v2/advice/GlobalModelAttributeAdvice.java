@@ -12,7 +12,10 @@ import com.example.shop_project_v2.product.service.RecentProductService;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @ControllerAdvice
 @RequiredArgsConstructor
@@ -28,7 +31,7 @@ public class GlobalModelAttributeAdvice {
         try {
             membershipName = memberService.getCurrentMember().getMembership().getName();
         } catch (RuntimeException ex) {
-            // 로그인 안된 거라면 그냥 무시
+            // 로그인 안 된 경우 그냥 무시
         }
 
         String redisKey;
@@ -40,12 +43,21 @@ public class GlobalModelAttributeAdvice {
             redisKey = "recent:product:guest:" + sessionId;
         }
 
-        // 먼저 Redis에서 최근 본 상품 ID 리스트 가져오기 (예: List<Long>)
         List<Long> recentIds = recentProductService.getRecentProductIds(redisKey);
-        if(recentIds == null || recentIds.isEmpty()){
-            return new ArrayList<>(); // 빈 리스트 반환
+        if (recentIds == null || recentIds.isEmpty()) {
+            return new ArrayList<>();
         }
-        // 이 상품 ID들을 이용해서 실제 Product 객체 리스트로 변환해주자.
-        return productService.findProductsByIds(recentIds);
+        
+        List<Product> products = productService.findProductsByIds(recentIds);
+        
+
+        Map<Long, Integer> orderMap = new HashMap<>();
+        for (int i = 0; i < recentIds.size(); i++) {
+            orderMap.put(recentIds.get(i), i);
+        }
+        
+        products.sort(Comparator.comparingInt(p -> orderMap.get(p.getProductId())));
+        
+        return products;
     }
 }

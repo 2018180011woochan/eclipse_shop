@@ -61,16 +61,26 @@
     </nav>
 </header>
 
-<aside style="width: 220px; float: left; margin: 20px;">
-    <h5>최근 본 상품</h5>
-    <ul>
-        <li th:each="product : ${recentProducts}">
-			<a th:href="@{/products/{id}(id=${product.productId})}">
-			    <img th:src="@{${product.thumbnailUrl}}" alt="상품 이미지" style="width:80px; height:80px;" />
-			    <span th:text="${product.name}">상품명</span>
-			</a>
+<aside style="
+  position: fixed;
+  bottom: 20px;                
+  left: 20px;                  
+  width: 250px;
+  background-color: rgba(0, 0, 0, 0.7); 
+  padding: 15px;
+  border-radius: 8px;          
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); 
+  z-index: 9999;
+">
+    <h5 style="color: #fff; margin-top: 0; font-family: 'Arial Black', sans-serif;">최근 본 상품</h5>
+    <ul style="list-style: none; padding: 0; margin: 0;">
+        <li th:each="product : ${recentProducts}" style="margin-bottom: 10px;">
+            <a th:href="@{/products/{id}(id=${product.productId})}" style="text-decoration: none; color: #ffce00; display: flex; align-items: center;">
+                <img th:src="@{${product.thumbnailUrl}}" alt="상품 이미지" style="width:60px; height:60px; object-fit:cover; border-radius: 4px; margin-right: 8px;" />
+                <span style="font-size: 14px; font-family: 'Helvetica Neue', sans-serif;" th:text="${product.name}">상품명</span>
+            </a>
         </li>
-        <li th:if="${#lists.isEmpty(recentProducts)}">최근 본 상품이 없네요.</li>
+        <li th:if="${#lists.isEmpty(recentProducts)}" style="color: #fff; font-size: 14px;">최근 본 상품이 없네요.</li>
     </ul>
 </aside>
 
