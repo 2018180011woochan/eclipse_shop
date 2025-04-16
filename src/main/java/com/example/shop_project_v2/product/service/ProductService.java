@@ -206,4 +206,10 @@ public class ProductService {
         }
     }
     
+    public List<Product> findProductsByIds(List<Long> productIds) {
+        return productRepository.findAllById(productIds)
+                .stream()
+                .collect(Collectors.toList());
+    }
+    
 }
