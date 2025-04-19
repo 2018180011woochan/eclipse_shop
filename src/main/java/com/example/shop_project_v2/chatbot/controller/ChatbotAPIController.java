@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.shop_project_v2.chatbot.service.ChatMessageService;
 import com.example.shop_project_v2.chatbot.service.ChatbotService;
 
 import lombok.RequiredArgsConstructor;
@@ -18,14 +19,31 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ChatbotAPIController {
 	private final ChatbotService chatbotService;
+	private final ChatMessageService msgService;
 
+//    @PostMapping
+//    public ResponseEntity<Map<String, String>> handleChatbot(@RequestParam("message") String message) {
+//        String botResponse = chatbotService.getResponse(message);
+//
+//        Map<String, String> json = new HashMap<>();
+//        json.put("response", botResponse);
+//
+//        return ResponseEntity.ok(json);
+//    }
+    
     @PostMapping
-    public ResponseEntity<Map<String, String>> handleChatbot(@RequestParam("message") String message) {
+    public ResponseEntity<Map<String, String>> handleChatbot(
+        @RequestParam("message") String message,
+        @RequestParam("roomId") String roomId     
+    ) {
+        msgService.save(roomId, "user", message);
+
         String botResponse = chatbotService.getResponse(message);
+
+        msgService.save(roomId, "bot", botResponse);
 
         Map<String, String> json = new HashMap<>();
         json.put("response", botResponse);
-
         return ResponseEntity.ok(json);
     }
 }

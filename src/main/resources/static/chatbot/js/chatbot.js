@@ -5,91 +5,65 @@ document.addEventListener("DOMContentLoaded", function () {
   const messageInput = document.getElementById("message");
   const sendButton = document.getElementById("send-btn");
 
-  // 질문 바 클릭 시 접기/펼치기
-  questionsBar.addEventListener("click", function() {
-    if (questionsContainer.classList.contains("hidden")) {
-      // 현재 숨겨져 있으면 펼치기
-      questionsContainer.classList.remove("hidden");
-      questionsBar.textContent = "접기";
-    } else {
-      // 보이는 상태라면 숨기기
-      questionsContainer.classList.add("hidden");
-      questionsBar.textContent = "펼치기";
-    }
+  // 질문 바 토글
+  questionsBar.addEventListener("click", () => {
+    questionsContainer.classList.toggle("hidden");
+    questionsBar.textContent = questionsContainer.classList.contains("hidden") ? "펼치기" : "접기";
   });
 
-  // 질문 버튼 클릭 시 자동 메시지 전송
+  // 기본 자동응답 버튼 클릭
   document.querySelectorAll(".chatbot-question-btn").forEach(button => {
-    button.addEventListener("click", function () {
-      const question = this.textContent.trim();
-	  
-	  if (question === "상담사 연결") {
-	    connectToAdmin(); 
-	    return;
-	  }
-	  
-	  if (!window.isCounseling) {
-		processMessage(question);
-	  } else {
-		console.log("1:1 채팅 상담 중에는 자동응답 질의를 할 수 없습니다.");
-	  }
-	  
+    button.addEventListener("click", () => {
+      const question = button.textContent.trim();
+      if (question === "상담사 연결") {
+        console.log("connect button clicked, userEmail =", window.userEmail);
+        connectToAdmin();
+      } else if (!window.isCounseling) {
+        processMessage(question);
+      }
     });
   });
 
-  // 메시지 전송 버튼 및 엔터키 처리
-  sendButton.addEventListener("click", function() {
-    const userMsg = messageInput.value.trim();
-    if (!userMsg) return;
-    processMessage(userMsg);
-    messageInput.value = "";
-  });
-  messageInput.addEventListener("keypress", function(event) {
-    if (event.key === "Enter") {
-      const userMsg = messageInput.value.trim();
-      if (!userMsg) return;
-      processMessage(userMsg);
-      messageInput.value = "";
-    }
+  // 엔터/클릭 전송
+  sendButton.addEventListener("click", sendUserMsg);
+  messageInput.addEventListener("keypress", e => {
+    if (e.key === "Enter") sendUserMsg();
   });
 
-  // 메시지 처리 함수
+  // 자동응답 처리
   function processMessage(message) {
-    appendMessage(message, "user"); // 화면에 사용자 메시지 표시
-
-    // 서버에 메시지 전송 (POST /api/v1/chatbot)
-	if (window.isCounseling) return;
+    appendMessage(message, "user");
+    if (window.isCounseling) return;
     fetch("/api/v1/chatbot", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: `message=${encodeURIComponent(message)}`
     })
-    .then(response => {
-      if (!response.ok) throw new Error("Network response was not ok");
-      return response.json();
+    .then(res => {
+      if (!res.ok) throw new Error("Network response was not ok");
+      return res.json();
     })
-    .then(data => {
-      appendMessage(data.response, "bot");
-    })
-    .catch(error => {
-      console.error("Error:", error);
-      appendMessage("에러가 발생했습니다.", "bot");
-    });
+    .then(data => appendMessage(data.response, "bot"))
+    .catch(_ => appendMessage("에러가 발생했습니다.", "bot"));
   }
 
-  // 채팅창에 메시지 추가 함수
+  function sendUserMsg() {
+    if (!window.isCounseling) return;
+    const msg = messageInput.value.trim();
+    if (!msg || !window.stompClient) return;
+    window.stompClient.send("/app/chat/send", {}, JSON.stringify({
+      roomId: window.currentRoomId,
+      sender: window.userEmail,
+      content: msg
+    }));
+    messageInput.value = "";
+  }
+
   function appendMessage(content, sender) {
-    const messageDiv = document.createElement("div");
-    messageDiv.classList.add("message");
-    if (sender === "user") {
-      messageDiv.classList.add("user");
-	  console.log("이름: " + sender);
-    } else {
-      messageDiv.classList.add("bot");
-	  console.log("이름: " + sender);
-    }
-    messageDiv.textContent = content;
-    chatContent.appendChild(messageDiv);
+    const div = document.createElement("div");
+    div.classList.add("message", sender === "user" ? "user" : "bot");
+    div.textContent = sender === "user" ? content : content;
+    chatContent.appendChild(div);
     chatContent.scrollTop = chatContent.scrollHeight;
   }
 });

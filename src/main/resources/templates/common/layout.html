@@ -63,25 +63,67 @@
 
 <aside style="
   position: fixed;
-  bottom: 20px;                
-  left: 20px;                  
-  width: 250px;
-  background-color: rgba(0, 0, 0, 0.7); 
-  padding: 15px;
-  border-radius: 8px;          
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); 
+  bottom: 20px;                  /* 아래 고정 */
+  left: 20px;                    /* 왼쪽 고정 */
+  width: 250px;                  /* 전체 너비 */
+  background-color: rgba(0, 0, 0, 0.8); /* 검정 배경 + 투명도 80% */
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   z-index: 9999;
+  font-family: 'Arial', sans-serif;
 ">
-    <h5 style="color: #fff; margin-top: 0; font-family: 'Arial Black', sans-serif;">최근 본 상품</h5>
-    <ul style="list-style: none; padding: 0; margin: 0;">
-        <li th:each="product : ${recentProducts}" style="margin-bottom: 10px;">
-            <a th:href="@{/products/{id}(id=${product.productId})}" style="text-decoration: none; color: #ffce00; display: flex; align-items: center;">
-                <img th:src="@{${product.thumbnailUrl}}" alt="상품 이미지" style="width:60px; height:60px; object-fit:cover; border-radius: 4px; margin-right: 8px;" />
-                <span style="font-size: 14px; font-family: 'Helvetica Neue', sans-serif;" th:text="${product.name}">상품명</span>
-            </a>
-        </li>
-        <li th:if="${#lists.isEmpty(recentProducts)}" style="color: #fff; font-size: 14px;">최근 본 상품이 없네요.</li>
-    </ul>
+  <h5 style="
+    color: #fff; 
+    margin-top: 0; 
+    font-size: 16px; 
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.7);
+  ">
+    최근 본 상품
+  </h5>
+  
+  <ul style="
+    list-style: none; 
+    padding: 0; 
+    margin: 0;
+  ">
+    <li th:each="product : ${recentProducts}" 
+        style="margin-bottom: 10px; display: flex; align-items: center;">
+      <a th:href="@{/products/{id}(id=${product.productId})}" 
+         style="
+           text-decoration: none; 
+           color: #fff; 
+           display: flex; 
+           align-items: center;
+         ">
+        <img th:src="@{${product.thumbnailUrl}}" alt="상품 이미지"
+             style="
+               width: 50px; 
+               height: 50px; 
+               object-fit: cover; 
+               border-radius: 4px; 
+               margin-right: 8px;
+             " />
+        
+        <!-- 글자가 너무 길면 줄바꿈 or 말줄임 처리 -->
+        <span style="
+          font-size: 14px; 
+          white-space: nowrap;      /* 한 줄 유지 */
+          overflow: hidden;         /* 넘치는 부분 숨김 */
+          text-overflow: ellipsis;  /* 말줄임표(...) 처리 */
+          max-width: 140px;         /* 글자 영역 제한 */
+          display: inline-block;
+        " 
+        th:text="${product.name}">상품명</span>
+      </a>
+    </li>
+    
+    <li th:if="${#lists.isEmpty(recentProducts)}" 
+        style="color: #fff; font-size: 14px;">
+      최근 본 상품이 없음.
+    </li>
+  </ul>
 </aside>
 
 <!-- 자식 템플릿이 덮어쓸 영역 -->

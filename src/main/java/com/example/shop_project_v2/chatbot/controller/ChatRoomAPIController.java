@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.shop_project_v2.chatbot.ChatMessage;
 import com.example.shop_project_v2.chatbot.ChatRoom;
+import com.example.shop_project_v2.chatbot.service.ChatMessageService;
 import com.example.shop_project_v2.chatbot.service.ChatService;
 
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ChatRoomAPIController {
 	private final ChatService chatService;
+	private final ChatMessageService msgService;
 	
     @PostMapping("/connection")
     public ResponseEntity<ChatRoom> connectToAdmin(@RequestBody String userEmail) {
@@ -34,5 +37,10 @@ public class ChatRoomAPIController {
         ChatRoom room = chatService.getRoom(roomId);
         if (room == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(room);
+    }
+    
+    @GetMapping("/history")
+    public List<ChatMessage> getHistory(@RequestParam String roomId) {
+        return msgService.history(roomId);
     }
 }
