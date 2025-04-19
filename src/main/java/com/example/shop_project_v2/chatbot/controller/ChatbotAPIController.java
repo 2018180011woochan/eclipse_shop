@@ -31,19 +31,24 @@ public class ChatbotAPIController {
 //        return ResponseEntity.ok(json);
 //    }
     
-    @PostMapping
-    public ResponseEntity<Map<String, String>> handleChatbot(
-        @RequestParam("message") String message,
-        @RequestParam("roomId") String roomId     
-    ) {
-        msgService.save(roomId, "user", message);
+	@PostMapping
+	public ResponseEntity<Map<String,String>> handleChatbot(
+	    @RequestParam("message") String message,
+	    @RequestParam(value="roomId", required=false) String roomId
+	) {
+	    // roomId 가 넘어왔을 때만 저장
+	    if (roomId != null && !roomId.isBlank()) {
+	      msgService.save(roomId, "user", message);
+	    }
 
-        String botResponse = chatbotService.getResponse(message);
+	    String botResponse = chatbotService.getResponse(message);
 
-        msgService.save(roomId, "bot", botResponse);
+	    if (roomId != null && !roomId.isBlank()) {
+	      msgService.save(roomId, "bot", botResponse);
+	    }
 
-        Map<String, String> json = new HashMap<>();
-        json.put("response", botResponse);
-        return ResponseEntity.ok(json);
-    }
+	    Map<String,String> json = new HashMap<>();
+	    json.put("response", botResponse);
+	    return ResponseEntity.ok(json);
+	}
 }
