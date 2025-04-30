@@ -89,11 +89,13 @@ public class ProductViewController {
             // 비로그인: 세션 ID 사용
             String sessionId = request.getSession(true).getId();
             redisKey = "recent:product:guest:" + sessionId;
-            System.out.println("Redis Key used: recent:product:guest:" + sessionId);
         }
         
         // Redis에 최근 본 상품 기록
         recentProductService.saveRecentProduct(redisKey, id);
+        
+        List<Product> recentProducts = recentProductService.getRecentProducts(redisKey);
+        model.addAttribute("recentProducts", recentProducts);
         
 		return "product/productDetail";
 	}

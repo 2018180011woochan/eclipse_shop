@@ -17,47 +17,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 @ControllerAdvice
 @RequiredArgsConstructor
 public class GlobalModelAttributeAdvice {
 
     private final RecentProductService recentProductService;
     private final MemberService memberService;
-    private final ProductService productService;  
 
     @ModelAttribute("recentProducts")
     public List<Product> populateRecentProducts(HttpServletRequest request) {
-        String membershipName = "";
-        try {
-            membershipName = memberService.getCurrentMember().getMembership().getName();
-        } catch (RuntimeException ex) {
-            // 로그인 안 된 경우 그냥 무시
-        }
-
         String redisKey;
-        if (!membershipName.isEmpty()) {
+        try {
+            String membership = memberService.getCurrentMember().getMembership().getName();
             Long userId = memberService.getCurrentMember().getId();
             redisKey = "recent:product:" + userId;
-        } else {
+        } catch (RuntimeException ex) {
+            // 비로그인
             String sessionId = request.getSession(true).getId();
             redisKey = "recent:product:guest:" + sessionId;
         }
 
-        List<Long> recentIds = recentProductService.getRecentProductIds(redisKey);
-        if (recentIds == null || recentIds.isEmpty()) {
-            return new ArrayList<>();
-        }
-        
-        List<Product> products = productService.findProductsByIds(recentIds);
-        
-
-        Map<Long, Integer> orderMap = new HashMap<>();
-        for (int i = 0; i < recentIds.size(); i++) {
-            orderMap.put(recentIds.get(i), i);
-        }
-        
-        products.sort(Comparator.comparingInt(p -> orderMap.get(p.getProductId())));
-        
-        return products;
+        return recentProductService.getRecentProducts(redisKey);
     }
 }
